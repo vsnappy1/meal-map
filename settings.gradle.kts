@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Meal Map"
 include(":app")
+include(":domain")
