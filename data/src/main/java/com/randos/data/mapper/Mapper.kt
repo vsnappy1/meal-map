@@ -1,0 +1,104 @@
+package com.randos.data.mapper
+
+import com.randos.domain.model.Ingredient
+import com.randos.domain.model.Meal
+import com.randos.domain.model.MealPlan
+import com.randos.domain.model.Recipe
+import com.randos.domain.model.RecipeIngredient
+
+internal fun Ingredient.toEntity(): com.randos.data.database.entity.Ingredient {
+    return com.randos.data.database.entity.Ingredient(
+        id = id,
+        name = name,
+        unit = unit,
+        calories = calories,
+    )
+}
+
+internal fun com.randos.data.database.entity.Ingredient.toDomain(): Ingredient {
+    return Ingredient(
+        id = id,
+        name = name,
+        unit = unit,
+        calories = calories,
+    )
+}
+
+internal fun Recipe.toEntity(): com.randos.data.database.entity.Recipe {
+    return com.randos.data.database.entity.Recipe(
+        id = id,
+        title = title,
+        description = description,
+        instructions = instructions,
+        prepTime = prepTime,
+        cookTime = cookTime,
+        servings = servings,
+        tag = tag,
+        calories = calories,
+        heaviness = heaviness
+    )
+}
+
+internal fun com.randos.data.database.entity.Recipe.toDomain(ingredients: List<RecipeIngredient>): Recipe{
+    return Recipe(
+        id = id,
+        title = title,
+        description = description,
+        instructions = instructions,
+        ingredients = ingredients,
+        prepTime = prepTime,
+        cookTime = cookTime,
+        servings = servings,
+        tag = tag,
+        calories = calories,
+        heaviness = heaviness
+    )
+}
+
+internal fun RecipeIngredient.toEntity(recipeId: Long, ingredientId: Long): com.randos.data.database.entity.RecipeIngredient {
+    return com.randos.data.database.entity.RecipeIngredient(
+        recipeId = recipeId,
+        ingredientId = ingredientId,
+        quantity = quantity,
+    )
+}
+
+internal fun com.randos.data.database.entity.RecipeIngredient.toDomain(ingredient: Ingredient): RecipeIngredient {
+    return RecipeIngredient(
+        ingredient = ingredient,
+        quantity = quantity,
+    )
+}
+
+internal fun MealPlan.toEntity(): com.randos.data.database.entity.MealPlan {
+    return com.randos.data.database.entity.MealPlan(
+        id = id,
+        week = week
+    )
+}
+
+internal fun com.randos.data.database.entity.MealPlan.toDomain(meals: List<Meal>): MealPlan {
+    return MealPlan(
+        id = id,
+        week = week,
+        meals = meals
+    )
+}
+
+internal fun Meal.toEntity(mealPlanId: Long): com.randos.data.database.entity.Meal {
+    return com.randos.data.database.entity.Meal(
+        id = id,
+        type = type,
+        date = date,
+        mealPlanId = mealPlanId
+    )
+}
+
+internal fun com.randos.data.database.entity.Meal.toDomain(recipes: List<Recipe>): Meal {
+    return Meal(
+        id = id,
+        type = type,
+        date = date,
+        recipes = recipes
+    )
+}

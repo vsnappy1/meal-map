@@ -3,9 +3,9 @@ package com.randos.domain.repository
 import com.randos.domain.model.Recipe
 
 interface RecipeRepository {
-    fun getRecipes()
-    fun getRecipe(id: Long)
-    fun addRecipe(recipe: Recipe)
-    fun deleteRecipe(recipe: Recipe)
-    fun updateRecipe(recipe: Recipe)
+    suspend fun getRecipes(): List<Recipe>
+    suspend fun getRecipe(id: Long): Recipe
+    suspend fun addRecipe(recipe: Recipe)
+    suspend fun deleteRecipe(recipe: Recipe)
+    suspend fun updateRecipe(recipe: Recipe)
 }

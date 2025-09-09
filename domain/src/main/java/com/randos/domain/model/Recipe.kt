@@ -12,7 +12,7 @@ data class Recipe(
     val prepTime: Int,
     val cookTime: Int,
     val servings: Int,
-    val tags: RecipeTag,
+    val tag: RecipeTag,
     val calories: Int,
     val heaviness: RecipeHeaviness,
 )
