@@ -6,6 +6,7 @@ import com.randos.data.database.dao.RecipeIngredientDao
 import com.randos.data.mapper.toDomain
 import com.randos.data.mapper.toEntity
 import com.randos.domain.model.Recipe
+import com.randos.domain.model.RecipeIngredient
 import com.randos.domain.repository.RecipeRepository
 
 internal class RecipeRepositoryImpl(
@@ -17,10 +18,12 @@ internal class RecipeRepositoryImpl(
         return recipeDao.getAll().map { it.toDomain(listOf()) }
     }
 
-    override suspend fun getRecipe(id: Long): Recipe {
+    override suspend fun getRecipe(id: Long): Recipe? {
         val recipeIngredients = recipeIngredientDao.get(id)
-            .map { it.toDomain(ingredientDao.get(it.ingredientId).toDomain()) }
-        return recipeDao.get(id).toDomain(recipeIngredients)
+            .map { recipeIngredient -> Pair(ingredientDao.get(recipeIngredient.ingredientId), recipeIngredient.quantity) }
+            .filter {it.first != null }
+            .map { RecipeIngredient(it.first!!.toDomain(), it.second) }
+        return recipeDao.get(id)?.toDomain(recipeIngredients)
     }
 
     override suspend fun addRecipe(recipe: Recipe) {
@@ -42,5 +45,8 @@ internal class RecipeRepositoryImpl(
 
     override suspend fun updateRecipe(recipe: Recipe) {
         recipeDao.update(recipe.toEntity())
+        recipeIngredientDao.deleteByRecipeId(recipe.id)
+        val recipeIngredients = recipe.ingredients.map { it.toEntity(recipe.id, it.ingredient.id) }
+        recipeIngredientDao.insertAll(*recipeIngredients.toTypedArray())
     }
 }

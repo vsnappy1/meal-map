@@ -11,7 +11,7 @@ import com.randos.data.database.entity.MealPlan
 internal interface MealPlanDao {
 
     @Query("SELECT * FROM MealPlan WHERE id=:id")
-    suspend fun get(id: Long): MealPlan
+    suspend fun get(id: Long): MealPlan?
 
     @Query("SELECT * FROM MealPlan")
     suspend fun getAll(): List<MealPlan>

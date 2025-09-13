@@ -1,0 +1,98 @@
+package com.randos.data.repository
+
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.randos.data.database.MealMapDatabase
+import com.randos.data.database.dao.IngredientDao
+import com.randos.data.mapper.toEntity
+import com.randos.data.utils.Utils.getMealMapDatabase
+import com.randos.data.utils.Utils.ingredient1
+import com.randos.data.utils.Utils.ingredient2
+import com.randos.domain.repository.IngredientRepository
+import kotlinx.coroutines.test.runTest
+import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+
+@RunWith(AndroidJUnit4::class)
+internal class IngredientRepositoryImplTest {
+
+    private lateinit var ingredientDao: IngredientDao
+    private lateinit var mealMapDatabase: MealMapDatabase
+    private lateinit var ingredientRepository: IngredientRepository
+
+    @Before
+    fun setUp() {
+        mealMapDatabase = getMealMapDatabase()
+        ingredientDao = mealMapDatabase.ingredientDao()
+        ingredientRepository = IngredientRepositoryImpl(ingredientDao)
+    }
+
+    @After
+    fun tearDown() {
+        mealMapDatabase.close()
+    }
+
+    @Test
+    fun getIngredients_should_return_ingredients_from_database() = runTest {
+        // Given
+        ingredientDao.insert(ingredient1.toEntity())
+        ingredientDao.insert(ingredient2.toEntity())
+
+        // When
+        val ingredientEntities = ingredientRepository.getIngredients()
+
+        // Then
+        assertEquals(2, ingredientEntities.size)
+        assertEquals(ingredient1, ingredientEntities[0])
+    }
+
+    @Test
+    fun getIngredient_should_return_ingredient_from_database() = runTest {
+        // Given
+        ingredientDao.insert(ingredient1.toEntity())
+
+        // When
+        val ingredientEntity = ingredientRepository.getIngredient(ingredient1.id)
+
+        // Then
+        assertEquals(ingredient1, ingredientEntity)
+    }
+
+    @Test
+    fun addIngredient_should_add_ingredient_to_database() = runTest {
+        // When
+        ingredientRepository.addIngredient(ingredient1)
+
+        // Then
+        val ingredientEntity = ingredientRepository.getIngredient(ingredient1.id)
+        assertEquals(ingredient1, ingredientEntity)
+    }
+
+    @Test
+    fun deleteIngredient_should_delete_ingredient_from_database() = runTest {
+        // Given
+        ingredientDao.insert(ingredient1.toEntity())
+
+        // When
+        ingredientRepository.deleteIngredient(ingredient1)
+
+        // Then
+        val ingredientEntities = ingredientRepository.getIngredients()
+        assertEquals(0, ingredientEntities.size)
+    }
+
+    @Test
+    fun updateIngredient_should_update_ingredient_in_database() = runTest {
+        // Given
+        ingredientDao.insert(ingredient1.toEntity())
+
+        // When
+        ingredientRepository.updateIngredient(ingredient1.copy(name = "Tomato"))
+
+        // Then
+        val ingredientEntity = ingredientRepository.getIngredient(ingredient1.id)
+        assertEquals(ingredient1.copy(name = "Tomato"), ingredientEntity)
+    }
+}

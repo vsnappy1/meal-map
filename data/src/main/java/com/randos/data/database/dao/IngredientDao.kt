@@ -11,7 +11,7 @@ import com.randos.data.database.entity.Ingredient
 internal interface IngredientDao {
 
     @Query("SELECT * FROM Ingredient WHERE id=:id")
-    suspend fun get(id: Long): Ingredient
+    suspend fun get(id: Long): Ingredient?
 
     @Query("SELECT * FROM Ingredient WHERE name LIKE '%' || :name || '%'")
     suspend fun getByName(name: String): List<Ingredient>

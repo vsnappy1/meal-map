@@ -16,16 +16,13 @@ internal class MealPlanRepositoryImpl(
         return mealPlanDao.getLastThree().map { it.toDomain(emptyList()) }
     }
 
-    override suspend fun getPlan(id: Long): MealPlan {
+    override suspend fun getPlan(id: Long): MealPlan? {
         val meals = mealRepository.getMealsForMealPlan(id)
-        return mealPlanDao.get(id).toDomain(meals)
+        return mealPlanDao.get(id)?.toDomain(meals)
     }
 
     override suspend fun addPlan(mealPlan: MealPlan) {
-        val mealPlanId = mealPlanDao.insert(mealPlan.toEntity())
-        mealPlan.meals.forEach { meal ->
-            mealRepository.addMeal(meal, mealPlanId)
-        }
+       mealPlanDao.insert(mealPlan.toEntity())
     }
 
     override suspend fun deletePlan(mealPlan: MealPlan) {

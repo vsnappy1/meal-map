@@ -20,18 +20,18 @@ internal class MealRepositoryImpl(
         val meals = mutableListOf<Meal>()
         val mealEntities = mealDao.getByMealPlanId(mealPlanId)
         mealEntities.forEach { meal ->
-            meals.add(getMeal(meal.id))
+            getMeal(meal.id)?.let { meals.add(it) }
         }
         return meals
     }
 
-    override suspend fun getMeal(id: Long): Meal {
+    override suspend fun getMeal(id: Long): Meal? {
         val recipeIds = mealRecipeCrossRefDao.getRecipesByMealId(id).map { it.recipeId }
         val recipes = mutableListOf<Recipe>()
         recipeIds.forEach { recipeId ->
-            recipes.add(recipeRepository.getRecipe(recipeId))
+            recipeRepository.getRecipe(recipeId)?.let { recipes.add(it) }
         }
-        return mealDao.get(id).toDomain(recipes)
+        return mealDao.get(id)?.toDomain(recipes)
     }
 
     override suspend fun addMeal(meal: Meal, mealPlanId: Long) {
@@ -42,8 +42,6 @@ internal class MealRepositoryImpl(
 
     override suspend fun deleteMeal(meal: Meal, mealPlanId: Long) {
         mealDao.delete(meal.toEntity(mealPlanId))
-        // TODO check if this is needed
-//        mealRecipeCrossRefDao.deleteByMealId(meal.id)
     }
 
     override suspend fun updateMeal(meal: Meal, mealPlanId: Long) {

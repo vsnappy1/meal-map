@@ -15,7 +15,7 @@ internal class IngredientRepositoryImpl(
     }
 
     override suspend fun getIngredient(id: Long): Ingredient? {
-        return ingredientDao.get(id).toDomain()
+        return ingredientDao.get(id)?.toDomain()
     }
 
     override suspend fun addIngredient(ingredient: Ingredient) {

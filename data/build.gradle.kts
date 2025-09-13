@@ -56,8 +56,12 @@ dependencies {
     // Gson for TypeConverters
     implementation(libs.google.code.gson)
 
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.junit.ktx)
+    testImplementation(libs.mockk)
     testImplementation(libs.junit)
     testImplementation(libs.androidx.room.testing)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
 }

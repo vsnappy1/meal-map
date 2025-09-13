@@ -39,4 +39,3 @@ internal abstract class MealMapDatabase: RoomDatabase() {
     abstract fun recipeIngredientDao(): RecipeIngredientDao
     abstract fun mealRecipeCrossRefDao(): MealRecipeCrossRefDao
 }
-
