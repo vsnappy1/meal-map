@@ -8,8 +8,9 @@ import com.randos.data.mapper.toEntity
 import com.randos.domain.model.Recipe
 import com.randos.domain.model.RecipeIngredient
 import com.randos.domain.repository.RecipeRepository
+import jakarta.inject.Inject
 
-internal class RecipeRepositoryImpl(
+internal class RecipeRepositoryImpl @Inject constructor(
     private val recipeDao: RecipeDao,
     private val ingredientDao: IngredientDao,
     private val recipeIngredientDao: RecipeIngredientDao

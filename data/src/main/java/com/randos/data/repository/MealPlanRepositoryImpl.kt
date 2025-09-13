@@ -6,8 +6,9 @@ import com.randos.data.mapper.toEntity
 import com.randos.domain.model.MealPlan
 import com.randos.domain.repository.MealPlanRepository
 import com.randos.domain.repository.MealRepository
+import jakarta.inject.Inject
 
-internal class MealPlanRepositoryImpl(
+internal class MealPlanRepositoryImpl @Inject constructor(
     private val mealPlanDao: MealPlanDao,
     private val mealRepository: MealRepository,
 ) : MealPlanRepository {

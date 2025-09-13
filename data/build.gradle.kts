@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.android.room)
     alias(libs.plugins.android.ksp)
+    alias(libs.plugins.android.hilt)
 }
 
 android {
@@ -55,6 +56,10 @@ dependencies {
 
     // Gson for TypeConverters
     implementation(libs.google.code.gson)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
 
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.junit.ktx)

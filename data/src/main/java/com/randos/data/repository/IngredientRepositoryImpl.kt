@@ -5,8 +5,9 @@ import com.randos.data.mapper.toDomain
 import com.randos.data.mapper.toEntity
 import com.randos.domain.model.Ingredient
 import com.randos.domain.repository.IngredientRepository
+import jakarta.inject.Inject
 
-internal class IngredientRepositoryImpl(
+internal class IngredientRepositoryImpl @Inject constructor(
     private val ingredientDao: IngredientDao
 ) :
     IngredientRepository {

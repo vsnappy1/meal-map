@@ -4,8 +4,11 @@ import android.content.SharedPreferences
 import com.randos.domain.manager.SettingsManager
 import com.randos.domain.type.Day
 import androidx.core.content.edit
+import jakarta.inject.Inject
 
-internal class SettingsManagerImpl(private val sharedPreferences: SharedPreferences) :
+internal class SettingsManagerImpl @Inject constructor(
+    private val sharedPreferences: SharedPreferences
+) :
     SettingsManager {
 
     companion object {

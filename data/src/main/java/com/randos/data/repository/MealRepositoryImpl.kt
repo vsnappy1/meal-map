@@ -9,8 +9,9 @@ import com.randos.domain.model.Meal
 import com.randos.domain.model.Recipe
 import com.randos.domain.repository.MealRepository
 import com.randos.domain.repository.RecipeRepository
+import jakarta.inject.Inject
 
-internal class MealRepositoryImpl(
+internal class MealRepositoryImpl @Inject constructor(
     private val mealDao: MealDao,
     private val mealRecipeCrossRefDao: MealRecipeCrossRefDao,
     private val recipeRepository: RecipeRepository,
