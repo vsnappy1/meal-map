@@ -25,7 +25,13 @@ fun MealMapNavHost(navController: NavHostController) {
         }
 
         composable<Recipes> {
-            RecipesScreen()
+            RecipesScreen(
+                onAddNewRecipe = {
+                    navController.navigate(AddRecipe)
+                },
+                onRecipeClick = { id ->
+                    navController.navigate(RecipeDetails(id))
+                })
         }
 
         composable<Grocery> {

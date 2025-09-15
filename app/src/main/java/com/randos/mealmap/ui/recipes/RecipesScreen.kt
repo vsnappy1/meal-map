@@ -1,9 +1,359 @@
 package com.randos.mealmap.ui.recipes
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Clear
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.KeyboardArrowUp
+import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.randos.domain.type.RecipesFilter
+import com.randos.domain.type.RecipesSort
+import com.randos.domain.type.SortOrder
+import com.randos.mealmap.R
+import com.randos.mealmap.ui.components.RecipeItem
+import com.randos.mealmap.utils.Utils
 
 @Composable
-fun RecipesScreen(){
-    Text(text = "Recipes")
+fun RecipesScreen(
+    onAddNewRecipe: () -> Unit,
+    onRecipeClick: (id: Long) -> Unit,
+    viewModel: RecipesScreenViewModel = hiltViewModel<RecipesScreenViewModel>()
+) {
+    val state by viewModel.state.observeAsState(RecipesScreenState())
+    RecipesScreen(
+        onAddNewRecipe = onAddNewRecipe,
+        onRecipeClick = onRecipeClick,
+        state = state,
+        onSearchTextChange = viewModel::onSearchTextChange,
+        onSortChange = viewModel::onSortChange,
+        onFilterChange = viewModel::onFilterChange,
+        onSortOrderChange = viewModel::onSortOrderChange
+    )
+}
+
+@Composable
+private fun RecipesScreen(
+    onAddNewRecipe: () -> Unit,
+    onRecipeClick: (id: Long) -> Unit,
+    state: RecipesScreenState,
+    onSearchTextChange: (String) -> Unit,
+    onSortChange: (RecipesSort?) -> Unit,
+    onFilterChange: (RecipesFilter?) -> Unit,
+    onSortOrderChange: (SortOrder) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+    ) {
+        Text(
+            text = "Recipes",
+            style = MaterialTheme.typography.headlineLarge
+        )
+        Spacer(modifier = Modifier.height(64.dp))
+        SearchBar(
+            text = state.searchText,
+            onSearchTextChange = onSearchTextChange
+        )
+        ActionButtons(
+            state = state,
+            onFilterChange = onFilterChange,
+            onSortChange = onSortChange,
+            onAddNewRecipe = onAddNewRecipe,
+            onSortOrderChange = onSortOrderChange
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        LazyColumn {
+            state.recipes.forEach { recipe ->
+                item {
+                    RecipeItem(
+                        recipe = recipe,
+                        onClick = onRecipeClick
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SortOrder(
+    state: RecipesScreenState,
+    onSortOrderChange: (SortOrder) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .clip(CircleShape)
+            .clickable {
+                if (state.sortOrder == SortOrder.ASCENDING) {
+                    onSortOrderChange(SortOrder.DESCENDING)
+                } else {
+                    onSortOrderChange(SortOrder.ASCENDING)
+                }
+            }) {
+        Icon(
+            modifier = Modifier.size(32.dp),
+            imageVector = Icons.Rounded.KeyboardArrowUp,
+            contentDescription = stringResource(R.string.sort_ascending),
+            tint = if (state.sortOrder == SortOrder.ASCENDING) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                alpha = 0.3f
+            )
+        )
+        Icon(
+            modifier = Modifier
+                .padding(top = 12.dp)
+                .size(32.dp),
+            imageVector = Icons.Rounded.KeyboardArrowDown,
+            contentDescription = stringResource(R.string.sort_descending),
+            tint = if (state.sortOrder == SortOrder.DESCENDING) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                alpha = 0.3f
+            )
+        )
+    }
+}
+
+@Composable
+private fun ActionButtons(
+    state: RecipesScreenState,
+    onFilterChange: (RecipesFilter?) -> Unit,
+    onSortChange: (RecipesSort?) -> Unit,
+    onSortOrderChange: (SortOrder) -> Unit,
+    onAddNewRecipe: () -> Unit
+) {
+    var isSortByExpanded by remember { mutableStateOf(false) }
+    var isFilterExpanded by remember { mutableStateOf(false) }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        DropDownButton(
+            text = "Filter",
+            items = Utils.recipeFilters,
+            onClick = { isFilterExpanded = !isFilterExpanded },
+            isExpanded = isFilterExpanded,
+            onDismissRequest = { isFilterExpanded = false },
+            onItemSelect = { onFilterChange(it) },
+            displayValue = { it.displayValue },
+            selectedItem = state.filter
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        DropDownButton(
+            text = "Sort by",
+            items = Utils.recipeSort,
+            onClick = { isSortByExpanded = !isSortByExpanded },
+            isExpanded = isSortByExpanded,
+            onDismissRequest = { isSortByExpanded = false },
+            onItemSelect = { onSortChange(it) },
+            displayValue = { it.displayValue },
+            selectedItem = state.sort
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        AnimatedVisibility(state.sort != null) {
+            SortOrder(state = state, onSortOrderChange = onSortOrderChange)
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        Button(onClick = onAddNewRecipe) { Text(text = "Add") }
+    }
+}
+
+@Composable
+private fun SearchBar(
+    text: String,
+    onSearchTextChange: (String) -> Unit,
+) {
+    val focusManager = LocalFocusManager.current
+    OutlinedTextField(
+        modifier = Modifier.fillMaxWidth(),
+        value = text,
+        onValueChange = { onSearchTextChange(it) },
+        label = { Text(text = "Search") },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+        trailingIcon = {
+            AnimatedContent(
+                targetState = text.isEmpty(),
+                label = "SearchClearIcon",
+                transitionSpec = { fadeIn() togetherWith fadeOut() }
+            ) { isEmpty ->
+                if (isEmpty) {
+                    Icon(
+                        imageVector = Icons.Rounded.Search,
+                        contentDescription = stringResource(R.string.search)
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Rounded.Clear,
+                        contentDescription = stringResource(R.string.clear_text),
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .clickable {
+                                onSearchTextChange("")
+                                focusManager.clearFocus()
+                            }
+                    )
+                }
+            }
+        })
+}
+
+@Composable
+private fun <T> DropDownButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    items: List<T>,
+    onClick: () -> Unit,
+    isExpanded: Boolean,
+    displayValue: (T) -> String,
+    onDismissRequest: () -> Unit,
+    onItemSelect: (T?) -> Unit,
+    selectedItem: T? = null
+) {
+    Button(
+        modifier = modifier,
+        onClick = onClick
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(text = text)
+            AnimatedVisibility(visible = selectedItem != null) {
+                Spacer(
+                    modifier = Modifier
+                        .size(height = 2.dp, width = 8.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            shape = MaterialTheme.shapes.small
+                        )
+                )
+            }
+        }
+        if (isExpanded) {
+            DropdownMenu(onDismissRequest, items, selectedItem, onItemSelect, displayValue)
+        }
+    }
+}
+
+@Composable
+private fun <T> DropdownMenu(
+    onDismissRequest: () -> Unit,
+    items: List<T>,
+    selectedItem: T?,
+    onItemSelect: (T?) -> Unit,
+    displayValue: (T) -> String
+) {
+    Popup(
+        alignment = Alignment.TopCenter,
+        onDismissRequest = onDismissRequest,
+        offset = IntOffset(0, 50)
+    ) {
+        FlowRow(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceContainer,
+                    shape = MaterialTheme.shapes.medium
+                )
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items.forEach { item ->
+                val isItemSelected = item == selectedItem
+                val borderColor =
+                    if (isItemSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                val textColor =
+                    if (isItemSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+                val cardContainerColor =
+                    if (isItemSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background
+                Card(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .clickable {
+                            onItemSelect(item)
+                            onDismissRequest()
+                        },
+                    border = BorderStroke(1.dp, borderColor),
+                    colors = CardDefaults.cardColors(containerColor = cardContainerColor)
+                ) {
+                    Text(
+                        modifier = Modifier.padding(vertical = 2.dp, horizontal = 6.dp),
+                        text = displayValue(item),
+                        style = MaterialTheme.typography.labelSmall.copy(color = textColor)
+                    )
+                }
+            }
+            Text(
+                modifier = Modifier
+                    .padding(vertical = 2.dp, horizontal = 6.dp)
+                    .clickable {
+                        onItemSelect(null)
+                        onDismissRequest()
+                    },
+                text = "Clear",
+                style = MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun RecipesScreenPreview() {
+    RecipesScreen(
+        onAddNewRecipe = { },
+        onRecipeClick = {},
+        state = RecipesScreenState(recipes = Utils.recipes),
+        onSearchTextChange = {},
+        onSortChange = {},
+        onFilterChange = {},
+        onSortOrderChange = {}
+    )
 }

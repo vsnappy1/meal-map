@@ -66,6 +66,13 @@ dependencies {
     // Navigation
     implementation(libs.androidx.navigation.compose)
 
+    // Coin (Image Loading)
+    implementation(libs.coil.compose)
+
+    // Compose
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.runtime.livedata)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
