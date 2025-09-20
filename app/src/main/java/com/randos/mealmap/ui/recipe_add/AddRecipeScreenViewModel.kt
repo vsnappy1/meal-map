@@ -34,9 +34,12 @@ class AddRecipeScreenViewModel @Inject constructor(
     private var _state = MutableLiveData(AddRecipeScreenState())
     val state: LiveData<AddRecipeScreenState> = _state
 
-    fun onSave(onSaved: () -> Unit) {
+    fun onSave(imagePath: String? = null, onSaved: () -> Unit) {
         viewModelScope.launch {
-            val recipe = getRecipe()
+            var recipe = getRecipe()
+            if(imagePath != null){
+                recipe = recipe.copy(imagePath = imagePath)
+            }
             recipesRepository.addRecipe(recipe.copy(dateCreated = Date()))
             onSaved()
         }

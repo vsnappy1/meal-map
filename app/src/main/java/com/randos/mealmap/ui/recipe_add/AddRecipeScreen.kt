@@ -62,11 +62,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -75,7 +75,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -85,6 +84,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.randos.domain.model.Ingredient
@@ -95,7 +95,11 @@ import com.randos.domain.type.RecipeTag
 import com.randos.mealmap.utils.Constants.RECIPE_INGREDIENT_QUANTITY_MAX_LENGTH
 import com.randos.mealmap.utils.Utils
 import com.randos.mealmap.utils.findActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileOutputStream
 
 @Composable
 fun AddRecipeScreen(
@@ -103,16 +107,30 @@ fun AddRecipeScreen(
     onSaved: () -> Unit,
     viewModel: AddRecipeScreenViewModel = hiltViewModel<AddRecipeScreenViewModel>()
 ) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     val state = viewModel.state.observeAsState(AddRecipeScreenState())
+    var shouldMakeCopyOfImage by remember { mutableStateOf(false) }
     AddRecipeScreen(
         id = id,
         state = state.value,
         onSave = {
-            viewModel.onSave(onSaved = { onSaved() })
+            if (shouldMakeCopyOfImage) {
+                val uri = state.value.recipe.imagePath?.toUri()
+                coroutineScope.launch {
+                    val path = uri?.let { copyUriToAppStorage(context, it) }
+                    viewModel.onSave(path.toString(), onSaved = { onSaved() })
+                }
+            } else {
+                viewModel.onSave(onSaved = { onSaved() })
+            }
         },
         onTitleChange = viewModel::onTitleChange,
         onDescriptionChange = viewModel::onDescriptionChange,
-        onImagePathChange = viewModel::onImagePathChange,
+        onImagePathChange = { url, shouldCopy ->
+            viewModel.onImagePathChange(url)
+            shouldMakeCopyOfImage = shouldCopy
+        },
         onIngredientTextChange = viewModel::onIngredientTextChange,
         onIngredientAdd = viewModel::onIngredientAdd,
         onIngredientUpdateQuantity = viewModel::onIngredientUpdateQuantity,
@@ -139,7 +157,7 @@ private fun AddRecipeScreen(
     onSave: () -> Unit = {},
     onTitleChange: (String) -> Unit = {},
     onDescriptionChange: (String) -> Unit = {},
-    onImagePathChange: (String) -> Unit = {},
+    onImagePathChange: (String, Boolean) -> Unit = { _, _ -> },
     onIngredientTextChange: (String) -> Unit = {},
     onIngredientAdd: (String) -> Unit = {},
     onIngredientUpdateQuantity: (Long, Double) -> Unit = { _, _ -> },
@@ -171,8 +189,8 @@ private fun AddRecipeScreen(
             Spacer(modifier = Modifier.height(50.dp))
             RecipeImage(
                 imagePath = recipe.imagePath,
-                onImagePick = onImagePathChange,
-                onCameraCapture = onImagePathChange
+                onImagePick = { onImagePathChange(it, true) },
+                onCameraCapture = { onImagePathChange(it, false) }
             )
             RecipeTextField(
                 value = recipe.title,
@@ -822,16 +840,7 @@ private fun RecipeImage(
     ) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             if (imagePath == null) {
-                LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Fixed(7)) {
-                    for (i in 0..5) {
-                        items(Utils.foodIcons.size) { index ->
-                            Icon(
-                                imageVector = Utils.foodIcons[(i + index) % 7],
-                                contentDescription = null
-                            )
-                        }
-                    }
-                }
+                TileBackground()
                 Text(
                     modifier = Modifier
                         .border(
@@ -871,6 +880,20 @@ private fun RecipeImage(
                         contentDescription = null,
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TileBackground() {
+    LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Fixed(7)) {
+        for (i in 0..5) {
+            items(Utils.foodIcons.size) { index ->
+                Icon(
+                    imageVector = Utils.foodIcons[(i + index) % 7],
+                    contentDescription = null
+                )
             }
         }
     }
@@ -921,6 +944,27 @@ private fun createImageUri(context: Context): Uri {
         "${context.packageName}.provider",
         imageFile
     )
+}
+
+suspend fun copyUriToAppStorage(context: Context, uri: Uri): Uri? = withContext(Dispatchers.IO) {
+    return@withContext try {
+        val inputStream = context.contentResolver.openInputStream(uri) ?: return@withContext null
+        val file = File(
+            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+            "meal_map_${System.currentTimeMillis()}.jpg"
+        )
+        FileOutputStream(file).use { output ->
+            inputStream.copyTo(output)
+        }
+        FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.provider",
+            file
+        )
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
 }
 
 private fun requestCameraPermission(

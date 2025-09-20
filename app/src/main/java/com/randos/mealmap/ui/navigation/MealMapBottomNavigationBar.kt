@@ -42,7 +42,6 @@ private val navigationItems = listOf(
 
 @Composable
 fun MealMapBottomNavigationBar(modifier: Modifier = Modifier, navController: NavController) {
-    val startDestination = Home
     var selectedDestination: Destination by rememberSaveable(stateSaver = DestinationSaver()) {
         mutableStateOf(startDestination)
     }

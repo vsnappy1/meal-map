@@ -15,15 +15,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
-import coil3.compose.rememberAsyncImagePainter
+import coil3.compose.AsyncImage
 import com.randos.domain.model.Recipe
 import com.randos.mealmap.R
 import com.randos.mealmap.utils.Utils
@@ -42,22 +41,32 @@ fun RecipeItem(
                 .fillMaxWidth()
                 .padding(8.dp),
         ) {
-            val painter: Painter = if (!recipe.imagePath.isNullOrEmpty()) {
-                rememberAsyncImagePainter(model = recipe.imagePath?.toUri())
+            if (recipe.imagePath.isNullOrEmpty()) {
+                Image(
+                    painter = painterResource(id = R.drawable.round_soup_kitchen_24),
+                    contentDescription = stringResource(R.string.recipe_image),
+                    modifier = Modifier
+                        .size(75.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = MaterialTheme.shapes.small
+                        ),
+                    contentScale = ContentScale.Crop
+                )
             } else {
-                painterResource(id = R.drawable.round_soup_kitchen_24)
+                AsyncImage(
+                    model = recipe.imagePath,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(75.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = MaterialTheme.shapes.small
+                        )
+                        .clip(MaterialTheme.shapes.small),
+                    contentScale = ContentScale.Crop,
+                )
             }
-            Image(
-                painter = painter,
-                contentDescription = stringResource(R.string.recipe_image),
-                modifier = Modifier
-                    .size(75.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = MaterialTheme.shapes.small
-                    ),
-                contentScale = ContentScale.Crop
-            )
             Spacer(modifier = Modifier.width(8.dp))
             Column {
                 Text(
