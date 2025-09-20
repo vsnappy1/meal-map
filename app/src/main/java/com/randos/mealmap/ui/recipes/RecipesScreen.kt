@@ -37,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -76,6 +77,9 @@ fun RecipesScreen(
         onFilterChange = viewModel::onFilterChange,
         onSortOrderChange = viewModel::onSortOrderChange
     )
+    LaunchedEffect(Unit) {
+        viewModel.getRecipes()
+    }
 }
 
 @Composable
@@ -110,7 +114,9 @@ private fun RecipesScreen(
             onSortOrderChange = onSortOrderChange
         )
         Spacer(modifier = Modifier.height(8.dp))
-        LazyColumn {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             state.recipes.forEach { recipe ->
                 item {
                     RecipeItem(
@@ -142,9 +148,7 @@ private fun SortOrder(
             modifier = Modifier.size(32.dp),
             imageVector = Icons.Rounded.KeyboardArrowUp,
             contentDescription = stringResource(R.string.sort_ascending),
-            tint = if (state.sortOrder == SortOrder.ASCENDING) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                alpha = 0.3f
-            )
+            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = if (state.sortOrder == SortOrder.ASCENDING) 1f else 0.3f)
         )
         Icon(
             modifier = Modifier
@@ -152,9 +156,7 @@ private fun SortOrder(
                 .size(32.dp),
             imageVector = Icons.Rounded.KeyboardArrowDown,
             contentDescription = stringResource(R.string.sort_descending),
-            tint = if (state.sortOrder == SortOrder.DESCENDING) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                alpha = 0.3f
-            )
+            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = if (state.sortOrder == SortOrder.DESCENDING) 1f else 0.3f)
         )
     }
 }

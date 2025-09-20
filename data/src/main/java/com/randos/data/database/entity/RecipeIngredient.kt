@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.randos.domain.type.IngredientUnit
 
 @Entity(
     foreignKeys = [
@@ -28,5 +29,6 @@ internal data class RecipeIngredient(
     val ingredientId: Long,
     @ColumnInfo(name = "recipe_id", index = true)
     val recipeId: Long,
-    val quantity: Double
+    val quantity: Double,
+    val unit: IngredientUnit?,
 )

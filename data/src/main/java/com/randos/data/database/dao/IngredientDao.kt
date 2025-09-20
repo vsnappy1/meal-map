@@ -20,7 +20,7 @@ internal interface IngredientDao {
     suspend fun getAll(): List<Ingredient>
 
     @Insert
-    suspend fun insert(ingredient: Ingredient)
+    suspend fun insert(ingredient: Ingredient): Long
 
     @Insert
     suspend fun insertAll(vararg ingredient: Ingredient)

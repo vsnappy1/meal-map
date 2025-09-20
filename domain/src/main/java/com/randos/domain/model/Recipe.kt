@@ -5,17 +5,17 @@ import com.randos.domain.type.RecipeTag
 import java.util.Date
 
 data class Recipe(
-    val id: Long,
+    val id: Long = 0,
     val title: String,
-    val description: String,
+    val description: String?,
     val imagePath: String?,
     val instructions: List<String>,
     val ingredients: List<RecipeIngredient>,
-    val prepTime: Int,
-    val cookTime: Int,
-    val servings: Int,
-    val tag: RecipeTag,
-    val calories: Int,
-    val heaviness: RecipeHeaviness,
+    val prepTime: Int?,
+    val cookTime: Int?,
+    val servings: Int?,
+    val tag: RecipeTag?,
+    val calories: Int?,
+    val heaviness: RecipeHeaviness?,
     val dateCreated: Date,
 )

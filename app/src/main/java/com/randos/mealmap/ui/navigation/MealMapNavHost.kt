@@ -58,11 +58,14 @@ fun MealMapNavHost(navController: NavHostController) {
 
         composable<ModifyRecipe> {
             val modifyRecipe = it.toRoute<ModifyRecipe>()
-            AddRecipeScreen(id = modifyRecipe.id)
+            AddRecipeScreen(
+                id = modifyRecipe.id,
+                onSaved = { navController.popBackStack() })
         }
 
         composable<AddRecipe>() {
-            AddRecipeScreen()
+            AddRecipeScreen(
+                onSaved = { navController.popBackStack() })
         }
     }
 }

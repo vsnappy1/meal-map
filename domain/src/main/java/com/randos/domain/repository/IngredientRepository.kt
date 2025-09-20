@@ -5,7 +5,7 @@ import com.randos.domain.model.Ingredient
 interface IngredientRepository {
     suspend fun getIngredients(): List<Ingredient>
     suspend fun getIngredient(id: Long): Ingredient?
-    suspend fun addIngredient(ingredient: Ingredient)
+    suspend fun addIngredient(ingredient: Ingredient): Ingredient
     suspend fun deleteIngredient(ingredient: Ingredient)
     suspend fun updateIngredient(ingredient: Ingredient)
 }

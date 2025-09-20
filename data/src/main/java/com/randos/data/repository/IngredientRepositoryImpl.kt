@@ -19,8 +19,9 @@ internal class IngredientRepositoryImpl @Inject constructor(
         return ingredientDao.get(id)?.toDomain()
     }
 
-    override suspend fun addIngredient(ingredient: Ingredient) {
-        ingredientDao.insert(ingredient.toEntity())
+    override suspend fun addIngredient(ingredient: Ingredient): Ingredient {
+        val id = ingredientDao.insert(ingredient.toEntity())
+        return Ingredient(id = id, name = ingredient.name)
     }
 
     override suspend fun deleteIngredient(ingredient: Ingredient) {

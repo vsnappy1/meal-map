@@ -1,0 +1,12 @@
+package com.randos.mealmap.utils
+
+object Constants {
+    const val RECIPE_TITLE_MAX_LENGTH = 60
+    const val RECIPE_DESCRIPTION_MAX_LENGTH = 500
+    const val RECIPE_INGREDIENTS_MAX_LENGTH = 200
+    const val RECIPE_INSTRUCTIONS_MAX_LENGTH = 2000
+    const val RECIPE_PREPARATION_TIME_MAX_LENGTH = 3
+    const val RECIPE_COOKING_TIME_MAX_LENGTH = 3
+    const val RECIPE_TOTAL_CALORIES_MAX_LENGTH = 5
+    const val RECIPE_INGREDIENT_QUANTITY_MAX_LENGTH = 6
+}

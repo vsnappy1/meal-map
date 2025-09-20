@@ -67,7 +67,7 @@ fun RecipeItem(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = recipe.description,
+                    text = recipe.description.orEmpty(),
                     style = MaterialTheme.typography.bodySmall,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis

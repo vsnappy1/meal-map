@@ -21,9 +21,13 @@ internal class RecipeRepositoryImpl @Inject constructor(
 
     override suspend fun getRecipe(id: Long): Recipe? {
         val recipeIngredients = recipeIngredientDao.get(id)
-            .map { recipeIngredient -> Pair(ingredientDao.get(recipeIngredient.ingredientId), recipeIngredient.quantity) }
+            .map { recipeIngredient -> Triple(ingredientDao.get(recipeIngredient.ingredientId), recipeIngredient.quantity, recipeIngredient.unit) }
             .filter {it.first != null }
-            .map { RecipeIngredient(it.first!!.toDomain(), it.second) }
+            .map { RecipeIngredient(
+                ingredient = it.first!!.toDomain(),
+                quantity = it.second,
+                unit = it.third
+            ) }
         return recipeDao.get(id)?.toDomain(recipeIngredients)
     }
 

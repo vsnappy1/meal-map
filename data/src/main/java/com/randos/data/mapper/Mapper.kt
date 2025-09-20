@@ -9,18 +9,14 @@ import com.randos.domain.model.RecipeIngredient
 internal fun Ingredient.toEntity(): com.randos.data.database.entity.Ingredient {
     return com.randos.data.database.entity.Ingredient(
         id = id,
-        name = name,
-        unit = unit,
-        calories = calories,
+        name = name
     )
 }
 
 internal fun com.randos.data.database.entity.Ingredient.toDomain(): Ingredient {
     return Ingredient(
         id = id,
-        name = name,
-        unit = unit,
-        calories = calories,
+        name = name
     )
 }
 
@@ -64,6 +60,7 @@ internal fun RecipeIngredient.toEntity(recipeId: Long, ingredientId: Long): com.
         recipeId = recipeId,
         ingredientId = ingredientId,
         quantity = quantity,
+        unit = unit,
     )
 }
 
@@ -71,6 +68,7 @@ internal fun com.randos.data.database.entity.RecipeIngredient.toDomain(ingredien
     return RecipeIngredient(
         ingredient = ingredient,
         quantity = quantity,
+        unit = unit,
     )
 }
 

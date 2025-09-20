@@ -15,14 +15,14 @@ internal data class Recipe(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val title: String,
-    val description: String,
+    val description: String?,
     val imagePath: String?,
     val instructions: List<String>,
-    val prepTime: Int,
-    val cookTime: Int,
-    val servings: Int,
-    val tag: RecipeTag,
-    val calories: Int,
-    val heaviness: RecipeHeaviness,
+    val prepTime: Int?,
+    val cookTime: Int?,
+    val servings: Int?,
+    val tag: RecipeTag?,
+    val calories: Int?,
+    val heaviness: RecipeHeaviness?,
     val dateCreated: Date
 )
