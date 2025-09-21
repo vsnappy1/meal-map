@@ -13,6 +13,7 @@ import com.randos.data.utils.Utils.recipe1
 import com.randos.data.utils.Utils.recipe2
 import com.randos.domain.model.RecipeIngredient
 import com.randos.domain.repository.RecipeRepository
+import com.randos.domain.type.IngredientUnit
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -111,7 +112,8 @@ class RecipeRepositoryImplTest {
                 ingredients = listOf(
                     RecipeIngredient(
                         ingredient1,
-                        5.0
+                        5.0,
+                        IngredientUnit.TEASPOON
                     )
                 ), instructions = listOf("NewStep")
             )

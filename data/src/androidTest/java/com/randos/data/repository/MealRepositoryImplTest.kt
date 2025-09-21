@@ -28,7 +28,6 @@ class MealRepositoryImplTest {
     private lateinit var recipeRepository: RecipeRepository
     private lateinit var mealRepository: MealRepository
 
-
     @Before
     fun setUp() {
         database = getMealMapDatabase()

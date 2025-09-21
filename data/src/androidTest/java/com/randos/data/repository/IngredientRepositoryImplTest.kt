@@ -3,6 +3,7 @@ package com.randos.data.repository
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.randos.data.database.MealMapDatabase
 import com.randos.data.database.dao.IngredientDao
+import com.randos.data.database.dao.RecipeIngredientDao
 import com.randos.data.mapper.toEntity
 import com.randos.data.utils.Utils.getMealMapDatabase
 import com.randos.data.utils.Utils.ingredient1
@@ -19,6 +20,7 @@ import org.junit.runner.RunWith
 internal class IngredientRepositoryImplTest {
 
     private lateinit var ingredientDao: IngredientDao
+    private lateinit var recipeIngredientDao: RecipeIngredientDao
     private lateinit var mealMapDatabase: MealMapDatabase
     private lateinit var ingredientRepository: IngredientRepository
 
@@ -26,7 +28,8 @@ internal class IngredientRepositoryImplTest {
     fun setUp() {
         mealMapDatabase = getMealMapDatabase()
         ingredientDao = mealMapDatabase.ingredientDao()
-        ingredientRepository = IngredientRepositoryImpl(ingredientDao)
+        recipeIngredientDao = mealMapDatabase.recipeIngredientDao()
+        ingredientRepository = IngredientRepositoryImpl(ingredientDao, recipeIngredientDao)
     }
 
     @After
