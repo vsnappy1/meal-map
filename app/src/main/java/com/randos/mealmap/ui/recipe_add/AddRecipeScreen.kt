@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Environment
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -28,10 +27,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.staggeredgrid.LazyHorizontalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -100,6 +97,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
+import kotlin.math.min
 
 @Composable
 fun AddRecipeScreen(
@@ -146,7 +144,12 @@ fun AddRecipeScreen(
         onCookTimeChange = viewModel::onCookTimeChange,
         onCaloriesChange = viewModel::onCaloriesChange,
         onHeavinessChange = viewModel::onHeavinessChange,
-        onTagChange = viewModel::onTagChange
+        onTagChange = viewModel::onTagChange,
+        onSuggestionItemSelected = viewModel::onSuggestionItemSelected,
+        onIngredientEditTextChanged = viewModel::onIngredientEditTextChanged,
+        ingredientOnIsEditingChange = viewModel::ingredientOnIsEditingChange,
+        onInstructionEditTextChanged = viewModel::onInstructionEditTextChanged,
+        instructionOnIsEditingChange = viewModel::instructionOnIsEditingChange
     )
 }
 
@@ -173,8 +176,14 @@ private fun AddRecipeScreen(
     onCookTimeChange: (String) -> Unit = {},
     onCaloriesChange: (String) -> Unit = {},
     onHeavinessChange: (RecipeHeaviness) -> Unit = {},
-    onTagChange: (RecipeTag) -> Unit = {}
-) { // If id is provided, it's an edit action
+    onTagChange: (RecipeTag) -> Unit = {},
+    onSuggestionItemSelected: (Int, Ingredient) -> Unit = { _, _ -> },
+    onIngredientEditTextChanged: (String) -> Unit = {},
+    ingredientOnIsEditingChange: (Int, Boolean) -> Unit = { _, _ -> },
+    onInstructionEditTextChanged: (String) -> Unit = {},
+    instructionOnIsEditingChange: (Int, Boolean) -> Unit = { _, _ -> },
+
+    ) { // If id is provided, it's an edit action
     val recipe = state.recipe
     Box(
         modifier = Modifier
@@ -206,23 +215,26 @@ private fun AddRecipeScreen(
             )
             Text(modifier = Modifier.padding(vertical = 4.dp), text = "Ingredients")
             RecipeIngredients(
-                value = state.currentIngredientText,
+                state = state,
                 onValueChange = onIngredientTextChange,
                 onAdd = onIngredientAdd,
                 onUpdateQuantity = onIngredientUpdateQuantity,
                 onUpdateUnit = onIngredientUpdateUnit,
-                ingredients = state.recipe.ingredients,
                 onUpdateIngredient = onUpdateIngredient,
-                onDeleteIngredient = onDeleteIngredient
+                onDeleteIngredient = onDeleteIngredient,
+                onSuggestionItemSelected = onSuggestionItemSelected,
+                onEditTextChanged = onIngredientEditTextChanged,
+                onIsEditingChange = ingredientOnIsEditingChange
             )
             Text(modifier = Modifier.padding(vertical = 4.dp), text = "Instructions")
             RecipeInstructions(
-                value = state.currentInstructionText,
+                state = state,
                 onValueChange = onInstructionTextChange,
                 onAdd = onInstructionAdd,
                 onUpdateInstruction = onUpdateInstruction,
                 onDeleteInstruction = onDeleteInstruction,
-                instructions = state.recipe.instructions
+                onEditTextChanged = onInstructionEditTextChanged,
+                onIsEditingChange = instructionOnIsEditingChange
             )
 
             RecipeTextField(
@@ -341,13 +353,15 @@ private fun <T> CustomDropdownMenu(
 @Composable
 fun RecipeInstructions(
     modifier: Modifier = Modifier,
-    value: String = "",
+    state: AddRecipeScreenState,
     onValueChange: (String) -> Unit,
     onAdd: (String) -> Unit,
     onUpdateInstruction: (Int, String) -> Unit,
     onDeleteInstruction: (Int) -> Unit,
-    instructions: List<String>
+    onEditTextChanged: (String) -> Unit,
+    onIsEditingChange: (Int, Boolean) -> Unit,
 ) {
+    val instructions = state.recipe.instructions
     Card(
         modifier = modifier
             .wrapContentHeight(unbounded = true)
@@ -365,15 +379,19 @@ fun RecipeInstructions(
                     instruction = instruction,
                     onUpdate = { onUpdateInstruction(index, it) },
                     onDelete = { onDeleteInstruction(index) },
-                    index = index
+                    index = index,
+                    isEditing = state.editInstructionIndex == index,
+                    onIsEditingChange = { onIsEditingChange(index, it) },
+                    editText = state.editInstructionText,
+                    onEditTextChanged = onEditTextChanged
                 )
                 HorizontalDivider(modifier = Modifier)
             }
             AddTextField(
                 modifier = Modifier.padding(top = 4.dp),
-                value = value,
+                value = state.currentInstructionText,
                 onValueChange = onValueChange,
-                onIngredientAdd = onAdd,
+                onDoneClick = onAdd,
                 hintText = "Step ${instructions.size + 1}"
             )
         }
@@ -383,15 +401,19 @@ fun RecipeInstructions(
 @Composable
 private fun RecipeIngredients(
     modifier: Modifier = Modifier,
-    value: String = "",
+    state: AddRecipeScreenState,
     onValueChange: (String) -> Unit,
     onAdd: (String) -> Unit,
+    onEditTextChanged: (String) -> Unit,
     onUpdateIngredient: (Ingredient) -> Unit,
     onDeleteIngredient: (Ingredient) -> Unit,
     onUpdateQuantity: (Long, Double) -> Unit,
     onUpdateUnit: (Long, IngredientUnit?) -> Unit,
-    ingredients: List<RecipeIngredient>
+    onSuggestionItemSelected: (Int, Ingredient) -> Unit,
+    onIsEditingChange: (Int, Boolean) -> Unit,
 ) {
+    val ingredients = state.recipe.ingredients
+    val suggestions = state.ingredientSuggestions
     Card(
         modifier = modifier
             .wrapContentHeight(unbounded = true)
@@ -407,21 +429,29 @@ private fun RecipeIngredients(
                 RecipeIngredient(
                     modifier = Modifier.padding(vertical = 4.dp),
                     ingredient = ingredient,
+                    onUpdateName = { newName -> onUpdateIngredient(ingredient.ingredient.copy(name = newName)) },
+                    editText = state.editIngredientText,
+                    onEditTextChanged = onEditTextChanged,
+                    isEditing = state.editIngredientIndex == index,
+                    onIsEditingChange = { onIsEditingChange(index, it) },
                     onUpdateQuantity = onUpdateQuantity,
                     onUpdateUnit = onUpdateUnit,
-                    onUpdateName = { newName -> onUpdateIngredient(ingredient.ingredient.copy(name = newName)) },
                     onDelete = { onDeleteIngredient(ingredient.ingredient.copy(id = it)) },
-                    hintText = "Ingredient ${index + 1}"
-
+                    hintText = "Ingredient ${index + 1}",
+                    suggestions = suggestions,
+                    onSuggestionItemSelected = { onSuggestionItemSelected(index, it) }
                 )
                 HorizontalDivider(modifier = Modifier)
             }
             AddTextField(
                 modifier = Modifier.padding(top = 4.dp),
-                value = value,
+                value = state.currentIngredientText,
                 onValueChange = onValueChange,
-                onIngredientAdd = onAdd,
-                hintText = "Ingredient ${ingredients.size + 1}"
+                onDoneClick = onAdd,
+                hintText = "Ingredient ${ingredients.size + 1}",
+                shouldShowSuggestion = true,
+                suggestions = suggestions,
+                onSuggestionItemSelected = { onSuggestionItemSelected(ingredients.size, it) }
             )
         }
     }
@@ -432,19 +462,23 @@ private fun RecipeIngredient(
     modifier: Modifier = Modifier,
     ingredient: RecipeIngredient,
     onUpdateName: (String) -> Unit,
+    editText: String,
+    onEditTextChanged: (String) -> Unit,
+    isEditing: Boolean,
+    onIsEditingChange: (Boolean) -> Unit,
     onUpdateQuantity: (Long, Double) -> Unit,
     onUpdateUnit: (Long, IngredientUnit?) -> Unit,
     onDelete: (Long) -> Unit,
-    hintText: String = ""
+    hintText: String = "",
+    suggestions: List<Ingredient>,
+    onSuggestionItemSelected: (Ingredient) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
-    var isEditingIngredient by remember { mutableStateOf(false) }
-    if (isEditingIngredient) {
-        var value by remember { mutableStateOf(ingredient.ingredient.name) }
+    if (isEditing) {
         var hadFocus by remember { mutableStateOf(false) }
         AddTextField(
-            value = value,
+            value = editText,
             modifier = Modifier
                 .focusRequester(focusRequester)
                 .onFocusChanged { state ->
@@ -457,19 +491,22 @@ private fun RecipeIngredient(
                     // event that fires before requestFocus() succeeds.
 
                     if (hadFocus && !state.isFocused) {
-                        isEditingIngredient = false // exit edit mode after user taps away
+                        onIsEditingChange(false) // exit edit mode after user taps away
                     }
 
                     // Keep track of current focus state for next comparison
                     hadFocus = state.isFocused
                 },
-            onValueChange = { value = it },
-            onIngredientAdd = {
+            onValueChange = onEditTextChanged,
+            onDoneClick = {
                 onUpdateName(it)
-                isEditingIngredient = false
+                onIsEditingChange(false)
             },
             isEditing = true,
-            hintText = hintText
+            hintText = hintText,
+            shouldShowSuggestion = true,
+            suggestions = suggestions,
+            onSuggestionItemSelected = onSuggestionItemSelected
         )
         LaunchedEffect(Unit) {
             focusRequester.requestFocus()
@@ -485,7 +522,7 @@ private fun RecipeIngredient(
             modifier = Modifier
                 .weight(1f)
                 .clickable {
-                    isEditingIngredient = true
+                    onIsEditingChange(true)
                 },
             text = ingredient.ingredient.name,
         )
@@ -583,16 +620,18 @@ private fun RecipeInstruction(
     instruction: String,
     onUpdate: (String) -> Unit,
     onDelete: () -> Unit,
-    index: Int
+    index: Int,
+    editText: String,
+    onEditTextChanged: (String) -> Unit,
+    isEditing: Boolean,
+    onIsEditingChange: (Boolean) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
-    var isEditingIngredient by remember { mutableStateOf(false) }
-    if (isEditingIngredient) {
-        var value by remember { mutableStateOf(instruction) }
+    if (isEditing) {
         var hadFocus by remember { mutableStateOf(false) }
         AddTextField(
-            value = value,
+            value = editText,
             modifier = Modifier
                 .focusRequester(focusRequester)
                 .onFocusChanged { state ->
@@ -604,16 +643,16 @@ private fun RecipeInstruction(
                     // and is now lost (isFocused = false). This ensures we ignore the "initial false"
                     // event that fires before requestFocus() succeeds.
                     if (hadFocus && !state.isFocused) {
-                        isEditingIngredient = false // exit edit mode after user taps away
+                        onIsEditingChange(false) // exit edit mode after user taps away
                     }
 
                     // Keep track of current focus state for next comparison
                     hadFocus = state.isFocused
                 },
-            onValueChange = { value = it },
-            onIngredientAdd = {
+            onValueChange = onEditTextChanged,
+            onDoneClick = {
                 onUpdate(it)
-                isEditingIngredient = false
+                onIsEditingChange(false)
             },
             isEditing = true,
             hintText = "Step ${index + 1}"
@@ -632,7 +671,7 @@ private fun RecipeInstruction(
             modifier = Modifier
                 .weight(1f)
                 .clickable {
-                    isEditingIngredient = true
+                    onIsEditingChange(true)
                 },
             text = "${index + 1}. $instruction",
         )
@@ -660,9 +699,12 @@ private fun AddTextField(
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
-    onIngredientAdd: (String) -> Unit,
+    onDoneClick: (String) -> Unit,
     hintText: String = "",
-    isEditing: Boolean = false
+    isEditing: Boolean = false,
+    shouldShowSuggestion: Boolean = false,
+    suggestions: List<Ingredient> = emptyList(),
+    onSuggestionItemSelected: (Ingredient) -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
     Row(
@@ -688,7 +730,9 @@ private fun AddTextField(
                     capitalization = KeyboardCapitalization.Sentences
                 ),
                 keyboardActions = KeyboardActions(onDone = {
-                    onIngredientAdd(value)
+                    if (value.isNotEmpty()) {
+                        onDoneClick(value)
+                    }
                     focusManager.clearFocus()
                 }),
                 cursorBrush = SolidColor(MaterialTheme.colorScheme.primary)
@@ -707,7 +751,7 @@ private fun AddTextField(
             modifier = Modifier
                 .size(24.dp),
             onClick = {
-                onIngredientAdd(value)
+                onDoneClick(value)
                 focusManager.clearFocus()
             },
             enabled = value.isNotEmpty(),
@@ -720,8 +764,43 @@ private fun AddTextField(
             )
         }
     }
+    if (isEditing && value.isNotEmpty()) {
+        if (shouldShowSuggestion) {
+            IngredientSuggestion(suggestions, onSuggestionItemSelected)
+        }
+    }
     if (isEditing) return
     HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+    if (shouldShowSuggestion && value.isNotEmpty()) {
+        IngredientSuggestion(suggestions, onSuggestionItemSelected)
+    }
+}
+
+@Composable
+private fun IngredientSuggestion(
+    suggestions: List<Ingredient>,
+    onSuggestionItemSelected: (Ingredient) -> Unit
+) {
+    val itemHeight = 50.dp // Standard DropdownMenuItem height
+    val maxVisibleItems = 3
+    val dropdownHeight = itemHeight * min(suggestions.size, maxVisibleItems)
+    if (suggestions.isNotEmpty()) {
+        Column(
+            modifier = Modifier
+                .height(dropdownHeight)
+                .verticalScroll(rememberScrollState())
+                .background(color = MaterialTheme.colorScheme.surfaceDim, shape = MaterialTheme.shapes.medium)
+        ) {
+            suggestions.forEachIndexed { index, ingredient ->
+                DropdownMenuItem(
+                    text = { Text(text = ingredient.name) },
+                    onClick = { onSuggestionItemSelected(ingredient) })
+                if (index < suggestions.size - 1) {
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -740,7 +819,6 @@ private fun UnitDropDown(
     ingredientUnit: IngredientUnit?
 ) {
     var isExpanded by remember { mutableStateOf(false) }
-    var unit by remember { mutableStateOf(ingredientUnit) }
     Surface(
         modifier = modifier
             .clickable { isExpanded = !isExpanded },
@@ -755,7 +833,7 @@ private fun UnitDropDown(
                     .padding(2.dp)
                     .fillMaxWidth()
                     .weight(1f),
-                text = unit?.displayName ?: "Unit",
+                text = ingredientUnit?.displayName ?: "Unit",
                 textAlign = TextAlign.Center,
                 maxLines = 1
             )
@@ -772,7 +850,6 @@ private fun UnitDropDown(
                 DropdownMenuItem(
                     text = { Text(text = it.displayName) },
                     onClick = {
-                        unit = it
                         isExpanded = false
                         onUnitChange(it)
                     })

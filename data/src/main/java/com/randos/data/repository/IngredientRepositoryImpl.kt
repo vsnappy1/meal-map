@@ -15,6 +15,10 @@ internal class IngredientRepositoryImpl @Inject constructor(
         return ingredientDao.getAll().map { it.toDomain() }
     }
 
+    override suspend fun getIngredientsLike(name: String): List<Ingredient> {
+        return ingredientDao.getByName(name).map { it.toDomain() }
+    }
+
     override suspend fun getIngredient(id: Long): Ingredient? {
         return ingredientDao.get(id)?.toDomain()
     }

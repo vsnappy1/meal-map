@@ -2,7 +2,6 @@ package com.randos.mealmap.ui.recipe_add
 
 import com.randos.domain.model.Ingredient
 import com.randos.domain.model.Recipe
-import com.randos.domain.model.RecipeIngredient
 import java.util.Date
 
 data class AddRecipeScreenState(
@@ -22,5 +21,10 @@ data class AddRecipeScreenState(
         dateCreated = Date()
     ),
     val currentIngredientText: String = "",
-    val currentInstructionText: String = ""
+    val editIngredientText: String = "",
+    val editIngredientIndex: Int? = null,
+    val currentInstructionText: String = "",
+    val editInstructionText: String = "",
+    val editInstructionIndex: Int? = null,
+    val ingredientSuggestions: List<Ingredient> = listOf()
 )
