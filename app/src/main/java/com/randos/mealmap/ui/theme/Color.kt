@@ -2,11 +2,14 @@ package com.randos.mealmap.ui.theme
 
 import android.content.Context
 import android.os.Build
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF3B6939)
@@ -172,3 +175,12 @@ fun getColorScheme(
     }
     return colorScheme
 }
+
+@Composable
+fun iconButtonColors() = IconButtonDefaults.iconButtonColors()
+    .copy(
+        containerColor = ButtonDefaults.buttonColors().containerColor,
+        contentColor = ButtonDefaults.buttonColors().contentColor,
+        disabledContainerColor = ButtonDefaults.buttonColors().disabledContainerColor,
+        disabledContentColor = ButtonDefaults.buttonColors().disabledContentColor
+    )

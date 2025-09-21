@@ -91,7 +91,7 @@ class AddRecipeScreenViewModel @Inject constructor(
         }
     }
 
-    fun onUpdateIngredient(index: Int, text: String) {
+    fun onIngredientUpdate(index: Int, text: String) {
         viewModelScope.launch {
             val ingredient = Ingredient(name = text.trim())
             if (doesIngredientAlreadyExistInIngredients(ingredient)) return@launch
@@ -102,7 +102,7 @@ class AddRecipeScreenViewModel @Inject constructor(
         }
     }
 
-    fun onDeleteIngredient(ingredient: Ingredient) {
+    fun onIngredientDelete(ingredient: Ingredient) {
         viewModelScope.launch {
             val ingredients =
                 getRecipe().ingredients.filter { recipeIngredient -> recipeIngredient.ingredient.id != ingredient.id }
@@ -156,13 +156,13 @@ class AddRecipeScreenViewModel @Inject constructor(
         )
     }
 
-    fun onUpdateInstruction(index: Int, value: String) {
+    fun onInstructionUpdate(index: Int, value: String) {
         val instructions = getRecipe().instructions.toMutableList()
         instructions[index] = value
         onInstructionsChange(instructions)
     }
 
-    fun onDeleteInstruction(index: Int) {
+    fun onInstructionDelete(index: Int) {
         val instructions = getRecipe().instructions.toMutableList()
         instructions.removeAt(index)
         onInstructionsChange(instructions)
