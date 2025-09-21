@@ -147,9 +147,9 @@ fun AddRecipeScreen(
         onTagChange = viewModel::onTagChange,
         onSuggestionItemSelected = viewModel::onSuggestionItemSelected,
         onIngredientEditTextChanged = viewModel::onIngredientEditTextChanged,
-        ingredientOnIsEditingChange = viewModel::ingredientOnIsEditingChange,
+        onIngredientIsEditingChange = viewModel::onIngredientIsEditingChange,
         onInstructionEditTextChanged = viewModel::onInstructionEditTextChanged,
-        instructionOnIsEditingChange = viewModel::instructionOnIsEditingChange
+        onInstructionIsEditingChange = viewModel::onInstructionIsEditingChange
     )
 
     LaunchedEffect(state.value.shouldShowDuplicateIngredientError) {
@@ -168,9 +168,9 @@ private fun AddRecipeScreen(
     onImagePathChange: (String, Boolean) -> Unit = { _, _ -> },
     onIngredientTextChange: (String) -> Unit = {},
     onIngredientAdd: (String) -> Unit = {},
-    onIngredientUpdateQuantity: (Long, Double) -> Unit = { _, _ -> },
-    onIngredientUpdateUnit: (Long, IngredientUnit?) -> Unit = { _, _ -> },
-    onUpdateIngredient: (Ingredient) -> Unit = {},
+    onIngredientUpdateQuantity: (Int, Double) -> Unit = { _, _ -> },
+    onIngredientUpdateUnit: (Int, IngredientUnit?) -> Unit = { _, _ -> },
+    onUpdateIngredient: (Int, String) -> Unit = { _, _ -> },
     onDeleteIngredient: (Ingredient) -> Unit = {},
     onInstructionTextChange: (String) -> Unit = {},
     onInstructionAdd: (String) -> Unit = {},
@@ -184,9 +184,9 @@ private fun AddRecipeScreen(
     onTagChange: (RecipeTag) -> Unit = {},
     onSuggestionItemSelected: (Int, Ingredient) -> Unit = { _, _ -> },
     onIngredientEditTextChanged: (String) -> Unit = {},
-    ingredientOnIsEditingChange: (Int, Boolean) -> Unit = { _, _ -> },
+    onIngredientIsEditingChange: (Int, Boolean) -> Unit = { _, _ -> },
     onInstructionEditTextChanged: (String) -> Unit = {},
-    instructionOnIsEditingChange: (Int, Boolean) -> Unit = { _, _ -> },
+    onInstructionIsEditingChange: (Int, Boolean) -> Unit = { _, _ -> },
 
     ) { // If id is provided, it's an edit action
     val recipe = state.recipe
@@ -229,7 +229,7 @@ private fun AddRecipeScreen(
                 onDeleteIngredient = onDeleteIngredient,
                 onSuggestionItemSelected = onSuggestionItemSelected,
                 onEditTextChanged = onIngredientEditTextChanged,
-                onIsEditingChange = ingredientOnIsEditingChange
+                onIsEditingChange = onIngredientIsEditingChange
             )
             Text(modifier = Modifier.padding(vertical = 4.dp), text = "Instructions")
             RecipeInstructions(
@@ -239,7 +239,7 @@ private fun AddRecipeScreen(
                 onUpdateInstruction = onUpdateInstruction,
                 onDeleteInstruction = onDeleteInstruction,
                 onEditTextChanged = onInstructionEditTextChanged,
-                onIsEditingChange = instructionOnIsEditingChange
+                onIsEditingChange = onInstructionIsEditingChange
             )
 
             RecipeTextField(
@@ -410,10 +410,10 @@ private fun RecipeIngredients(
     onValueChange: (String) -> Unit,
     onAdd: (String) -> Unit,
     onEditTextChanged: (String) -> Unit,
-    onUpdateIngredient: (Ingredient) -> Unit,
+    onUpdateIngredient: (Int, String) -> Unit,
     onDeleteIngredient: (Ingredient) -> Unit,
-    onUpdateQuantity: (Long, Double) -> Unit,
-    onUpdateUnit: (Long, IngredientUnit?) -> Unit,
+    onUpdateQuantity: (Int, Double) -> Unit,
+    onUpdateUnit: (Int, IngredientUnit?) -> Unit,
     onSuggestionItemSelected: (Int, Ingredient) -> Unit,
     onIsEditingChange: (Int, Boolean) -> Unit,
 ) {
@@ -434,13 +434,13 @@ private fun RecipeIngredients(
                 RecipeIngredient(
                     modifier = Modifier.padding(vertical = 4.dp),
                     ingredient = ingredient,
-                    onUpdateName = { newName -> onUpdateIngredient(ingredient.ingredient.copy(name = newName)) },
+                    onUpdateName = { onUpdateIngredient(index, it) },
                     editText = state.editIngredientText,
                     onEditTextChanged = onEditTextChanged,
                     isEditing = state.editIngredientIndex == index,
                     onIsEditingChange = { onIsEditingChange(index, it) },
-                    onUpdateQuantity = onUpdateQuantity,
-                    onUpdateUnit = onUpdateUnit,
+                    onUpdateQuantity = { onUpdateQuantity(index, it) },
+                    onUpdateUnit = { onUpdateUnit(index, it) },
                     onDelete = { onDeleteIngredient(ingredient.ingredient.copy(id = it)) },
                     hintText = "Ingredient ${index + 1}",
                     suggestions = suggestions,
@@ -471,8 +471,8 @@ private fun RecipeIngredient(
     onEditTextChanged: (String) -> Unit,
     isEditing: Boolean,
     onIsEditingChange: (Boolean) -> Unit,
-    onUpdateQuantity: (Long, Double) -> Unit,
-    onUpdateUnit: (Long, IngredientUnit?) -> Unit,
+    onUpdateQuantity: (Double) -> Unit,
+    onUpdateUnit: (IngredientUnit?) -> Unit,
     onDelete: (Long) -> Unit,
     hintText: String = "",
     suggestions: List<Ingredient>,
@@ -541,7 +541,7 @@ private fun RecipeIngredient(
         UnitDropDown(
             modifier = Modifier.width(60.dp),
             onUnitChange = {
-                onUpdateUnit(ingredient.ingredient.id, it)
+                onUpdateUnit(it)
             },
             ingredientUnit = ingredient.unit
         )
@@ -567,7 +567,7 @@ private fun RecipeIngredient(
 @Composable
 private fun QuantityTextField(
     ingredient: RecipeIngredient,
-    onUpdateQuantity: (Long, Double) -> Unit,
+    onUpdateQuantity: (Double) -> Unit,
     onKeyboardDone: () -> Unit
 ) {
     val quantityString = if (ingredient.quantity % 1.0 == 0.0) {
@@ -591,10 +591,7 @@ private fun QuantityTextField(
         onValueChange = {
             if (it.length > RECIPE_INGREDIENT_QUANTITY_MAX_LENGTH) return@BasicTextField
             quality = it
-            onUpdateQuantity(
-                ingredient.ingredient.id,
-                quality.toDoubleOrNull() ?: 0.0
-            )
+            onUpdateQuantity(quality.toDoubleOrNull() ?: 0.0)
         },
         textStyle = LocalTextStyle.current.copy(
             textAlign = TextAlign.Center,

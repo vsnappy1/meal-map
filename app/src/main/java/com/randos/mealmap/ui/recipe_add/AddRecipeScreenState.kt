@@ -20,11 +20,29 @@ data class AddRecipeScreenState(
         heaviness = null,
         dateCreated = Date()
     ),
+    /**
+     * The current text entered in the ingredient input field.
+     */
     val currentIngredientText: String = "",
+    /**
+     * The text being edited for an existing ingredient.
+     */
     val editIngredientText: String = "",
+    /**
+     * The index of the ingredient being edited. Null if no ingredient is being edited.
+     */
     val editIngredientIndex: Int? = null,
+    /**
+     * The current text entered in the instruction input field.
+     */
     val currentInstructionText: String = "",
+    /**
+     * The text being edited for an existing instruction.
+     */
     val editInstructionText: String = "",
+    /**
+     * The index of the instruction being edited. Null if no instruction is being edited.
+     */
     val editInstructionIndex: Int? = null,
     val ingredientSuggestions: List<Ingredient> = listOf(),
     val shouldShowDuplicateIngredientError: Boolean = false
