@@ -151,6 +151,11 @@ fun AddRecipeScreen(
         onInstructionEditTextChanged = viewModel::onInstructionEditTextChanged,
         instructionOnIsEditingChange = viewModel::instructionOnIsEditingChange
     )
+
+    LaunchedEffect(state.value.shouldShowDuplicateIngredientError) {
+        if (state.value.shouldShowDuplicateIngredientError)
+            Toast.makeText(context, "Ingredient already exists", Toast.LENGTH_SHORT).show()
+    }
 }
 
 @Composable
@@ -789,7 +794,10 @@ private fun IngredientSuggestion(
             modifier = Modifier
                 .height(dropdownHeight)
                 .verticalScroll(rememberScrollState())
-                .background(color = MaterialTheme.colorScheme.surfaceDim, shape = MaterialTheme.shapes.medium)
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceDim,
+                    shape = MaterialTheme.shapes.medium
+                )
         ) {
             suggestions.forEachIndexed { index, ingredient ->
                 DropdownMenuItem(

@@ -26,5 +26,6 @@ data class AddRecipeScreenState(
     val currentInstructionText: String = "",
     val editInstructionText: String = "",
     val editInstructionIndex: Int? = null,
-    val ingredientSuggestions: List<Ingredient> = listOf()
+    val ingredientSuggestions: List<Ingredient> = listOf(),
+    val shouldShowDuplicateIngredientError: Boolean = false
 )
