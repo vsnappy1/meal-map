@@ -11,7 +11,13 @@ import com.randos.data.database.entity.RecipeIngredient
 internal interface RecipeIngredientDao {
 
     @Query("SELECT * FROM RecipeIngredient WHERE recipe_id=:recipeId")
-    suspend fun get(recipeId: Long): List<RecipeIngredient>
+    suspend fun getByRecipeId(recipeId: Long): List<RecipeIngredient>
+
+    @Query("SELECT * FROM RecipeIngredient WHERE ingredient_id=:ingredientId")
+    suspend fun getByIngredientId(ingredientId: Long): List<RecipeIngredient>
+
+    @Query("SELECT EXISTS (SELECT 1 FROM RecipeIngredient WHERE ingredient_id=:ingredientId)")
+    suspend fun isThisIngredientUsedInAnyRecipe(ingredientId: Long): Boolean
 
     @Query("SELECT * FROM RecipeIngredient")
     suspend fun getAll(): List<RecipeIngredient>

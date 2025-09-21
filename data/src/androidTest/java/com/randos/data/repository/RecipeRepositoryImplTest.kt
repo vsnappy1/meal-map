@@ -80,7 +80,7 @@ class RecipeRepositoryImplTest {
 
         // Then
         val recipeEntity = recipeDao.get(recipe1.id)
-        val ingredientEntities = recipeIngredientDao.get(recipe1.id)
+        val ingredientEntities = recipeIngredientDao.getByRecipeId(recipe1.id)
         assertEquals(recipe1.toEntity(), recipeEntity)
         assertEquals(recipe1.ingredients.size, ingredientEntities.size)
     }
@@ -95,7 +95,7 @@ class RecipeRepositoryImplTest {
 
         // Then
         val recipes = recipeDao.getAll()
-        val recipeIngredients = recipeIngredientDao.get(recipe1.id)
+        val recipeIngredients = recipeIngredientDao.getByRecipeId(recipe1.id)
         assertEquals(0, recipes.size)
         assertEquals(0, recipeIngredients.size)
     }
@@ -119,7 +119,7 @@ class RecipeRepositoryImplTest {
 
         // Then
         val recipe = recipeDao.get(recipe1.id)
-        val recipeIngredients = recipeIngredientDao.get(recipe!!.id)
+        val recipeIngredients = recipeIngredientDao.getByRecipeId(recipe!!.id)
         assertEquals(1, recipe.instructions.size)
         assertEquals("NewStep", recipe.instructions[0])
         assertEquals(1, recipeIngredients.size)

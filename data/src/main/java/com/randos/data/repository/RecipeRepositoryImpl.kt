@@ -20,7 +20,7 @@ internal class RecipeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getRecipe(id: Long): Recipe? {
-        val recipeIngredients = recipeIngredientDao.get(id)
+        val recipeIngredients = recipeIngredientDao.getByRecipeId(id)
             .map { recipeIngredient -> Triple(ingredientDao.get(recipeIngredient.ingredientId), recipeIngredient.quantity, recipeIngredient.unit) }
             .filter {it.first != null }
             .map { RecipeIngredient(

@@ -239,28 +239,56 @@ class AddRecipeScreenViewModel @Inject constructor(
         }
     }
 
+    fun onDeleteSuggestedIngredient(ingredient: Ingredient) {
+        viewModelScope.launch {
+            if (ingredientsRepository.isThisIngredientUsedInAnyRecipe(ingredient) ||
+                isIngredientAlreadyExistInIngredients(ingredient)
+            ) {
+                _state.postValue(
+                    _state.value?.copy(
+                        errorMessage = "Cannot delete: This ingredient is part of one or more recipes."
+                    )
+                )
+                delay(1000)
+                _state.postValue(
+                    _state.value?.copy(
+                        errorMessage = null
+                    )
+                )
+                return@launch
+            }
+            ingredientsRepository.deleteIngredient(ingredient)
+            val suggestions = _state.value?.ingredientSuggestions?.toMutableList()
+            suggestions?.remove(ingredient)
+            _state.postValue(_state.value?.copy(ingredientSuggestions = suggestions.orEmpty()))
+        }
+    }
+
     private fun getRecipe(): Recipe {
         return _state.value!!.recipe
     }
 
     private suspend fun doesIngredientAlreadyExistInIngredients(ingredient: Ingredient): Boolean {
-        if (getRecipe().ingredients.find { it.ingredient.name == ingredient.name } != null) {
+        if (isIngredientAlreadyExistInIngredients(ingredient)) {
             _state.postValue(
                 _state.value?.copy(
                     currentIngredientText = "",
-                    shouldShowDuplicateIngredientError = true
+                    errorMessage = "Duplicate ingredient: This ingredient is already part of the current recipe."
                 )
             )
             delay(1000)
             _state.postValue(
                 _state.value?.copy(
-                    shouldShowDuplicateIngredientError = false
+                    errorMessage = null
                 )
             )
             return true
         }
         return false
     }
+
+    private fun isIngredientAlreadyExistInIngredients(ingredient: Ingredient): Boolean =
+        getRecipe().ingredients.find { it.ingredient.name == ingredient.name } != null
 
     private fun findSuggestion(text: String) {
         viewModelScope.launch {

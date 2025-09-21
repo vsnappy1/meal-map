@@ -35,6 +35,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.Edit
@@ -64,6 +65,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -149,12 +151,13 @@ fun AddRecipeScreen(
         onIngredientEditTextChanged = viewModel::onIngredientEditTextChanged,
         onIngredientIsEditingChange = viewModel::onIngredientIsEditingChange,
         onInstructionEditTextChanged = viewModel::onInstructionEditTextChanged,
-        onInstructionIsEditingChange = viewModel::onInstructionIsEditingChange
+        onInstructionIsEditingChange = viewModel::onInstructionIsEditingChange,
+        onDeleteSuggestedIngredient = viewModel::onDeleteSuggestedIngredient
     )
 
-    LaunchedEffect(state.value.shouldShowDuplicateIngredientError) {
-        if (state.value.shouldShowDuplicateIngredientError)
-            Toast.makeText(context, "Ingredient already exists", Toast.LENGTH_SHORT).show()
+    LaunchedEffect(state.value.errorMessage) {
+        if(state.value.errorMessage == null) return@LaunchedEffect
+        Toast.makeText(context, state.value.errorMessage, Toast.LENGTH_SHORT).show()
     }
 }
 
@@ -187,6 +190,7 @@ private fun AddRecipeScreen(
     onIngredientIsEditingChange: (Int, Boolean) -> Unit = { _, _ -> },
     onInstructionEditTextChanged: (String) -> Unit = {},
     onInstructionIsEditingChange: (Int, Boolean) -> Unit = { _, _ -> },
+    onDeleteSuggestedIngredient: (Ingredient) -> Unit = {},
 
     ) { // If id is provided, it's an edit action
     val recipe = state.recipe
@@ -229,7 +233,8 @@ private fun AddRecipeScreen(
                 onDeleteIngredient = onDeleteIngredient,
                 onSuggestionItemSelected = onSuggestionItemSelected,
                 onEditTextChanged = onIngredientEditTextChanged,
-                onIsEditingChange = onIngredientIsEditingChange
+                onIsEditingChange = onIngredientIsEditingChange,
+                onDeleteSuggestion = onDeleteSuggestedIngredient
             )
             Text(modifier = Modifier.padding(vertical = 4.dp), text = "Instructions")
             RecipeInstructions(
@@ -415,6 +420,7 @@ private fun RecipeIngredients(
     onUpdateQuantity: (Int, Double) -> Unit,
     onUpdateUnit: (Int, IngredientUnit?) -> Unit,
     onSuggestionItemSelected: (Int, Ingredient) -> Unit,
+    onDeleteSuggestion: (Ingredient) -> Unit,
     onIsEditingChange: (Int, Boolean) -> Unit,
 ) {
     val ingredients = state.recipe.ingredients
@@ -444,7 +450,8 @@ private fun RecipeIngredients(
                     onDelete = { onDeleteIngredient(ingredient.ingredient.copy(id = it)) },
                     hintText = "Ingredient ${index + 1}",
                     suggestions = suggestions,
-                    onSuggestionItemSelected = { onSuggestionItemSelected(index, it) }
+                    onSuggestionItemSelected = { onSuggestionItemSelected(index, it) },
+                    onDeleteSuggestion = onDeleteSuggestion
                 )
                 HorizontalDivider(modifier = Modifier)
             }
@@ -456,7 +463,8 @@ private fun RecipeIngredients(
                 hintText = "Ingredient ${ingredients.size + 1}",
                 shouldShowSuggestion = true,
                 suggestions = suggestions,
-                onSuggestionItemSelected = { onSuggestionItemSelected(ingredients.size, it) }
+                onSuggestionItemSelected = { onSuggestionItemSelected(ingredients.size, it) },
+                onDeleteSuggestion = onDeleteSuggestion
             )
         }
     }
@@ -476,7 +484,8 @@ private fun RecipeIngredient(
     onDelete: (Long) -> Unit,
     hintText: String = "",
     suggestions: List<Ingredient>,
-    onSuggestionItemSelected: (Ingredient) -> Unit
+    onSuggestionItemSelected: (Ingredient) -> Unit,
+    onDeleteSuggestion: (Ingredient) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
@@ -511,7 +520,8 @@ private fun RecipeIngredient(
             hintText = hintText,
             shouldShowSuggestion = true,
             suggestions = suggestions,
-            onSuggestionItemSelected = onSuggestionItemSelected
+            onSuggestionItemSelected = onSuggestionItemSelected,
+            onDeleteSuggestion = onDeleteSuggestion
         )
         LaunchedEffect(Unit) {
             focusRequester.requestFocus()
@@ -706,7 +716,8 @@ private fun AddTextField(
     isEditing: Boolean = false,
     shouldShowSuggestion: Boolean = false,
     suggestions: List<Ingredient> = emptyList(),
-    onSuggestionItemSelected: (Ingredient) -> Unit = {}
+    onSuggestionItemSelected: (Ingredient) -> Unit = {},
+    onDeleteSuggestion: (Ingredient) -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
     Row(
@@ -768,20 +779,21 @@ private fun AddTextField(
     }
     if (isEditing && value.isNotEmpty()) {
         if (shouldShowSuggestion) {
-            IngredientSuggestion(suggestions, onSuggestionItemSelected)
+            IngredientSuggestion(suggestions, onSuggestionItemSelected, onDeleteSuggestion)
         }
     }
     if (isEditing) return
     HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
     if (shouldShowSuggestion && value.isNotEmpty()) {
-        IngredientSuggestion(suggestions, onSuggestionItemSelected)
+        IngredientSuggestion(suggestions, onSuggestionItemSelected, onDeleteSuggestion)
     }
 }
 
 @Composable
 private fun IngredientSuggestion(
     suggestions: List<Ingredient>,
-    onSuggestionItemSelected: (Ingredient) -> Unit
+    onSuggestionItemSelected: (Ingredient) -> Unit,
+    onDeleteSuggestion: (Ingredient) -> Unit
 ) {
     val itemHeight = 50.dp // Standard DropdownMenuItem height
     val maxVisibleItems = 3
@@ -798,7 +810,25 @@ private fun IngredientSuggestion(
         ) {
             suggestions.forEachIndexed { index, ingredient ->
                 DropdownMenuItem(
-                    text = { Text(text = ingredient.name) },
+                    modifier = Modifier.clip(MaterialTheme.shapes.medium),
+                    text = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                modifier = Modifier.weight(1f),
+                                text = ingredient.name)
+                            IconButton(
+                                modifier = Modifier.size(32.dp),
+                                onClick = {
+                                    onDeleteSuggestion(ingredient)
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Close,
+                                    contentDescription = null,
+                                )
+                            }
+                        }
+                    },
                     onClick = { onSuggestionItemSelected(ingredient) })
                 if (index < suggestions.size - 1) {
                     HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
