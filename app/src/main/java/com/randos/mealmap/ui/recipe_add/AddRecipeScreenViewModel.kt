@@ -34,7 +34,6 @@ class AddRecipeScreenViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var recipeId: Long? = savedStateHandle["id"]
-
     private var _state = MutableLiveData(AddRecipeScreenState(isLoading = recipeId != null))
     val state: LiveData<AddRecipeScreenState> = _state
 

@@ -152,7 +152,7 @@ private fun RecipeDetailsScreen(
                     fontWeight = FontWeight.W400
                 )
                 Text(
-                    text = "${formatQuantity(it.quantity)} ${it.unit?.displayName ?: "unit"}",
+                    text = "${formatQuantity(it.quantity)} ${it.unit?.value ?: "unit"}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -331,7 +331,7 @@ fun recipeToShareableText(recipe: Recipe): String {
     // Ingredients
     builder.appendLine("🛒 Ingredients:")
     recipe.ingredients.forEach { ri ->
-        builder.appendLine("- ${formatQuantity(ri.quantity)} ${ri.unit?.displayName ?: "unit"} ${ri.ingredient.name}")
+        builder.appendLine("- ${formatQuantity(ri.quantity)} ${ri.unit?.value ?: "unit"} ${ri.ingredient.name}")
     }
     builder.appendLine()
 

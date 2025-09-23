@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.randos.domain.model.Recipe
 import com.randos.domain.repository.RecipeRepository
 import com.randos.domain.type.RecipesFilter
 import com.randos.domain.type.RecipesSort
@@ -19,16 +20,20 @@ class RecipesScreenViewModel @Inject constructor(
 
     private val _state = MutableLiveData(RecipesScreenState())
     val state: LiveData<RecipesScreenState> = _state
+    private var recipes: List<Recipe> = emptyList()
+    private var filteredRecipes: List<Recipe> = emptyList()
 
     fun getRecipes() {
         viewModelScope.launch {
-            val recipes = recipeRepository.getRecipes()
+            recipes = recipeRepository.getRecipes()
+            filteredRecipes = recipes
             _state.postValue(_state.value?.copy(recipes = recipes))
         }
     }
 
     fun onSearchTextChange(text: String) {
-        _state.postValue(_state.value?.copy(searchText = text))
+        filteredRecipes = recipes.filter { it.title.contains(text, ignoreCase = true) }
+        _state.postValue(_state.value?.copy(searchText = text, recipes = filteredRecipes))
     }
 
     fun onFilterChange(filter: RecipesFilter?) {
@@ -36,10 +41,31 @@ class RecipesScreenViewModel @Inject constructor(
     }
 
     fun onSortChange(sort: RecipesSort?) {
-        _state.postValue(_state.value?.copy(sort = sort))
+        filteredRecipes = when (sort) {
+            RecipesSort.TITLE -> filteredRecipes.sortedBy { it.title }
+            RecipesSort.CREATED_DATE -> filteredRecipes.sortedBy { it.dateCreated }
+            RecipesSort.CALORIES -> filteredRecipes.sortedBy { it.calories }
+            RecipesSort.HEAVINESS -> filteredRecipes.sortedBy { it.heaviness }
+            null -> filteredRecipes
+        }
+        var sortOrder = _state.value?.sortOrder ?: SortOrder.ASCENDING
+        if (sort == null) {
+            if (sortOrder == SortOrder.DESCENDING) {
+                filteredRecipes = filteredRecipes.reversed()
+                sortOrder = SortOrder.ASCENDING
+            }
+        }
+        _state.postValue(
+            _state.value?.copy(
+                sort = sort,
+                sortOrder = sortOrder,
+                recipes = filteredRecipes
+            )
+        )
     }
 
     fun onSortOrderChange(sortOrder: SortOrder) {
-        _state.postValue(_state.value?.copy(sortOrder = sortOrder))
+        filteredRecipes = this.filteredRecipes.reversed()
+        _state.postValue(_state.value?.copy(sortOrder = sortOrder, recipes = filteredRecipes))
     }
 }

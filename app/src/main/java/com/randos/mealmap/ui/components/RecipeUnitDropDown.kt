@@ -48,7 +48,7 @@ fun RecipeUnitDropDown(
                     .padding(2.dp)
                     .fillMaxWidth()
                     .weight(1f),
-                text = ingredientUnit?.displayName ?: "Unit",
+                text = ingredientUnit?.value ?: "Unit",
                 textAlign = TextAlign.Center,
                 maxLines = 1
             )
@@ -63,7 +63,7 @@ fun RecipeUnitDropDown(
             onDismissRequest = { isExpanded = false }) {
             Utils.ingredientUnits.forEach {
                 DropdownMenuItem(
-                    text = { Text(text = it.displayName) },
+                    text = { Text(text = it.value) },
                     onClick = {
                         isExpanded = false
                         onUnitChange(it)

@@ -183,8 +183,8 @@ private fun ActionButtons(
             onClick = { isFilterExpanded = !isFilterExpanded },
             isExpanded = isFilterExpanded,
             onDismissRequest = { isFilterExpanded = false },
-            onItemSelect = { onFilterChange(it) },
-            displayValue = { it.displayValue },
+            onItemSelect = { onFilterChange(it as? RecipesFilter) },
+            displayValue = { (it as? RecipesFilter)?.value.orEmpty() },
             selectedItem = state.filter
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -195,7 +195,7 @@ private fun ActionButtons(
             isExpanded = isSortByExpanded,
             onDismissRequest = { isSortByExpanded = false },
             onItemSelect = { onSortChange(it) },
-            displayValue = { it.displayValue },
+            displayValue = { it.value },
             selectedItem = state.sort
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -294,7 +294,7 @@ private fun <T> DropdownMenu(
     Popup(
         alignment = Alignment.TopCenter,
         onDismissRequest = onDismissRequest,
-        offset = IntOffset(0, 50)
+        offset = IntOffset(0, 55)
     ) {
         FlowRow(
             modifier = Modifier
@@ -328,7 +328,7 @@ private fun <T> DropdownMenu(
                     Text(
                         modifier = Modifier.padding(vertical = 2.dp, horizontal = 6.dp),
                         text = displayValue(item),
-                        style = MaterialTheme.typography.labelSmall.copy(color = textColor)
+                        style = MaterialTheme.typography.labelLarge.copy(color = textColor)
                     )
                 }
             }
@@ -340,7 +340,7 @@ private fun <T> DropdownMenu(
                         onDismissRequest()
                     },
                 text = "Clear",
-                style = MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                style = MaterialTheme.typography.labelLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
             )
         }
     }

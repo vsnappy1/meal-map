@@ -52,46 +52,17 @@ object Utils {
     )
     val recipes = listOf(recipe)
 
-    val recipeFilters = listOf(
-        RecipesFilter.BREAKFAST,
-        RecipesFilter.LUNCH,
-        RecipesFilter.DINNER,
-        RecipesFilter.SNACK
-    )
-
-    val recipeSort = listOf(
-        RecipesSort.TITLE,
-        RecipesSort.CALORIES,
-        RecipesSort.HEAVINESS,
-        RecipesSort.CREATED_DATE
-    )
-
-    val ingredientUnits = listOf(
-        IngredientUnit.GRAM,
-        IngredientUnit.CUP,
-        IngredientUnit.TEASPOON,
-        IngredientUnit.TABLESPOON,
-        IngredientUnit.KILOGRAM,
-        IngredientUnit.ML,
-        IngredientUnit.LITER,
-        IngredientUnit.PIECE
-    )
-
     val servings = listOf(2, 4, 6, 8, 10, 12, 14, 16, 18, 20)
 
-    val recipeHeaviness = listOf(
-        RecipeHeaviness.LIGHT,
-        RecipeHeaviness.MEDIUM,
-        RecipeHeaviness.HEAVY
-    )
+    val recipeFilters = RecipesFilter.entries.toList()
 
-    val recipeTags = listOf(
-        RecipeTag.QUICK,
-        RecipeTag.SEA_FOOD,
-        RecipeTag.CHICKEN,
-        RecipeTag.LENTIL,
-        RecipeTag.VEGITABLE
-    )
+    val recipeSort = RecipesSort.entries.toList()
+
+    val ingredientUnits = IngredientUnit.entries.toList()
+
+    val recipeHeaviness = RecipeHeaviness.entries.toList()
+
+    val recipeTags = RecipeTag.entries.toList()
 
     val foodIcons = listOf(
         Icons.Rounded.Fastfood,

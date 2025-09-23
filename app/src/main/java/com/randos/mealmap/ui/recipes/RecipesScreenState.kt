@@ -8,7 +8,7 @@ import com.randos.domain.type.SortOrder
 data class RecipesScreenState (
     val searchText: String = "",
     val recipes: List<Recipe> = emptyList(),
-    val filter: RecipesFilter? = null,
+    val filter: Any? = null,
     val sort: RecipesSort? = null,
     val sortOrder: SortOrder = SortOrder.ASCENDING
 )

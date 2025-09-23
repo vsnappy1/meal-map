@@ -1,8 +1,8 @@
 package com.randos.domain.type
 
-enum class IngredientUnit(val displayName: String) {
+enum class IngredientUnit(val value: String) {
     GRAM("gm"),
-    KILOGRAM("Kg"),
+    KILOGRAM("kg"),
     CUP("cup"),
     TEASPOON("tsp"),
     TABLESPOON("tbsp"),
