@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.randos.domain.model.Recipe
 import com.randos.domain.repository.RecipeRepository
-import com.randos.domain.type.RecipesFilter
+import com.randos.domain.type.RecipeTag
 import com.randos.domain.type.RecipesSort
 import com.randos.domain.type.SortOrder
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,7 +36,7 @@ class RecipesScreenViewModel @Inject constructor(
         _state.postValue(_state.value?.copy(searchText = text, recipes = filteredRecipes))
     }
 
-    fun onFilterChange(filter: RecipesFilter?) {
+    fun onFilterChange(filter: RecipeTag?) {
         _state.postValue(_state.value?.copy(filter = filter))
     }
 

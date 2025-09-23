@@ -4,13 +4,14 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.randos.data.database.util.DateConverter
+import com.randos.data.database.util.RecipeTagListConverter
 import com.randos.data.database.util.StringListConverter // Assuming this will be the path to your converter
 import com.randos.domain.type.RecipeHeaviness
 import com.randos.domain.type.RecipeTag
 import java.util.Date
 
 @Entity()
-@TypeConverters(StringListConverter::class, DateConverter::class)
+@TypeConverters(StringListConverter::class, RecipeTagListConverter::class, DateConverter::class)
 internal data class Recipe(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
@@ -21,7 +22,7 @@ internal data class Recipe(
     val prepTime: Int?,
     val cookTime: Int?,
     val servings: Int?,
-    val tag: RecipeTag?,
+    val tags: List<RecipeTag>,
     val calories: Int?,
     val heaviness: RecipeHeaviness?,
     val dateCreated: Date

@@ -225,7 +225,7 @@ private fun RecipeExtraDetails(modifier: Modifier = Modifier, recipe: Recipe) {
             Spacer(modifier = Modifier.height(8.dp))
             RecipeExtraRow(
                 title1 = "Tag",
-                value1 = recipe.tag?.value ?: "--",
+                value1 = recipe.tags.getOrNull(0)?.value ?: "--",
                 title2 = "Heaviness",
                 value2 = recipe.heaviness?.value ?: "--",
                 title3 = "Total Calories",
@@ -323,7 +323,7 @@ fun recipeToShareableText(recipe: Recipe): String {
     recipe.prepTime?.let { builder.appendLine("⏱ Prep Time: ${formatTime(it)}") }
     recipe.cookTime?.let { builder.appendLine("🍳 Cook Time: ${formatTime(it)}") }
     recipe.servings?.let { builder.appendLine("👥 Servings: $it") }
-    recipe.tag?.let { builder.appendLine("🏷 Tag: $it") }
+    recipe.tags?.let { builder.appendLine("🏷 Tag: $it") }
     recipe.heaviness?.let { builder.appendLine("⚖️ Heaviness: $it") }
     recipe.calories?.let { builder.appendLine("🔥 Calories: $it kcal") }
     builder.appendLine()

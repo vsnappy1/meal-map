@@ -5,5 +5,9 @@ enum class RecipeTag(val value: String) {
     SEA_FOOD("Sea Food"),
     CHICKEN("Chicken"),
     LENTIL("Lentil"),
-    VEGETABLE("Vegetable")
+    VEGETABLE("Vegetable"),
+    BREAKFAST("Breakfast"),
+    LUNCH("Lunch"),
+    DINNER("Dinner"),
+    SNACK("Snack")
 }

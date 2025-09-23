@@ -5,8 +5,10 @@ import android.net.Uri
 import android.os.Environment
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -54,6 +56,7 @@ import com.randos.mealmap.ui.components.CustomDropdownMenu
 import com.randos.mealmap.ui.components.RecipeAddTextField
 import com.randos.mealmap.ui.components.RecipeImage
 import com.randos.mealmap.ui.components.RecipeInstruction
+import com.randos.mealmap.ui.components.RecipePill
 import com.randos.mealmap.utils.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -72,8 +75,10 @@ fun AddRecipeScreen(
     val state = viewModel.state.observeAsState(AddRecipeScreenState(isLoading = id != null))
     var shouldMakeCopyOfImage by remember { mutableStateOf(false) }
     if (state.value.isLoading) {
-        Box(modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center){
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
             CircularProgressIndicator()
         }
         return
@@ -117,7 +122,7 @@ fun AddRecipeScreen(
         onCookTimeChange = viewModel::onCookTimeChange,
         onCaloriesChange = viewModel::onCaloriesChange,
         onHeavinessChange = viewModel::onHeavinessChange,
-        onTagChange = viewModel::onTagChange,
+        onTagClick = viewModel::onTagClick,
         onSuggestionItemSelected = viewModel::onSuggestionItemSelected,
         onDeleteSuggestedIngredient = viewModel::onDeleteSuggestedIngredient
     )
@@ -155,7 +160,7 @@ private fun AddRecipeScreen(
     onCookTimeChange: (String) -> Unit = {},
     onCaloriesChange: (String) -> Unit = {},
     onHeavinessChange: (RecipeHeaviness) -> Unit = {},
-    onTagChange: (RecipeTag) -> Unit = {},
+    onTagClick: (RecipeTag) -> Unit = {},
     onSuggestionItemSelected: (Int, Ingredient) -> Unit = { _, _ -> },
     onDeleteSuggestedIngredient: (Ingredient) -> Unit = {},
 
@@ -226,8 +231,8 @@ private fun AddRecipeScreen(
                 label = "Cook Time (minutes)",
                 keyboardType = KeyboardType.Number
             )
+            Tag(selectedTags = recipe.tags, onTagClick = onTagClick)
             Servings(servings = recipe.servings, onServingsChange = onServingsChange)
-            Tag(tag = recipe.tag, onTagChange = onTagChange)
             Heaviness(heaviness = recipe.heaviness, onHeavinessChange = onHeavinessChange)
             RecipeTextField(
                 value = recipe.calories?.toString().orEmpty(),
@@ -256,13 +261,29 @@ private fun Servings(servings: Int?, onServingsChange: (Int) -> Unit) {
 }
 
 @Composable
-private fun Tag(tag: RecipeTag?, onTagChange: (RecipeTag) -> Unit) {
-    CustomDropdownMenu(
-        value = tag,
-        onValueChange = onTagChange,
-        hint = "Tag",
-        items = Utils.recipeTags,
-        getTextValue = { it.value })
+private fun Tag(
+    selectedTags: List<RecipeTag>,
+    onTagClick: (RecipeTag) -> Unit,
+) {
+    Text(modifier = Modifier.padding(vertical = 4.dp), text = "Tags")
+    Card {
+        FlowRow(
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Utils.recipeTags.forEach { item ->
+                RecipePill(
+                    isSelected = selectedTags.contains(item),
+                    onItemSelect = {onTagClick(it)},
+                    item = item,
+                    displayValue = { it.value }
+                )
+            }
+        }
+    }
 }
 
 @Composable

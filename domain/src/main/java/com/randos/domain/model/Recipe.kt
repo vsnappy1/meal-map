@@ -14,7 +14,7 @@ data class Recipe(
     val prepTime: Int?,
     val cookTime: Int?,
     val servings: Int?,
-    val tag: RecipeTag?,
+    val tags: List<RecipeTag>,
     val calories: Int?,
     val heaviness: RecipeHeaviness?,
     val dateCreated: Date,

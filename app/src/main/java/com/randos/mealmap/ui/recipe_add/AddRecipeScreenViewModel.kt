@@ -217,8 +217,11 @@ class AddRecipeScreenViewModel @Inject constructor(
         _state.postValue(_state.value?.copy(recipe = getRecipe().copy(servings = servings)))
     }
 
-    fun onTagChange(tag: RecipeTag) {
-        _state.postValue(_state.value?.copy(recipe = getRecipe().copy(tag = tag)))
+    fun onTagClick(tag: RecipeTag) {
+        val tags = getRecipe().tags.toMutableList()
+        if (tags.contains(tag)) tags.remove(tag)
+        else tags.add(tag)
+        _state.postValue(_state.value?.copy(recipe = getRecipe().copy(tags = tags)))
     }
 
     fun onHeavinessChange(heaviness: RecipeHeaviness) {

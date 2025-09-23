@@ -54,11 +54,12 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.randos.domain.type.RecipesFilter
+import com.randos.domain.type.RecipeTag
 import com.randos.domain.type.RecipesSort
 import com.randos.domain.type.SortOrder
 import com.randos.mealmap.R
 import com.randos.mealmap.ui.components.RecipeItem
+import com.randos.mealmap.ui.components.RecipePill
 import com.randos.mealmap.utils.Utils
 
 @Composable
@@ -89,7 +90,7 @@ private fun RecipesScreen(
     state: RecipesScreenState,
     onSearchTextChange: (String) -> Unit,
     onSortChange: (RecipesSort?) -> Unit,
-    onFilterChange: (RecipesFilter?) -> Unit,
+    onFilterChange: (RecipeTag?) -> Unit,
     onSortOrderChange: (SortOrder) -> Unit
 ) {
     Column(
@@ -164,7 +165,7 @@ private fun SortOrder(
 @Composable
 private fun ActionButtons(
     state: RecipesScreenState,
-    onFilterChange: (RecipesFilter?) -> Unit,
+    onFilterChange: (RecipeTag?) -> Unit,
     onSortChange: (RecipesSort?) -> Unit,
     onSortOrderChange: (SortOrder) -> Unit,
     onAddNewRecipe: () -> Unit
@@ -179,12 +180,12 @@ private fun ActionButtons(
     ) {
         DropDownButton(
             text = "Filter",
-            items = Utils.recipeFilters,
+            items = Utils.recipeTags,
             onClick = { isFilterExpanded = !isFilterExpanded },
             isExpanded = isFilterExpanded,
             onDismissRequest = { isFilterExpanded = false },
-            onItemSelect = { onFilterChange(it as? RecipesFilter) },
-            displayValue = { (it as? RecipesFilter)?.value.orEmpty() },
+            onItemSelect = { onFilterChange(it as? RecipeTag) },
+            displayValue = { (it as RecipeTag).value },
             selectedItem = state.filter
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -305,32 +306,20 @@ private fun <T> DropdownMenu(
                     shape = MaterialTheme.shapes.medium
                 )
                 .padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             items.forEach { item ->
                 val isItemSelected = item == selectedItem
-                val borderColor =
-                    if (isItemSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                val textColor =
-                    if (isItemSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
-                val cardContainerColor =
-                    if (isItemSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background
-                Card(
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .clickable {
-                            onItemSelect(item)
-                            onDismissRequest()
-                        },
-                    border = BorderStroke(1.dp, borderColor),
-                    colors = CardDefaults.cardColors(containerColor = cardContainerColor)
-                ) {
-                    Text(
-                        modifier = Modifier.padding(vertical = 2.dp, horizontal = 6.dp),
-                        text = displayValue(item),
-                        style = MaterialTheme.typography.labelLarge.copy(color = textColor)
-                    )
-                }
+                RecipePill(
+                    isSelected = isItemSelected,
+                    onItemSelect = {
+                        onItemSelect(it)
+                        onDismissRequest()
+                    },
+                    item = item,
+                    displayValue = displayValue
+                )
             }
             Text(
                 modifier = Modifier

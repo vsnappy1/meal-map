@@ -30,7 +30,7 @@ internal fun Recipe.toEntity(): com.randos.data.database.entity.Recipe {
         prepTime = prepTime,
         cookTime = cookTime,
         servings = servings,
-        tag = tag,
+        tags = tags,
         calories = calories,
         heaviness = heaviness,
         dateCreated = dateCreated
@@ -48,7 +48,7 @@ internal fun com.randos.data.database.entity.Recipe.toDomain(ingredients: List<R
         prepTime = prepTime,
         cookTime = cookTime,
         servings = servings,
-        tag = tag,
+        tags = tags,
         calories = calories,
         heaviness = heaviness,
         dateCreated = dateCreated

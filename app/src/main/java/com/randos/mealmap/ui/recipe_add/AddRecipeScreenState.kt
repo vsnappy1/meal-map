@@ -15,7 +15,7 @@ data class AddRecipeScreenState(
         prepTime = null,
         cookTime = null,
         servings = null,
-        tag = null,
+        tags = listOf(),
         calories = null,
         heaviness = null,
         dateCreated = Date()

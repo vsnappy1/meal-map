@@ -46,7 +46,7 @@ internal object Utils {
         prepTime = 10,
         cookTime = 20,
         servings = 2,
-        tag = RecipeTag.CHICKEN,
+        tags = listOf(RecipeTag.CHICKEN),
         calories = 100,
         heaviness = RecipeHeaviness.MEDIUM,
         dateCreated = Date()
@@ -65,7 +65,7 @@ internal object Utils {
         prepTime = 10,
         cookTime = 20,
         servings = 4,
-        tag = RecipeTag.CHICKEN,
+        tags = listOf(RecipeTag.CHICKEN),
         calories = 100,
         heaviness = RecipeHeaviness.MEDIUM,
         dateCreated = Date()

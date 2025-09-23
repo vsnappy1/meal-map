@@ -1,7 +1,6 @@
 package com.randos.mealmap.ui.recipes
 
 import com.randos.domain.model.Recipe
-import com.randos.domain.type.RecipesFilter
 import com.randos.domain.type.RecipesSort
 import com.randos.domain.type.SortOrder
 

@@ -14,7 +14,6 @@ import com.randos.domain.model.RecipeIngredient
 import com.randos.domain.type.IngredientUnit
 import com.randos.domain.type.RecipeHeaviness
 import com.randos.domain.type.RecipeTag
-import com.randos.domain.type.RecipesFilter
 import com.randos.domain.type.RecipesSort
 import java.util.Date
 
@@ -45,7 +44,7 @@ object Utils {
         prepTime = 10,
         cookTime = 400,
         servings = 2,
-        tag = RecipeTag.CHICKEN,
+        tags = listOf(RecipeTag.CHICKEN),
         calories = 100,
         heaviness = RecipeHeaviness.MEDIUM,
         dateCreated = Date()
@@ -53,8 +52,6 @@ object Utils {
     val recipes = listOf(recipe)
 
     val servings = listOf(2, 4, 6, 8, 10, 12, 14, 16, 18, 20)
-
-    val recipeFilters = RecipesFilter.entries.toList()
 
     val recipeSort = RecipesSort.entries.toList()
 
