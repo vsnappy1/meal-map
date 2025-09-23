@@ -11,8 +11,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.randos.mealmap.utils.vibrateOnClick
 
 @Composable
 fun <T> RecipePill(
@@ -21,6 +23,7 @@ fun <T> RecipePill(
     isSelected: Boolean,
     displayValue: (T) -> String
 ) {
+    val context = LocalContext.current
     val borderColor =
         if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
     val textColor =
@@ -32,6 +35,7 @@ fun <T> RecipePill(
             .clip(CircleShape)
             .clickable {
                 onItemSelect(item)
+                context.vibrateOnClick()
             },
         border = BorderStroke(1.dp, borderColor),
         colors = CardDefaults.cardColors(containerColor = cardContainerColor)

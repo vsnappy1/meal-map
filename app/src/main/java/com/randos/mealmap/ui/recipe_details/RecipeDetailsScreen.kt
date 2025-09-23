@@ -225,7 +225,7 @@ private fun RecipeExtraDetails(modifier: Modifier = Modifier, recipe: Recipe) {
             Spacer(modifier = Modifier.height(8.dp))
             RecipeExtraRow(
                 title1 = "Tag",
-                value1 = recipe.tags.getOrNull(0)?.value ?: "--",
+                value1 = if (recipe.tags.isEmpty()) "--" else recipe.tags.joinToString(", ") { it.value },
                 title2 = "Heaviness",
                 value2 = recipe.heaviness?.value ?: "--",
                 title3 = "Total Calories",
@@ -273,7 +273,9 @@ private fun RecipeExtraItem(modifier: Modifier = Modifier, title: String, value:
         Text(
             text = value,
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

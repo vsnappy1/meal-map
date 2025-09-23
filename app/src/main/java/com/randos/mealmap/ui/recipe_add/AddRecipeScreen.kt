@@ -169,7 +169,7 @@ private fun AddRecipeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+            .padding(horizontal = 16.dp)
     ) {
         Column(
             modifier = Modifier
@@ -241,6 +241,7 @@ private fun AddRecipeScreen(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
             )
+            Spacer(modifier = Modifier.height(16.dp))
         }
         Header(
             title = state.recipe.title,
