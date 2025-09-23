@@ -78,7 +78,8 @@ fun RecipeImage(
     ) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             if (imagePath == null) {
-                TileBackground()
+                TileBackground(iconSize = 24.dp,
+                    spaceBetweenRow = 4.dp)
                 Text(
                     modifier = Modifier
                         .border(

@@ -15,6 +15,7 @@ import com.randos.mealmap.ui.settings.SettingsScreen
 import com.randos.mealmap.ui.navigation.Destination.*
 
 val startDestination = Recipes
+
 @Composable
 fun MealMapNavHost(navController: NavHostController) {
     NavHost(
@@ -53,6 +54,9 @@ fun MealMapNavHost(navController: NavHostController) {
                 id = recipeDetails.id,
                 onEdit = { id ->
                     navController.navigate(ModifyRecipe(id))
+                },
+                onDelete = {
+                    navController.popBackStack()
                 }
             )
         }

@@ -8,7 +8,9 @@ import androidx.compose.material.icons.rounded.KebabDining
 import androidx.compose.material.icons.rounded.Liquor
 import androidx.compose.material.icons.rounded.LocalPizza
 import androidx.compose.material.icons.rounded.RamenDining
+import com.randos.domain.model.Ingredient
 import com.randos.domain.model.Recipe
+import com.randos.domain.model.RecipeIngredient
 import com.randos.domain.type.IngredientUnit
 import com.randos.domain.type.RecipeHeaviness
 import com.randos.domain.type.RecipeTag
@@ -22,10 +24,26 @@ object Utils {
         title = "Recipe Title",
         description = "Recipe Description",
         imagePath = null,
-        ingredients = listOf(),
-        instructions = listOf(),
+        ingredients = listOf(
+            RecipeIngredient(
+                ingredient = Ingredient(name = "Ingredient 1"),
+                quantity = 1.0,
+                unit = IngredientUnit.GRAM
+            ),
+            RecipeIngredient(
+                ingredient = Ingredient(name = "Ingredient 2"),
+                quantity = 2.5,
+                unit = IngredientUnit.CUP
+            ),
+            RecipeIngredient(
+                ingredient = Ingredient(name = "Ingredient 3"),
+                quantity = 0.25,
+                unit = IngredientUnit.PIECE
+            )
+        ),
+        instructions = listOf("Instruction 1", "Instruction 2", "Instruction 3"),
         prepTime = 10,
-        cookTime = 20,
+        cookTime = 400,
         servings = 2,
         tag = RecipeTag.CHICKEN,
         calories = 100,

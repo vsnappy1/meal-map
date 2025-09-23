@@ -20,6 +20,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -68,8 +69,15 @@ fun AddRecipeScreen(
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val state = viewModel.state.observeAsState(AddRecipeScreenState())
+    val state = viewModel.state.observeAsState(AddRecipeScreenState(isLoading = id != null))
     var shouldMakeCopyOfImage by remember { mutableStateOf(false) }
+    if (state.value.isLoading) {
+        Box(modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center){
+            CircularProgressIndicator()
+        }
+        return
+    }
     AddRecipeScreen(
         id = id,
         state = state.value,

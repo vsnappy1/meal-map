@@ -45,5 +45,6 @@ data class AddRecipeScreenState(
      */
     val editInstructionIndex: Int? = null,
     val ingredientSuggestions: List<Ingredient> = listOf(),
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isLoading: Boolean = false
 )

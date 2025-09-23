@@ -2,6 +2,7 @@ package com.randos.mealmap.ui.recipe_add
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.randos.domain.model.Ingredient
@@ -28,11 +29,23 @@ import java.util.Date
 @HiltViewModel
 class AddRecipeScreenViewModel @Inject constructor(
     private val recipesRepository: RecipeRepository,
-    private val ingredientsRepository: IngredientRepository
+    private val ingredientsRepository: IngredientRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private var _state = MutableLiveData(AddRecipeScreenState())
+    private var recipeId: Long? = savedStateHandle["id"]
+
+    private var _state = MutableLiveData(AddRecipeScreenState(isLoading = recipeId != null))
     val state: LiveData<AddRecipeScreenState> = _state
+
+    init {
+        viewModelScope.launch {
+            val id = recipeId
+            if (id == null) return@launch
+            val recipe = recipesRepository.getRecipe(id) ?: return@launch
+            _state.postValue(_state.value?.copy(recipe = recipe, isLoading = false))
+        }
+    }
 
     fun onSave(imagePath: String? = null, onSaved: () -> Unit) {
         viewModelScope.launch {
@@ -40,7 +53,8 @@ class AddRecipeScreenViewModel @Inject constructor(
             if (imagePath != null) {
                 recipe = recipe.copy(imagePath = imagePath)
             }
-            recipesRepository.addRecipe(recipe.copy(dateCreated = Date()))
+            if (recipeId != null) recipesRepository.updateRecipe(recipe)
+            else recipesRepository.addRecipe(recipe.copy(dateCreated = Date()))
             onSaved()
         }
     }
