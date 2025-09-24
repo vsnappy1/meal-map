@@ -48,6 +48,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -135,6 +136,14 @@ private fun RecipesScreen(
                             recipe = recipe,
                             onClick = onRecipeClick
                         )
+                    }
+                }
+                item {
+                    if(recipes.isEmpty() && (state.filter != null || state.searchText.isNotEmpty()) ){
+                        Text(
+                            modifier = Modifier.fillMaxSize(),
+                            text = "No recipes found",
+                            textAlign = TextAlign.Center)
                     }
                 }
                 item {
