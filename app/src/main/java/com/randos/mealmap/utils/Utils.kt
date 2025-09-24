@@ -53,13 +53,13 @@ object Utils {
 
     val servings = listOf(2, 4, 6, 8, 10, 12, 14, 16, 18, 20)
 
-    val recipeSort = RecipesSort.entries.toList()
+    val recipeSort: List<RecipesSort> = RecipesSort.entries.toList()
 
     val ingredientUnits = IngredientUnit.entries.toList()
 
     val recipeHeaviness = RecipeHeaviness.entries.toList()
 
-    val recipeTags = RecipeTag.entries.toList()
+    val recipeTags: List<RecipeTag> = RecipeTag.entries.toList()
 
     val foodIcons = listOf(
         Icons.Rounded.Fastfood,

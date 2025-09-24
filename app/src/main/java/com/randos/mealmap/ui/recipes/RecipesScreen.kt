@@ -96,7 +96,7 @@ private fun RecipesScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+            .padding(horizontal = 16.dp)
     ) {
         Text(
             text = "Recipes",
@@ -114,10 +114,12 @@ private fun RecipesScreen(
             onAddNewRecipe = onAddNewRecipe,
             onSortOrderChange = onSortOrderChange
         )
-        Spacer(modifier = Modifier.height(8.dp))
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            item {
+                Spacer(modifier = Modifier.height(4.dp))
+            }
             state.recipes.forEach { recipe ->
                 item {
                     RecipeItem(
@@ -125,6 +127,9 @@ private fun RecipesScreen(
                         onClick = onRecipeClick
                     )
                 }
+            }
+            item {
+                Spacer(modifier = Modifier.height(4.dp))
             }
         }
     }
@@ -170,8 +175,6 @@ private fun ActionButtons(
     onSortOrderChange: (SortOrder) -> Unit,
     onAddNewRecipe: () -> Unit
 ) {
-    var isSortByExpanded by remember { mutableStateOf(false) }
-    var isFilterExpanded by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -181,9 +184,6 @@ private fun ActionButtons(
         DropDownButton(
             text = "Filter",
             items = Utils.recipeTags,
-            onClick = { isFilterExpanded = !isFilterExpanded },
-            isExpanded = isFilterExpanded,
-            onDismissRequest = { isFilterExpanded = false },
             onItemSelect = { onFilterChange(it as? RecipeTag) },
             displayValue = { (it as RecipeTag).value },
             selectedItem = state.filter
@@ -192,9 +192,6 @@ private fun ActionButtons(
         DropDownButton(
             text = "Sort by",
             items = Utils.recipeSort,
-            onClick = { isSortByExpanded = !isSortByExpanded },
-            isExpanded = isSortByExpanded,
-            onDismissRequest = { isSortByExpanded = false },
             onItemSelect = { onSortChange(it) },
             displayValue = { it.value },
             selectedItem = state.sort
@@ -254,16 +251,14 @@ private fun <T> DropDownButton(
     modifier: Modifier = Modifier,
     text: String,
     items: List<T>,
-    onClick: () -> Unit,
-    isExpanded: Boolean,
     displayValue: (T) -> String,
-    onDismissRequest: () -> Unit,
     onItemSelect: (T?) -> Unit,
     selectedItem: T? = null
 ) {
+    var isExpanded by remember { mutableStateOf(false) }
     Button(
         modifier = modifier,
-        onClick = onClick
+        onClick = { isExpanded = !isExpanded }
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(text = text)
@@ -279,7 +274,13 @@ private fun <T> DropDownButton(
             }
         }
         if (isExpanded) {
-            DropdownMenu(onDismissRequest, items, selectedItem, onItemSelect, displayValue)
+            DropdownMenu(
+                onDismissRequest = { isExpanded = false },
+                items = items,
+                selectedItem = selectedItem,
+                onItemSelect = onItemSelect,
+                displayValue = displayValue
+            )
         }
     }
 }

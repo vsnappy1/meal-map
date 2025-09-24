@@ -22,6 +22,7 @@ fun Context.vibrateOnClick(duration: Long = 25) {
         val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
         vibratorManager.defaultVibrator
     } else {
+        @Suppress("DEPRECATION")
         getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     }
     vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
