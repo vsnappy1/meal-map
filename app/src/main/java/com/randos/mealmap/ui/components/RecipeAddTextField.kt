@@ -1,8 +1,12 @@
 package com.randos.mealmap.ui.components
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,7 +44,6 @@ fun RecipeAddTextField(
     onDoneClick: (String) -> Unit,
     hintText: String = "",
     isEditing: Boolean = false,
-    shouldShowSuggestion: Boolean = false,
     suggestions: List<Ingredient> = emptyList(),
     onSuggestionItemSelected: (Ingredient) -> Unit = {},
     onDeleteSuggestion: (Ingredient) -> Unit = {}
@@ -103,26 +106,23 @@ fun RecipeAddTextField(
             )
         }
     }
-    AnimatedVisibility(
-        visible = shouldShowSuggestion && isEditing && value.isNotEmpty() && suggestions.isNotEmpty(),
-        enter = expandVertically(),
-        exit = shrinkVertically()
-    ) {
-        RecipeIngredientSuggestion(
-            modifier = Modifier.padding(bottom = 8.dp),
-            suggestions = suggestions,
-            onSuggestionItemSelected = onSuggestionItemSelected,
-            onDeleteSuggestion = onDeleteSuggestion
-        )
+
+    AnimatedVisibility(!isEditing || suggestions.isNotEmpty()) {
+        HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
     }
-    if (isEditing) return
-    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-    AnimatedVisibility(
-        visible = shouldShowSuggestion && value.isNotEmpty() && suggestions.isNotEmpty(),
-        enter = expandVertically(),
-        exit = shrinkVertically()
-    ) {
+
+    AnimatedContent(
+        modifier = Modifier.fillMaxWidth(),
+        targetState = suggestions,
+        label = "IngredientSuggestionAnimation",
+        contentAlignment = Alignment.TopCenter,
+        transitionSpec = {
+            slideInVertically(initialOffsetY = { -it / 3 }) + fadeIn() togetherWith
+                    slideOutVertically(targetOffsetY = { it / 3 }) + fadeOut()
+        }
+    ) { suggestions ->
         RecipeIngredientSuggestion(
+            modifier = if (isEditing) Modifier.padding(bottom = 4.dp) else Modifier,
             suggestions = suggestions,
             onSuggestionItemSelected = onSuggestionItemSelected,
             onDeleteSuggestion = onDeleteSuggestion
@@ -140,7 +140,6 @@ private fun PreviewRecipeAddTextField() {
             onDoneClick = {},
             hintText = "This is a hint",
             isEditing = false,
-            shouldShowSuggestion = false,
             suggestions = emptyList(),
             onSuggestionItemSelected = {},
             onDeleteSuggestion = {}
@@ -158,7 +157,6 @@ private fun PreviewRecipeAddTextFieldIsEditing() {
             onDoneClick = {},
             hintText = "This is a hint",
             isEditing = true,
-            shouldShowSuggestion = true,
             suggestions = listOf(Ingredient(1, "Ingredient 1"), Ingredient(2, "Ingredient 2")),
             onSuggestionItemSelected = {},
             onDeleteSuggestion = {}

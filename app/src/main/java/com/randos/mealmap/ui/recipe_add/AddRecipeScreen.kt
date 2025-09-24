@@ -51,6 +51,7 @@ import com.randos.domain.type.RecipeTag
 import com.randos.mealmap.ui.components.CustomDropdownMenu
 import com.randos.mealmap.ui.components.RecipeAddTextField
 import com.randos.mealmap.ui.components.RecipeImage
+import com.randos.mealmap.ui.components.RecipeIngredient
 import com.randos.mealmap.ui.components.RecipeInstruction
 import com.randos.mealmap.ui.components.RecipePill
 import com.randos.mealmap.ui.theme.buttonColors
@@ -367,7 +368,7 @@ private fun RecipeIngredients(
 
             ) {
             ingredients.forEachIndexed { index, ingredient ->
-                com.randos.mealmap.ui.components.RecipeIngredient(
+                RecipeIngredient(
                     modifier = Modifier.padding(vertical = 4.dp),
                     ingredient = ingredient,
                     onUpdateName = { onUpdateIngredient(index, it) },
@@ -391,8 +392,8 @@ private fun RecipeIngredients(
                 onValueChange = onValueChange,
                 onDoneClick = onAdd,
                 hintText = "Ingredient ${ingredients.size + 1}",
-                shouldShowSuggestion = true,
-                suggestions = suggestions,
+                // We don't want to show suggestions on this text filed while some of the ingredients are being edited
+                suggestions = if (state.editIngredientIndex == null && state.currentIngredientText.isNotEmpty()) suggestions else emptyList(),
                 onSuggestionItemSelected = { onSuggestionItemSelected(ingredients.size, it) },
                 onDeleteSuggestion = onDeleteSuggestion
             )

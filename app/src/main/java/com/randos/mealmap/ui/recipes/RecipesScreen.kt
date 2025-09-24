@@ -114,8 +114,10 @@ private fun RecipesScreen(
             onSortOrderChange = onSortOrderChange
         )
         AnimatedContent(
+            modifier = Modifier.fillMaxSize(),
             targetState = state.recipes,
-            label = "SearchClearIcon",
+            label = "RecipeListAnimation",
+            contentAlignment = Alignment.TopCenter,
             transitionSpec = {
                 slideInVertically(initialOffsetY = { -it / 3 }) + fadeIn() togetherWith
                         slideOutVertically(targetOffsetY = { it / 3 }) + fadeOut()

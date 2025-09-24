@@ -78,7 +78,6 @@ fun RecipeIngredient(
             },
             isEditing = true,
             hintText = hintText,
-            shouldShowSuggestion = true,
             suggestions = suggestions,
             onSuggestionItemSelected = onSuggestionItemSelected,
             onDeleteSuggestion = onDeleteSuggestion
