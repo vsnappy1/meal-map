@@ -1,9 +1,45 @@
 <resources>
     <string name="app_name">Meal Map</string>
+<!-- Recipes Screen -->
     <string name="search">Search</string>
     <string name="clear_text">Clear Text</string>
     <string name="sort">Sort</string>
     <string name="recipe_image">Recipe Image</string>
     <string name="sort_ascending">Sort Ascending</string>
     <string name="sort_descending">Sort Descending</string>
+    <string name="no_recipes_found">No recipes found</string>
+    <string name="recipes_title">Recipes</string>
+    <string name="filter_button_text">Filter</string>
+    <string name="sort_by_button_text">Sort by</string>
+    <string name="add_button_text">Add</string>
+    <string name="clear_filter_button_text">Clear</string>
+
+<!-- Add Recipe Screen -->
+    <string name="add_recipe_title_label">Title*</string>
+    <string name="add_recipe_description_label">Description</string>
+    <string name="recipe_ingredients_label">Ingredients</string>
+    <string name="recipe_instructions_label">Instructions</string>
+    <string name="add_recipe_prep_time_label">Prep Time (minutes)</string>
+    <string name="add_recipe_cook_time_label">Cook Time (minutes)</string>
+    <string name="recipe_tags_label">Tags</string>
+    <string name="recipe_total_calories_label">Total calories</string>
+    <string name="recipe_servings_label">Servings</string>
+    <string name="recipe_heaviness_label">Heaviness</string>
+    <string name="add_recipe_instruction_step_hint">Step %1$d</string>
+    <string name="add_recipe_ingredient_hint">Ingredient %1$d</string>
+    <string name="edit_recipe">Edit Recipe</string>
+    <string name="new_recipe">New Recipe</string>
+    <string name="save_button_text">Save</string>
+
+<!-- Recipe Details -->
+    <string name="recipe_extra_details_label">Extra Details</string>
+    <string name="ingredient_default_unit">unit</string>
+    <string name="default_value_for_no_value">--</string>
+    <string name="cancel_button_text">Cancel</string>
+    <string name="delete_button_text">Delete</string>
+    <string name="delete_confirmation_dialog_title">Delete Recipe</string>
+    <string name="delete_confirmation_dialog_text">Are you sure you want to delete this recipe? This action cannot be undone.</string>
+    <string name="prep_time_label">Prep Time</string>
+    <string name="cook_time_label">Cook Time</string>
+    <string name="recipe_instruction_step_hint">Step %1$d:</string>
 </resources>

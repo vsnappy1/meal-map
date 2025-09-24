@@ -39,6 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.randos.domain.model.Recipe
+import com.randos.mealmap.R
 import com.randos.mealmap.ui.components.TileBackground
 import com.randos.mealmap.ui.theme.iconButtonColors
 import com.randos.mealmap.utils.Utils
@@ -103,11 +105,11 @@ private fun RecipeDetailsScreen(
                 style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
             )
         }
-        SubHeading(text = "Ingredients")
+        SubHeading(text = stringResource(R.string.recipe_ingredients_label))
         RecipeIngredients(recipe)
-        SubHeading(text = "Instructions")
+        SubHeading(text = stringResource(R.string.recipe_instructions_label))
         RecipeInstructions(recipe)
-        SubHeading(text = "Extra Details")
+        SubHeading(text = stringResource(R.string.recipe_extra_details_label))
         RecipeExtraDetails(recipe = recipe)
         Spacer(modifier = Modifier.height(16.dp))
     }
@@ -121,7 +123,7 @@ private fun RecipeInstructions(recipe: Recipe) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Step ${index + 1}:",
+                text = stringResource(R.string.recipe_instruction_step_hint, index + 1),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.W500
             )
@@ -149,7 +151,7 @@ private fun RecipeIngredients(recipe: Recipe) {
                 fontWeight = FontWeight.W400
             )
             Text(
-                text = "${formatQuantity(it.quantity)} ${it.unit?.value ?: "unit"}",
+                text = "${formatQuantity(it.quantity)} ${it.unit?.value ?: stringResource(R.string.ingredient_default_unit)}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -239,21 +241,21 @@ private fun RecipeExtraDetails(modifier: Modifier = Modifier, recipe: Recipe) {
     ) {
         Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
             RecipeExtraRow(
-                title1 = "Prep Time",
+                title1 = stringResource(R.string.prep_time_label),
                 value1 = formatTime(recipe.prepTime),
-                title2 = "Cook Time",
+                title2 = stringResource(R.string.cook_time_label),
                 value2 = formatTime(recipe.cookTime),
-                title3 = "Servings",
-                value3 = recipe.servings?.toString() ?: "--"
+                title3 = stringResource(R.string.recipe_servings_label),
+                value3 = recipe.servings?.toString() ?: stringResource(R.string.default_value_for_no_value)
             )
             Spacer(modifier = Modifier.height(8.dp))
             RecipeExtraRow(
-                title1 = "Tag",
-                value1 = if (recipe.tags.isEmpty()) "--" else recipe.tags.joinToString(", ") { it.value },
-                title2 = "Heaviness",
-                value2 = recipe.heaviness?.value ?: "--",
-                title3 = "Total Calories",
-                value3 = recipe.calories?.toString() ?: "--"
+                title1 = stringResource(R.string.recipe_tags_label),
+                value1 = if (recipe.tags.isEmpty()) stringResource(R.string.default_value_for_no_value) else recipe.tags.joinToString(", ") { it.value },
+                title2 = stringResource(R.string.recipe_heaviness_label),
+                value2 = recipe.heaviness?.value ?: stringResource(R.string.default_value_for_no_value),
+                title3 = stringResource(R.string.recipe_total_calories_label),
+                value3 = recipe.calories?.toString() ?: stringResource(R.string.default_value_for_no_value)
             )
         }
     }
@@ -312,19 +314,19 @@ private fun DeleteConfirmationDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(text = "Delete Recipe")
+            Text(text = stringResource(R.string.delete_confirmation_dialog_title))
         },
         text = {
-            Text("Are you sure you want to delete this recipe? This action cannot be undone.")
+            Text(stringResource(R.string.delete_confirmation_dialog_text))
         },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text("Delete")
+                Text(stringResource(R.string.delete_button_text))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel_button_text))
             }
         }
     )

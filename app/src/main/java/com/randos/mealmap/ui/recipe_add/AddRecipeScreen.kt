@@ -43,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -54,6 +55,7 @@ import com.randos.domain.model.Ingredient
 import com.randos.domain.type.IngredientUnit
 import com.randos.domain.type.RecipeHeaviness
 import com.randos.domain.type.RecipeTag
+import com.randos.mealmap.R
 import com.randos.mealmap.ui.components.CustomDropdownMenu
 import com.randos.mealmap.ui.components.RecipeAddTextField
 import com.randos.mealmap.ui.components.RecipeImage
@@ -185,16 +187,16 @@ private fun AddRecipeScreen(
             RecipeTextField(
                 value = recipe.title,
                 onValueChange = onTitleChange,
-                label = "Title*"
+                label = stringResource(R.string.add_recipe_title_label)
             )
             RecipeTextField(
                 value = recipe.description.orEmpty(),
                 onValueChange = onDescriptionChange,
-                label = "Description",
+                label = stringResource(R.string.add_recipe_description_label),
                 maxLines = 3,
                 imeAction = ImeAction.Done
             )
-            Text(modifier = Modifier.padding(vertical = 4.dp), text = "Ingredients")
+            Text(modifier = Modifier.padding(vertical = 4.dp), text = stringResource(R.string.recipe_ingredients_label))
             RecipeIngredients(
                 state = state,
                 onValueChange = onIngredientTextChange,
@@ -208,7 +210,7 @@ private fun AddRecipeScreen(
                 onIsEditingChange = onIngredientIsEditingChange,
                 onDeleteSuggestion = onDeleteSuggestedIngredient
             )
-            Text(modifier = Modifier.padding(vertical = 4.dp), text = "Instructions")
+            Text(modifier = Modifier.padding(vertical = 4.dp), text = stringResource(R.string.recipe_instructions_label))
             RecipeInstructions(
                 state = state,
                 onValueChange = onInstructionTextChange,
@@ -222,13 +224,13 @@ private fun AddRecipeScreen(
             RecipeTextField(
                 value = recipe.prepTime?.toString().orEmpty(),
                 onValueChange = { onPrepTimeChange(it) },
-                label = "Prep Time (minutes)",
+                label = stringResource(R.string.add_recipe_prep_time_label),
                 keyboardType = KeyboardType.Number
             )
             RecipeTextField(
                 value = recipe.cookTime?.toString().orEmpty(),
                 onValueChange = { onCookTimeChange(it) },
-                label = "Cook Time (minutes)",
+                label = stringResource(R.string.add_recipe_cook_time_label),
                 keyboardType = KeyboardType.Number
             )
             Tag(selectedTags = recipe.tags, onTagClick = onTagClick)
@@ -237,7 +239,7 @@ private fun AddRecipeScreen(
             RecipeTextField(
                 value = recipe.calories?.toString().orEmpty(),
                 onValueChange = { onCaloriesChange(it) },
-                label = "Total calories",
+                label = stringResource(R.string.recipe_total_calories_label),
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
             )
@@ -256,7 +258,7 @@ private fun Servings(servings: Int?, onServingsChange: (Int) -> Unit) {
     CustomDropdownMenu(
         value = servings,
         onValueChange = onServingsChange,
-        hint = "Servings",
+        hint = stringResource(R.string.recipe_servings_label),
         items = Utils.servings,
         getTextValue = { it.toString() })
 }
@@ -266,7 +268,7 @@ private fun Tag(
     selectedTags: List<RecipeTag>,
     onTagClick: (RecipeTag) -> Unit,
 ) {
-    Text(modifier = Modifier.padding(vertical = 4.dp), text = "Tags")
+    Text(modifier = Modifier.padding(vertical = 4.dp), text = stringResource(R.string.recipe_tags_label))
     Card {
         FlowRow(
             modifier = Modifier
@@ -292,7 +294,7 @@ private fun Heaviness(heaviness: RecipeHeaviness?, onHeavinessChange: (RecipeHea
     CustomDropdownMenu(
         value = heaviness,
         onValueChange = onHeavinessChange,
-        hint = "Heaviness",
+        hint = stringResource(R.string.recipe_heaviness_label),
         items = Utils.recipeHeaviness,
         getTextValue = { it.value })
 }
@@ -339,7 +341,7 @@ fun RecipeInstructions(
                 value = state.currentInstructionText,
                 onValueChange = onValueChange,
                 onDoneClick = onAdd,
-                hintText = "Step ${instructions.size + 1}"
+                hintText = stringResource(R.string.add_recipe_instruction_step_hint, instructions.size + 1)
             )
         }
     }
@@ -393,7 +395,7 @@ private fun RecipeIngredients(
                         onUpdateQuantity = { onUpdateQuantity(index, it) },
                         onUpdateUnit = { onUpdateUnit(index, it) },
                         onDelete = { onDeleteIngredient(ingredient.ingredient.copy(id = it)) },
-                        hintText = "Ingredient ${index + 1}",
+                        hintText = stringResource(R.string.add_recipe_ingredient_hint, index + 1),
                         suggestions = suggestions,
                         onSuggestionItemSelected = { onSuggestionItemSelected(index, it) },
                         onDeleteSuggestion = onDeleteSuggestion
@@ -406,7 +408,7 @@ private fun RecipeIngredients(
                 value = state.currentIngredientText,
                 onValueChange = onValueChange,
                 onDoneClick = onAdd,
-                hintText = "Ingredient ${ingredients.size + 1}",
+                hintText = stringResource(R.string.add_recipe_ingredient_hint, ingredients.size + 1),
                 // We don't want to show suggestions on this text filed while some of the ingredients are being edited
                 suggestions = if (state.editIngredientIndex == null && state.currentIngredientText.isNotEmpty()) suggestions else emptyList(),
                 onSuggestionItemSelected = { onSuggestionItemSelected(ingredients.size, it) },
@@ -449,7 +451,7 @@ private fun RecipeTextField(
 
 @Composable
 private fun Header(title: String = "", onSave: () -> Unit, isEdit: Boolean) {
-    val headerText = if (isEdit) "Edit Recipe" else "New Recipe"
+    val headerText = if (isEdit) stringResource(R.string.edit_recipe) else stringResource(R.string.new_recipe)
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -466,7 +468,7 @@ private fun Header(title: String = "", onSave: () -> Unit, isEdit: Boolean) {
                 enabled = title.isNotEmpty(),
                 colors = buttonColors(title.isNotEmpty())
             ) {
-                Text(text = "Save")
+                Text(text = stringResource(R.string.save_button_text))
             }
         }
     }

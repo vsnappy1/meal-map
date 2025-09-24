@@ -99,7 +99,7 @@ private fun RecipesScreen(
             .padding(horizontal = 16.dp)
     ) {
         Text(
-            text = "Recipes",
+            text = stringResource(R.string.recipes_title),
             style = MaterialTheme.typography.headlineLarge
         )
         Spacer(modifier = Modifier.height(64.dp))
@@ -142,7 +142,7 @@ private fun RecipesScreen(
                     if(recipes.isEmpty() && (state.filter != null || state.searchText.isNotEmpty()) ){
                         Text(
                             modifier = Modifier.fillMaxSize(),
-                            text = "No recipes found",
+                            text = stringResource(R.string.no_recipes_found),
                             textAlign = TextAlign.Center)
                     }
                 }
@@ -201,7 +201,7 @@ private fun ActionButtons(
         verticalAlignment = Alignment.CenterVertically
     ) {
         DropDownButton(
-            text = "Filter",
+            text = stringResource(R.string.filter_button_text),
             items = Utils.recipeTags,
             onItemSelect = { onFilterChange(it as? RecipeTag) },
             displayValue = { (it as RecipeTag).value },
@@ -209,7 +209,7 @@ private fun ActionButtons(
         )
         Spacer(modifier = Modifier.width(8.dp))
         DropDownButton(
-            text = "Sort by",
+            text = stringResource(R.string.sort_by_button_text),
             items = Utils.recipeSort,
             onItemSelect = { onSortChange(it) },
             displayValue = { it.value },
@@ -220,7 +220,7 @@ private fun ActionButtons(
             SortOrder(state = state, onSortOrderChange = onSortOrderChange)
         }
         Spacer(modifier = Modifier.weight(1f))
-        Button(onClick = onAddNewRecipe) { Text(text = "Add") }
+        Button(onClick = onAddNewRecipe) { Text(text = stringResource(R.string.add_button_text)) }
     }
 }
 
@@ -234,7 +234,7 @@ private fun SearchBar(
         modifier = Modifier.fillMaxWidth(),
         value = text,
         onValueChange = { onSearchTextChange(it) },
-        label = { Text(text = "Search") },
+        label = { Text(text = stringResource(R.string.search)) },
         singleLine = true,
         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
@@ -348,7 +348,7 @@ private fun <T> DropdownMenu(
                         onItemSelect(null)
                         onDismissRequest()
                     },
-                text = "Clear",
+                text = stringResource(R.string.clear_filter_button_text),
                 style = MaterialTheme.typography.labelLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
             )
         }
