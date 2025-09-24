@@ -57,6 +57,7 @@ import com.randos.mealmap.ui.components.RecipeAddTextField
 import com.randos.mealmap.ui.components.RecipeImage
 import com.randos.mealmap.ui.components.RecipeInstruction
 import com.randos.mealmap.ui.components.RecipePill
+import com.randos.mealmap.ui.theme.buttonColors
 import com.randos.mealmap.utils.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -163,8 +164,7 @@ private fun AddRecipeScreen(
     onTagClick: (RecipeTag) -> Unit = {},
     onSuggestionItemSelected: (Int, Ingredient) -> Unit = { _, _ -> },
     onDeleteSuggestedIngredient: (Ingredient) -> Unit = {},
-
-    ) { // If id is provided, it's an edit action
+) {
     val recipe = state.recipe
     Box(
         modifier = Modifier
@@ -278,7 +278,7 @@ private fun Tag(
             Utils.recipeTags.forEach { item ->
                 RecipePill(
                     isSelected = selectedTags.contains(item),
-                    onItemSelect = {onTagClick(it)},
+                    onItemSelect = { onTagClick(it) },
                     item = item,
                     displayValue = { it.value }
                 )
@@ -419,7 +419,9 @@ private fun RecipeTextField(
 ) {
     val focusManager = LocalFocusManager.current
     OutlinedTextField(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 4.dp),
         value = value,
         maxLines = maxLines,
         keyboardOptions = KeyboardOptions.Default.copy(
@@ -434,27 +436,6 @@ private fun RecipeTextField(
         onValueChange = onValueChange,
         label = { Text(label) }
     )
-}
-
-suspend fun copyUriToAppStorage(context: Context, uri: Uri): Uri? = withContext(Dispatchers.IO) {
-    return@withContext try {
-        val inputStream = context.contentResolver.openInputStream(uri) ?: return@withContext null
-        val file = File(
-            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-            "meal_map_${System.currentTimeMillis()}.jpg"
-        )
-        FileOutputStream(file).use { output ->
-            inputStream.copyTo(output)
-        }
-        FileProvider.getUriForFile(
-            context,
-            "${context.packageName}.provider",
-            file
-        )
-    } catch (e: Exception) {
-        e.printStackTrace()
-        null
-    }
 }
 
 @Composable
@@ -473,13 +454,37 @@ private fun Header(title: String = "", onSave: () -> Unit, isEdit: Boolean) {
             Spacer(Modifier.weight(1f))
             Button(
                 onClick = onSave,
-                enabled = title.isNotEmpty()
+                enabled = title.isNotEmpty(),
+                colors = buttonColors(title.isNotEmpty())
             ) {
                 Text(text = "Save")
             }
         }
     }
 }
+
+private suspend fun copyUriToAppStorage(context: Context, uri: Uri): Uri? =
+    withContext(Dispatchers.IO) {
+        return@withContext try {
+            val inputStream =
+                context.contentResolver.openInputStream(uri) ?: return@withContext null
+            val file = File(
+                context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                "meal_map_${System.currentTimeMillis()}.jpg"
+            )
+            FileOutputStream(file).use { output ->
+                inputStream.copyTo(output)
+            }
+            FileProvider.getUriForFile(
+                context,
+                "${context.packageName}.provider",
+                file
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
 
 @Preview(showSystemUi = true)
 @Composable

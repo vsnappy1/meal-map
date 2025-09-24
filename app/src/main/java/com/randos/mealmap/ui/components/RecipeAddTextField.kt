@@ -1,5 +1,8 @@
 package com.randos.mealmap.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -91,7 +94,7 @@ fun RecipeAddTextField(
                 focusManager.clearFocus()
             },
             enabled = value.isNotEmpty(),
-            colors = iconButtonColors()
+            colors = iconButtonColors(value.isNotEmpty())
         ) {
             Icon(
                 modifier = Modifier.size(18.dp),
@@ -100,19 +103,25 @@ fun RecipeAddTextField(
             )
         }
     }
-    if (isEditing && value.isNotEmpty()) {
-        if (shouldShowSuggestion) {
-            RecipeIngredientSuggestion(
-                modifier = Modifier.padding(bottom = 8.dp),
-                suggestions = suggestions,
-                onSuggestionItemSelected = onSuggestionItemSelected,
-                onDeleteSuggestion = onDeleteSuggestion
-            )
-        }
+    AnimatedVisibility(
+        visible = shouldShowSuggestion && isEditing && value.isNotEmpty() && suggestions.isNotEmpty(),
+        enter = expandVertically(),
+        exit = shrinkVertically()
+    ) {
+        RecipeIngredientSuggestion(
+            modifier = Modifier.padding(bottom = 8.dp),
+            suggestions = suggestions,
+            onSuggestionItemSelected = onSuggestionItemSelected,
+            onDeleteSuggestion = onDeleteSuggestion
+        )
     }
     if (isEditing) return
     HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-    if (shouldShowSuggestion && value.isNotEmpty()) {
+    AnimatedVisibility(
+        visible = shouldShowSuggestion && value.isNotEmpty() && suggestions.isNotEmpty(),
+        enter = expandVertically(),
+        exit = shrinkVertically()
+    ) {
         RecipeIngredientSuggestion(
             suggestions = suggestions,
             onSuggestionItemSelected = onSuggestionItemSelected,

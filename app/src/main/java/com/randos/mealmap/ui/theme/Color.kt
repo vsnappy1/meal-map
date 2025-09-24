@@ -2,6 +2,8 @@ package com.randos.mealmap.ui.theme
 
 import android.content.Context
 import android.os.Build
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.IconButtonDefaults
@@ -10,6 +12,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF3B6939)
@@ -177,10 +180,49 @@ fun getColorScheme(
 }
 
 @Composable
-fun iconButtonColors() = IconButtonDefaults.iconButtonColors()
-    .copy(
-        containerColor = ButtonDefaults.buttonColors().containerColor,
-        contentColor = ButtonDefaults.buttonColors().contentColor,
-        disabledContainerColor = ButtonDefaults.buttonColors().disabledContainerColor,
-        disabledContentColor = ButtonDefaults.buttonColors().disabledContentColor
-    )
+fun iconButtonColors(enabled: Boolean = true) =
+    IconButtonDefaults.iconButtonColors().run {
+        val defaultButtonColors = ButtonDefaults.buttonColors()
+
+        val animatedContainerColor by animateColorAsState(
+            targetValue = if (enabled) defaultButtonColors.containerColor else defaultButtonColors.disabledContainerColor,
+            animationSpec = tween(durationMillis = 300), // Adjust animation duration as needed
+            label = "iconButtonContainerColorAnimation"
+        )
+        val animatedContentColor by animateColorAsState(
+            targetValue = if (enabled) defaultButtonColors.contentColor else defaultButtonColors.disabledContentColor,
+            animationSpec = tween(durationMillis = 300), // Adjust animation duration as needed
+            label = "iconButtonContentColorAnimation"
+        )
+
+        copy(
+            containerColor = animatedContainerColor,
+            contentColor = animatedContentColor,
+            disabledContainerColor = animatedContainerColor,
+            disabledContentColor = animatedContentColor
+        )
+    }
+
+@Composable
+fun buttonColors(enabled: Boolean = true) =
+    ButtonDefaults.buttonColors().run {
+        val defaultButtonColors = ButtonDefaults.buttonColors()
+
+        val animatedContainerColor by animateColorAsState(
+            targetValue = if (enabled) defaultButtonColors.containerColor else defaultButtonColors.disabledContainerColor,
+            animationSpec = tween(durationMillis = 300), // Adjust animation duration as needed
+            label = "iconButtonContainerColorAnimation"
+        )
+        val animatedContentColor by animateColorAsState(
+            targetValue = if (enabled) defaultButtonColors.contentColor else defaultButtonColors.disabledContentColor,
+            animationSpec = tween(durationMillis = 300), // Adjust animation duration as needed
+            label = "iconButtonContentColorAnimation"
+        )
+
+        copy(
+            containerColor = animatedContainerColor,
+            contentColor = animatedContentColor,
+            disabledContainerColor = animatedContainerColor,
+            disabledContentColor = animatedContentColor
+        )
+    }
