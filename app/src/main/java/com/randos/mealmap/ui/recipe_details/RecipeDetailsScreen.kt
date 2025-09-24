@@ -1,7 +1,5 @@
 package com.randos.mealmap.ui.recipe_details
 
-import android.content.Context
-import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,19 +49,22 @@ import com.randos.domain.model.Recipe
 import com.randos.mealmap.ui.components.TileBackground
 import com.randos.mealmap.ui.theme.iconButtonColors
 import com.randos.mealmap.utils.Utils
+import com.randos.mealmap.utils.Utils.formatQuantity
+import com.randos.mealmap.utils.Utils.formatTime
+import com.randos.mealmap.utils.Utils.shareRecipe
 
 @Composable
 fun RecipeDetailsScreen(
     id: Long,
     onEdit: (id: Long) -> Unit,
-    onDelete: () -> Unit,
+    onDeleted: () -> Unit,
     viewModel: RecipeDetailsScreenViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.observeAsState()
     RecipeDetailsScreen(
         recipe = state.value?.recipe,
         onEdit = { onEdit(id) },
-        onDelete = { viewModel.deleteRecipe { onDelete() } })
+        onDelete = { viewModel.deleteRecipe { onDeleted() } })
     LaunchedEffect(Unit) {
         viewModel.getRecipeDetails(id)
     }
@@ -76,8 +77,6 @@ private fun RecipeDetailsScreen(
     onDelete: () -> Unit
 ) {
     if (recipe == null) return
-    var isDeleteDialogOpen by remember { mutableStateOf(false) }
-    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -86,46 +85,11 @@ private fun RecipeDetailsScreen(
             .verticalScroll(rememberScrollState())
     ) {
         Spacer(modifier = Modifier.height(16.dp))
-        Box(
-            modifier = Modifier
-                .height(250.dp)
-                .clip(shape = MaterialTheme.shapes.medium),
-            contentAlignment = Alignment.Center
-        ) {
-            if (recipe.imagePath != null) {
-                AsyncImage(
-                    model = recipe.imagePath,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-            } else {
-                Card {
-                    TileBackground(
-                        modifier = Modifier.padding(vertical = 4.dp),
-                        rows = 6,
-                    )
-                }
-            }
-            Column(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(4.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.25f),
-                        shape = CircleShape
-                    ),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                ActionButton(
-                    imageVector = Icons.Rounded.Delete,
-                    onClick = { isDeleteDialogOpen = true })
-                ActionButton(imageVector = Icons.Rounded.Edit, onClick = onEdit)
-                ActionButton(imageVector = Icons.Rounded.Share, onClick = {
-                    shareRecipe(context = context, recipe = recipe)
-                })
-            }
-        }
+        HeaderImageWithActionButtons(
+            recipe = recipe,
+            onEdit = onEdit,
+            onDelete = onDelete
+        )
         Text(
             modifier = Modifier.padding(top = 8.dp),
             text = recipe.title,
@@ -140,56 +104,116 @@ private fun RecipeDetailsScreen(
             )
         }
         SubHeading(text = "Ingredients")
-        recipe.ingredients.forEach {
-            Row(
-                modifier = Modifier.padding(top = 4.dp, start = 4.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    modifier = Modifier.weight(1f),
-                    text = it.ingredient.name,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.W400
-                )
-                Text(
-                    text = "${formatQuantity(it.quantity)} ${it.unit?.value ?: "unit"}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
+        RecipeIngredients(recipe)
         SubHeading(text = "Instructions")
-        recipe.instructions.forEachIndexed { index, instruction ->
-            Row(
-                modifier = Modifier.padding(top = 4.dp, start = 4.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Step ${index + 1}:",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.W500
-                )
-                Text(
-                    modifier = Modifier.padding(start = 4.dp),
-                    text = instruction,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.W400
-                )
-            }
-        }
+        RecipeInstructions(recipe)
         SubHeading(text = "Extra Details")
         RecipeExtraDetails(recipe = recipe)
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
 
-        if (isDeleteDialogOpen) {
-            DeleteConfirmationDialog(
-                onConfirm = {
-                    onDelete()
-                    isDeleteDialogOpen = false
-                },
-                onDismiss = { isDeleteDialogOpen = false }
+@Composable
+private fun RecipeInstructions(recipe: Recipe) {
+    recipe.instructions.forEachIndexed { index, instruction ->
+        Row(
+            modifier = Modifier.padding(top = 4.dp, start = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Step ${index + 1}:",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.W500
+            )
+            Text(
+                modifier = Modifier.padding(start = 4.dp),
+                text = instruction,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.W400
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+private fun RecipeIngredients(recipe: Recipe) {
+    recipe.ingredients.forEach {
+        Row(
+            modifier = Modifier.padding(top = 4.dp, start = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = it.ingredient.name,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.W400
+            )
+            Text(
+                text = "${formatQuantity(it.quantity)} ${it.unit?.value ?: "unit"}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
+fun HeaderImageWithActionButtons(
+    modifier: Modifier = Modifier,
+    recipe: Recipe,
+    onEdit: () -> Unit = {},
+    onDelete: () -> Unit = {}
+) {
+    val context = LocalContext.current
+    var isDeleteConfirmationDialogOpen by remember { mutableStateOf(false) }
+    Box(
+        modifier = modifier
+            .height(250.dp)
+            .clip(shape = MaterialTheme.shapes.medium),
+        contentAlignment = Alignment.Center
+    ) {
+        if (recipe.imagePath != null) {
+            AsyncImage(
+                model = recipe.imagePath,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            Card {
+                TileBackground(
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    rows = 6,
+                )
+            }
+        }
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(4.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.25f),
+                    shape = CircleShape
+                ),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            ActionButton(
+                imageVector = Icons.Rounded.Delete,
+                onClick = { isDeleteConfirmationDialogOpen = true })
+            ActionButton(imageVector = Icons.Rounded.Edit, onClick = onEdit)
+            ActionButton(imageVector = Icons.Rounded.Share, onClick = {
+                shareRecipe(context = context, recipe = recipe)
+            })
+        }
+    }
+    if (isDeleteConfirmationDialogOpen) {
+        DeleteConfirmationDialog(
+            onConfirm = {
+                onDelete()
+                isDeleteConfirmationDialogOpen = false
+            },
+            onDismiss = { isDeleteConfirmationDialogOpen = false }
+        )
     }
 }
 
@@ -305,113 +329,6 @@ private fun DeleteConfirmationDialog(
         }
     )
 }
-
-fun recipeToShareableText(recipe: Recipe): String {
-    val builder = StringBuilder()
-
-    // Title
-    builder.appendLine("🍽 ${recipe.title}")
-    builder.appendLine()
-
-    // Description (if present)
-    recipe.description?.let {
-        if (it.isNotBlank()) {
-            builder.appendLine(it.trim())
-            builder.appendLine()
-        }
-    }
-
-    // Metadata
-    recipe.prepTime?.let { builder.appendLine("⏱ Prep Time: ${formatTime(it)}") }
-    recipe.cookTime?.let { builder.appendLine("🍳 Cook Time: ${formatTime(it)}") }
-    recipe.servings?.let { builder.appendLine("👥 Servings: $it") }
-    recipe.tags?.let { builder.appendLine("🏷 Tag: $it") }
-    recipe.heaviness?.let { builder.appendLine("⚖️ Heaviness: $it") }
-    recipe.calories?.let { builder.appendLine("🔥 Calories: $it kcal") }
-    builder.appendLine()
-
-    // Ingredients
-    builder.appendLine("🛒 Ingredients:")
-    recipe.ingredients.forEach { ri ->
-        builder.appendLine("- ${formatQuantity(ri.quantity)} ${ri.unit?.value ?: "unit"} ${ri.ingredient.name}")
-    }
-    builder.appendLine()
-
-    // Instructions
-    builder.appendLine("👩‍🍳 Instructions:")
-    recipe.instructions.forEachIndexed { index, step ->
-        builder.appendLine("${index + 1}. $step")
-    }
-
-    return builder.toString().trim()
-}
-
-fun shareRecipe(context: Context, recipe: Recipe) {
-    val sendIntent = Intent(Intent.ACTION_SEND).apply {
-        type = "text/plain"
-        putExtra(Intent.EXTRA_TEXT, recipeToShareableText(recipe))
-        putExtra(Intent.EXTRA_SUBJECT, "Check out this recipe!")
-    }
-
-    val shareIntent = Intent.createChooser(sendIntent, "Share via")
-    context.startActivity(shareIntent)
-}
-
-fun formatTime(minutes: Int?): String {
-    if (minutes == null) return "--"
-    if (minutes <= 0) return "0 min"
-
-    val hours = minutes / 60
-    val mins = minutes % 60
-
-    return buildString {
-        if (hours > 0) {
-            append(hours)
-            append(" hr")
-            if (hours > 1) append("s") // plural
-        }
-        if (hours > 0 && mins > 0) append(" ")
-        if (mins > 0) {
-            append(mins)
-            append(" min")
-            if (mins > 1) append("s") // plural
-        }
-    }
-}
-
-private fun formatQuantity(quantity: Double): String {
-    // If it's basically an integer, show as integer
-    if (quantity % 1.0 == 0.0) {
-        return quantity.toInt().toString()
-    }
-
-    // Map common fractions
-    val fractions = mapOf(
-        0.25 to "¼",
-        0.33 to "⅓",
-        0.5 to "½",
-        0.66 to "⅔",
-        0.75 to "¾"
-    )
-
-    // Find closest match among fractions
-    val roundedFraction = fractions.minByOrNull { (value, _) ->
-        kotlin.math.abs(quantity % 1 - value)
-    }
-
-    if (roundedFraction != null && kotlin.math.abs(quantity % 1 - roundedFraction.key) < 0.05) {
-        val whole = quantity.toInt()
-        return if (whole > 0) {
-            "$whole${roundedFraction.value}"
-        } else {
-            roundedFraction.value
-        }
-    }
-
-    // Fallback: show up to 2 decimal places
-    return String.format("%.2f", quantity).trimEnd('0').trimEnd('.')
-}
-
 @Composable
 private fun ActionButton(
     modifier: Modifier = Modifier,

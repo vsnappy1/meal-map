@@ -1,8 +1,5 @@
 package com.randos.mealmap.ui.recipe_add
 
-import android.content.Context
-import android.net.Uri
-import android.os.Environment
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -45,7 +42,6 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.randos.domain.model.Ingredient
@@ -59,11 +55,8 @@ import com.randos.mealmap.ui.components.RecipeInstruction
 import com.randos.mealmap.ui.components.RecipePill
 import com.randos.mealmap.ui.theme.buttonColors
 import com.randos.mealmap.utils.Utils
-import kotlinx.coroutines.Dispatchers
+import com.randos.mealmap.utils.Utils.copyUriToAppStorage
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.FileOutputStream
 
 @Composable
 fun AddRecipeScreen(
@@ -462,29 +455,6 @@ private fun Header(title: String = "", onSave: () -> Unit, isEdit: Boolean) {
         }
     }
 }
-
-private suspend fun copyUriToAppStorage(context: Context, uri: Uri): Uri? =
-    withContext(Dispatchers.IO) {
-        return@withContext try {
-            val inputStream =
-                context.contentResolver.openInputStream(uri) ?: return@withContext null
-            val file = File(
-                context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                "meal_map_${System.currentTimeMillis()}.jpg"
-            )
-            FileOutputStream(file).use { output ->
-                inputStream.copyTo(output)
-            }
-            FileProvider.getUriForFile(
-                context,
-                "${context.packageName}.provider",
-                file
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
 
 @Preview(showSystemUi = true)
 @Composable

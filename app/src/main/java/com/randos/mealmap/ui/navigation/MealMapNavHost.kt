@@ -55,7 +55,7 @@ fun MealMapNavHost(navController: NavHostController) {
                 onEdit = { id ->
                     navController.navigate(ModifyRecipe(id))
                 },
-                onDelete = {
+                onDeleted = {
                     navController.popBackStack()
                 }
             )
