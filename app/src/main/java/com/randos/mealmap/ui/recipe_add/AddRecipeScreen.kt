@@ -1,6 +1,12 @@
 package com.randos.mealmap.ui.recipe_add
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -368,22 +374,31 @@ private fun RecipeIngredients(
 
             ) {
             ingredients.forEachIndexed { index, ingredient ->
-                RecipeIngredient(
-                    modifier = Modifier.padding(vertical = 4.dp),
-                    ingredient = ingredient,
-                    onUpdateName = { onUpdateIngredient(index, it) },
-                    editText = state.editIngredientText,
-                    onEditTextChanged = onEditTextChanged,
-                    isEditing = state.editIngredientIndex == index,
-                    onIsEditingChange = { onIsEditingChange(index, it) },
-                    onUpdateQuantity = { onUpdateQuantity(index, it) },
-                    onUpdateUnit = { onUpdateUnit(index, it) },
-                    onDelete = { onDeleteIngredient(ingredient.ingredient.copy(id = it)) },
-                    hintText = "Ingredient ${index + 1}",
-                    suggestions = suggestions,
-                    onSuggestionItemSelected = { onSuggestionItemSelected(index, it) },
-                    onDeleteSuggestion = onDeleteSuggestion
-                )
+                AnimatedContent(
+                    targetState = state.editIngredientIndex == index,
+                    label = "IngredientItemAnimation",
+                    contentAlignment = Alignment.TopCenter,
+                    transitionSpec = {
+                        scaleIn(initialScale = 0.95f) + fadeIn() togetherWith
+                                scaleOut(targetScale = 0.95f) + fadeOut()
+                    }) { isEditing ->
+                    RecipeIngredient(
+                        modifier = Modifier.padding(vertical = 4.dp),
+                        ingredient = ingredient,
+                        onUpdateName = { onUpdateIngredient(index, it) },
+                        editText = state.editIngredientText,
+                        onEditTextChanged = onEditTextChanged,
+                        isEditing = isEditing,
+                        onIsEditingChange = { onIsEditingChange(index, it) },
+                        onUpdateQuantity = { onUpdateQuantity(index, it) },
+                        onUpdateUnit = { onUpdateUnit(index, it) },
+                        onDelete = { onDeleteIngredient(ingredient.ingredient.copy(id = it)) },
+                        hintText = "Ingredient ${index + 1}",
+                        suggestions = suggestions,
+                        onSuggestionItemSelected = { onSuggestionItemSelected(index, it) },
+                        onDeleteSuggestion = onDeleteSuggestion
+                    )
+                }
                 HorizontalDivider(modifier = Modifier)
             }
             RecipeAddTextField(

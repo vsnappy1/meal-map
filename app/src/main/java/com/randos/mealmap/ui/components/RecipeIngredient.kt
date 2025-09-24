@@ -2,6 +2,7 @@ package com.randos.mealmap.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -47,88 +48,90 @@ fun RecipeIngredient(
     onSuggestionItemSelected: (Ingredient) -> Unit,
     onDeleteSuggestion: (Ingredient) -> Unit
 ) {
-    val focusManager = LocalFocusManager.current
-    val focusRequester = remember { FocusRequester() }
-    if (isEditing) {
-        var hadFocus by remember { mutableStateOf(false) }
-        RecipeAddTextField(
-            value = editText,
-            modifier = Modifier
-                .focusRequester(focusRequester)
-                .onFocusChanged { state ->
-                    // 🔹 Problem: onFocusChanged is always called at least once with isFocused = false
-                    // right after the TextField is composed. If we exit edit mode here, the user
-                    // never gets a chance to actually edit.
-                    //
-                    // 🔹 Solution: Only exit edit mode when focus was previously gained (hadFocus = true)
-                    // and is now lost (isFocused = false). This ensures we ignore the "initial false"
-                    // event that fires before requestFocus() succeeds.
+    Column {
+        val focusManager = LocalFocusManager.current
+        val focusRequester = remember { FocusRequester() }
+        if (isEditing) {
+            var hadFocus by remember { mutableStateOf(false) }
+            RecipeAddTextField(
+                value = editText,
+                modifier = Modifier
+                    .focusRequester(focusRequester)
+                    .onFocusChanged { state ->
+                        // 🔹 Problem: onFocusChanged is always called at least once with isFocused = false
+                        // right after the TextField is composed. If we exit edit mode here, the user
+                        // never gets a chance to actually edit.
+                        //
+                        // 🔹 Solution: Only exit edit mode when focus was previously gained (hadFocus = true)
+                        // and is now lost (isFocused = false). This ensures we ignore the "initial false"
+                        // event that fires before requestFocus() succeeds.
 
-                    if (hadFocus && !state.isFocused) {
-                        onIsEditingChange(false) // exit edit mode after user taps away
-                    }
+                        if (hadFocus && !state.isFocused) {
+                            onIsEditingChange(false) // exit edit mode after user taps away
+                        }
 
-                    // Keep track of current focus state for next comparison
-                    hadFocus = state.isFocused
+                        // Keep track of current focus state for next comparison
+                        hadFocus = state.isFocused
+                    },
+                onValueChange = onEditTextChanged,
+                onDoneClick = {
+                    onUpdateName(it)
+                    onIsEditingChange(false)
                 },
-            onValueChange = onEditTextChanged,
-            onDoneClick = {
-                onUpdateName(it)
-                onIsEditingChange(false)
-            },
-            isEditing = true,
-            hintText = hintText,
-            suggestions = suggestions,
-            onSuggestionItemSelected = onSuggestionItemSelected,
-            onDeleteSuggestion = onDeleteSuggestion
-        )
-        LaunchedEffect(Unit) {
-            focusRequester.requestFocus()
-        }
-        return
-    }
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            modifier = Modifier
-                .weight(1f)
-                .clickable {
-                    onIsEditingChange(true)
-                },
-            text = ingredient.ingredient.name,
-        )
-        RecipeQuantityTextField(
-            ingredient = ingredient,
-            onUpdateQuantity = onUpdateQuantity,
-            onKeyboardDone = {
-                focusManager.clearFocus()
-            }
-        )
-        RecipeUnitDropDown(
-            modifier = Modifier.width(60.dp),
-            onUnitChange = {
-                onUpdateUnit(it)
-            },
-            ingredientUnit = ingredient.unit
-        )
-        IconButton(
-            modifier = Modifier
-                .size(24.dp)
-                .padding(2.dp)
-                .align(Alignment.Top),
-            onClick = {
-                onDelete(ingredient.ingredient.id)
-                focusManager.clearFocus()
-            }
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.Delete,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.error
+                isEditing = true,
+                hintText = hintText,
+                suggestions = suggestions,
+                onSuggestionItemSelected = onSuggestionItemSelected,
+                onDeleteSuggestion = onDeleteSuggestion
             )
+            LaunchedEffect(Unit) {
+                focusRequester.requestFocus()
+            }
+            return
+        }
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable {
+                        onIsEditingChange(true)
+                    },
+                text = ingredient.ingredient.name,
+            )
+            RecipeQuantityTextField(
+                ingredient = ingredient,
+                onUpdateQuantity = onUpdateQuantity,
+                onKeyboardDone = {
+                    focusManager.clearFocus()
+                }
+            )
+            RecipeUnitDropDown(
+                modifier = Modifier.width(60.dp),
+                onUnitChange = {
+                    onUpdateUnit(it)
+                },
+                ingredientUnit = ingredient.unit
+            )
+            IconButton(
+                modifier = Modifier
+                    .size(24.dp)
+                    .padding(2.dp)
+                    .align(Alignment.Top),
+                onClick = {
+                    onDelete(ingredient.ingredient.id)
+                    focusManager.clearFocus()
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Delete,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
         }
     }
 }
