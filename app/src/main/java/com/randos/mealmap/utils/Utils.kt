@@ -120,6 +120,7 @@ object Utils {
 
         return builder.toString().trim()
     }
+
     fun shareRecipe(context: Context, recipe: Recipe) {
         val sendIntent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
@@ -130,6 +131,7 @@ object Utils {
         val shareIntent = Intent.createChooser(sendIntent, "Share via")
         context.startActivity(shareIntent)
     }
+
     fun formatTime(minutes: Int?): String {
         if (minutes == null) return "--"
         if (minutes <= 0) return "0 min"
@@ -151,6 +153,7 @@ object Utils {
             }
         }
     }
+
     fun formatQuantity(quantity: Double): String {
         // If it's basically an integer, show as integer
         if (quantity % 1.0 == 0.0) {
@@ -206,6 +209,4 @@ object Utils {
                 null
             }
         }
-
-
 }

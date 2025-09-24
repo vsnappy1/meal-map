@@ -4,8 +4,9 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,8 +31,6 @@ import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -114,22 +113,31 @@ private fun RecipesScreen(
             onAddNewRecipe = onAddNewRecipe,
             onSortOrderChange = onSortOrderChange
         )
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            item {
-                Spacer(modifier = Modifier.height(4.dp))
+        AnimatedContent(
+            targetState = state.recipes,
+            label = "SearchClearIcon",
+            transitionSpec = {
+                slideInVertically(initialOffsetY = { -it / 3 }) + fadeIn() togetherWith
+                        slideOutVertically(targetOffsetY = { it / 3 }) + fadeOut()
             }
-            state.recipes.forEach { recipe ->
+        ) { recipes ->
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 item {
-                    RecipeItem(
-                        recipe = recipe,
-                        onClick = onRecipeClick
-                    )
+                    Spacer(modifier = Modifier.height(4.dp))
                 }
-            }
-            item {
-                Spacer(modifier = Modifier.height(4.dp))
+                recipes.forEach { recipe ->
+                    item {
+                        RecipeItem(
+                            recipe = recipe,
+                            onClick = onRecipeClick
+                        )
+                    }
+                }
+                item {
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
             }
         }
     }
@@ -251,9 +259,9 @@ private fun <T> DropDownButton(
     modifier: Modifier = Modifier,
     text: String,
     items: List<T>,
-    displayValue: (T) -> String,
+    selectedItem: T? = null,
     onItemSelect: (T?) -> Unit,
-    selectedItem: T? = null
+    displayValue: (T) -> String
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     Button(
@@ -287,11 +295,11 @@ private fun <T> DropDownButton(
 
 @Composable
 private fun <T> DropdownMenu(
-    onDismissRequest: () -> Unit,
     items: List<T>,
     selectedItem: T?,
     onItemSelect: (T?) -> Unit,
-    displayValue: (T) -> String
+    displayValue: (T) -> String,
+    onDismissRequest: () -> Unit,
 ) {
     Popup(
         alignment = Alignment.TopCenter,
