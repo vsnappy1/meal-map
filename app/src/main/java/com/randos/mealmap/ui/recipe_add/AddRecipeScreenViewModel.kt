@@ -15,6 +15,7 @@ import com.randos.domain.type.RecipeHeaviness
 import com.randos.domain.type.RecipeTag
 import com.randos.mealmap.utils.Constants.RECIPE_COOKING_TIME_MAX_LENGTH
 import com.randos.mealmap.utils.Constants.RECIPE_DESCRIPTION_MAX_LENGTH
+import com.randos.mealmap.utils.Constants.RECIPE_ERROR_MESSAGE_SHOWN_DURATION
 import com.randos.mealmap.utils.Constants.RECIPE_INGREDIENTS_MAX_LENGTH
 import com.randos.mealmap.utils.Constants.RECIPE_INSTRUCTIONS_MAX_LENGTH
 import com.randos.mealmap.utils.Constants.RECIPE_PREPARATION_TIME_MAX_LENGTH
@@ -42,7 +43,7 @@ class AddRecipeScreenViewModel @Inject constructor(
             val id = recipeId
             if (id == null) return@launch
             val recipe = recipesRepository.getRecipe(id) ?: return@launch
-            _state.postValue(_state.value?.copy(recipe = recipe, isLoading = false))
+            _state.postValue(getState().copy(recipe = recipe, isLoading = false))
         }
     }
 
@@ -60,13 +61,13 @@ class AddRecipeScreenViewModel @Inject constructor(
 
     fun onIngredientTextChange(text: String) {
         if (text.length > RECIPE_INGREDIENTS_MAX_LENGTH) return
-        _state.postValue(_state.value?.copy(currentIngredientText = text))
+        _state.postValue(getState().copy(currentIngredientText = text))
         findSuggestion(text)
     }
 
-    fun onIngredientEditTextChanged(value: String) {
+    fun onIngredientEditTextChange(value: String) {
         if (value.length > RECIPE_INGREDIENTS_MAX_LENGTH) return
-        _state.postValue(_state.value?.copy(editIngredientText = value))
+        _state.postValue(getState().copy(editIngredientText = value))
         findSuggestion(value)
     }
 
@@ -76,7 +77,7 @@ class AddRecipeScreenViewModel @Inject constructor(
         viewModelScope.launch {
             if (!value) delay(50)
             _state.postValue(
-                _state.value?.copy(
+                getState().copy(
                     editIngredientIndex = newIndex,
                     editIngredientText = ingredient
                 )
@@ -93,7 +94,7 @@ class AddRecipeScreenViewModel @Inject constructor(
                 RecipeIngredient(ingredient = addedIngredient, quantity = 1.0, unit = null)
             val ingredients = getRecipe().ingredients + recipeIngredient
             _state.postValue(
-                _state.value?.copy(
+                getState().copy(
                     recipe = getRecipe().copy(ingredients = ingredients),
                     currentIngredientText = "",
                     ingredientSuggestions = listOf(),
@@ -115,12 +116,10 @@ class AddRecipeScreenViewModel @Inject constructor(
         }
     }
 
-    fun onIngredientDelete(ingredient: Ingredient) {
-        viewModelScope.launch {
-            val ingredients =
-                getRecipe().ingredients.filter { recipeIngredient -> recipeIngredient.ingredient.id != ingredient.id }
-            onIngredientsChange(ingredients)
-        }
+    fun onIngredientDelete(index: Int) {
+        val ingredients = getRecipe().ingredients.toMutableList()
+        ingredients.removeAt(index)
+        onIngredientsChange(ingredients)
     }
 
     fun onIngredientUpdateQuantity(index: Int, quantity: Double) {
@@ -137,12 +136,12 @@ class AddRecipeScreenViewModel @Inject constructor(
 
     fun onInstructionTextChange(value: String) {
         if (value.length > RECIPE_INSTRUCTIONS_MAX_LENGTH) return
-        _state.postValue(_state.value?.copy(currentInstructionText = value))
+        _state.postValue(getState().copy(currentInstructionText = value))
     }
 
-    fun onInstructionEditTextChanged(value: String) {
+    fun onInstructionEditTextChange(value: String) {
         if (value.length > RECIPE_INSTRUCTIONS_MAX_LENGTH) return
-        _state.postValue(_state.value?.copy(editInstructionText = value))
+        _state.postValue(getState().copy(editInstructionText = value))
     }
 
     fun onInstructionIsEditingChange(index: Int, value: Boolean) {
@@ -151,7 +150,7 @@ class AddRecipeScreenViewModel @Inject constructor(
         viewModelScope.launch {
             if (!value) delay(50)
             _state.postValue(
-                _state.value?.copy(
+                getState().copy(
                     editInstructionIndex = newIndex,
                     editInstructionText = instruction
                 )
@@ -162,7 +161,7 @@ class AddRecipeScreenViewModel @Inject constructor(
     fun onInstructionAdd(value: String) {
         val instructions = getRecipe().instructions + value
         _state.postValue(
-            _state.value?.copy(
+            getState().copy(
                 recipe = getRecipe().copy(instructions = instructions),
                 currentInstructionText = ""
             )
@@ -182,55 +181,55 @@ class AddRecipeScreenViewModel @Inject constructor(
     }
 
     fun onImagePathChange(imagePath: String) {
-        _state.postValue(_state.value?.copy(recipe = getRecipe().copy(imagePath = imagePath)))
+        _state.postValue(getState().copy(recipe = getRecipe().copy(imagePath = imagePath)))
     }
 
     fun onTitleChange(title: String) {
         if (title.length > RECIPE_TITLE_MAX_LENGTH) return
-        _state.postValue(_state.value?.copy(recipe = getRecipe().copy(title = title)))
+        _state.postValue(getState().copy(recipe = getRecipe().copy(title = title)))
     }
 
     fun onDescriptionChange(description: String) {
         if (description.length > RECIPE_DESCRIPTION_MAX_LENGTH) return
-        _state.postValue(_state.value?.copy(recipe = getRecipe().copy(description = description)))
+        _state.postValue(getState().copy(recipe = getRecipe().copy(description = description)))
     }
 
     fun onIngredientsChange(ingredients: List<RecipeIngredient>) {
-        _state.postValue(_state.value?.copy(recipe = getRecipe().copy(ingredients = ingredients)))
+        _state.postValue(getState().copy(recipe = getRecipe().copy(ingredients = ingredients)))
     }
 
     fun onInstructionsChange(instructions: List<String>) {
-        _state.postValue(_state.value?.copy(recipe = getRecipe().copy(instructions = instructions)))
+        _state.postValue(getState().copy(recipe = getRecipe().copy(instructions = instructions)))
     }
 
     fun onPrepTimeChange(prepTime: String) {
         if (prepTime.length > RECIPE_PREPARATION_TIME_MAX_LENGTH) return
-        _state.postValue(_state.value?.copy(recipe = getRecipe().copy(prepTime = prepTime.toIntOrNull())))
+        _state.postValue(getState().copy(recipe = getRecipe().copy(prepTime = prepTime.toIntOrNull())))
     }
 
     fun onCookTimeChange(cookTime: String) {
         if (cookTime.length > RECIPE_COOKING_TIME_MAX_LENGTH) return
-        _state.postValue(_state.value?.copy(recipe = getRecipe().copy(cookTime = cookTime.toIntOrNull())))
+        _state.postValue(getState().copy(recipe = getRecipe().copy(cookTime = cookTime.toIntOrNull())))
     }
 
     fun onServingsChange(servings: Int) {
-        _state.postValue(_state.value?.copy(recipe = getRecipe().copy(servings = servings)))
+        _state.postValue(getState().copy(recipe = getRecipe().copy(servings = servings)))
     }
 
     fun onTagClick(tag: RecipeTag) {
         val tags = getRecipe().tags.toMutableList()
         if (tags.contains(tag)) tags.remove(tag)
         else tags.add(tag)
-        _state.postValue(_state.value?.copy(recipe = getRecipe().copy(tags = tags)))
+        _state.postValue(getState().copy(recipe = getRecipe().copy(tags = tags)))
     }
 
     fun onHeavinessChange(heaviness: RecipeHeaviness) {
-        _state.postValue(_state.value?.copy(recipe = getRecipe().copy(heaviness = heaviness)))
+        _state.postValue(getState().copy(recipe = getRecipe().copy(heaviness = heaviness)))
     }
 
     fun onCaloriesChange(calories: String) {
         if (calories.length > RECIPE_TOTAL_CALORIES_MAX_LENGTH) return
-        _state.postValue(_state.value?.copy(recipe = getRecipe().copy(calories = calories.toIntOrNull())))
+        _state.postValue(getState().copy(recipe = getRecipe().copy(calories = calories.toIntOrNull())))
     }
 
     fun onSuggestionItemSelected(index: Int, ingredient: Ingredient) {
@@ -244,7 +243,7 @@ class AddRecipeScreenViewModel @Inject constructor(
                 ingredients[index] = ingredients[index].copy(ingredient = ingredient)
             }
             _state.postValue(
-                _state.value?.copy(
+                getState().copy(
                     recipe = getRecipe().copy(ingredients = ingredients),
                     ingredientSuggestions = listOf(),
                     currentIngredientText = "",
@@ -261,22 +260,22 @@ class AddRecipeScreenViewModel @Inject constructor(
                 isIngredientAlreadyExistInIngredients(ingredient)
             ) {
                 _state.postValue(
-                    _state.value?.copy(
+                    getState().copy(
                         errorMessage = "Cannot delete: This ingredient is part of one or more recipes."
                     )
                 )
-                delay(1000)
+                delay(RECIPE_ERROR_MESSAGE_SHOWN_DURATION)
                 _state.postValue(
-                    _state.value?.copy(
+                    getState().copy(
                         errorMessage = null
                     )
                 )
                 return@launch
             }
             ingredientsRepository.deleteIngredient(ingredient)
-            val suggestions = _state.value?.ingredientSuggestions?.toMutableList()
-            suggestions?.remove(ingredient)
-            _state.postValue(_state.value?.copy(ingredientSuggestions = suggestions.orEmpty()))
+            val suggestions = getState().ingredientSuggestions.toMutableList()
+            suggestions.remove(ingredient)
+            _state.postValue(getState().copy(ingredientSuggestions = suggestions))
         }
     }
 
@@ -284,17 +283,21 @@ class AddRecipeScreenViewModel @Inject constructor(
         return _state.value!!.recipe
     }
 
+    private fun getState(): AddRecipeScreenState {
+        return _state.value!!
+    }
+
     private suspend fun doesIngredientAlreadyExistInIngredients(ingredient: Ingredient): Boolean {
         if (isIngredientAlreadyExistInIngredients(ingredient)) {
             _state.postValue(
-                _state.value?.copy(
+                getState().copy(
                     currentIngredientText = "",
                     errorMessage = "Duplicate ingredient: This ingredient is already part of the current recipe."
                 )
             )
-            delay(1000)
+            delay(RECIPE_ERROR_MESSAGE_SHOWN_DURATION)
             _state.postValue(
-                _state.value?.copy(
+                getState().copy(
                     errorMessage = null
                 )
             )
@@ -310,11 +313,11 @@ class AddRecipeScreenViewModel @Inject constructor(
         viewModelScope.launch {
             delay(50)
             if (text.isBlank()) {
-                _state.postValue(_state.value?.copy(ingredientSuggestions = listOf()))
+                _state.postValue(getState().copy(ingredientSuggestions = listOf()))
                 return@launch
             }
             val suggestions = ingredientsRepository.getIngredientsLike(text)
-            _state.postValue(_state.value?.copy(ingredientSuggestions = suggestions))
+            _state.postValue(getState().copy(ingredientSuggestions = suggestions))
         }
     }
 }
