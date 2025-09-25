@@ -279,13 +279,9 @@ class AddRecipeScreenViewModel @Inject constructor(
         }
     }
 
-    private fun getRecipe(): Recipe {
-        return _state.value!!.recipe
-    }
+    private fun getState() = _state.value ?: AddRecipeScreenState()
 
-    private fun getState(): AddRecipeScreenState {
-        return _state.value!!
-    }
+    private fun getRecipe(): Recipe = getState().recipe
 
     private suspend fun doesIngredientAlreadyExistInIngredients(ingredient: Ingredient): Boolean {
         if (isIngredientAlreadyExistInIngredients(ingredient)) {

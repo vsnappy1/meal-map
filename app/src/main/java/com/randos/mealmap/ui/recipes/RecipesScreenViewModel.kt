@@ -26,34 +26,34 @@ class RecipesScreenViewModel @Inject constructor(
     fun getRecipes() {
         viewModelScope.launch {
             recipes = recipeRepository.getRecipes()
-            applyFiltersAndSort()
+            _state.postValue( getState().copy(recipes = recipes))
         }
     }
 
     fun onSearchTextChange(text: String) {
-        _state.postValue(_state.value?.copy(searchText = text))
+        _state.postValue( getState().copy(searchText = text))
         applyFiltersAndSort()
     }
 
     fun onFilterChange(filter: RecipeTag?) {
-        _state.postValue(_state.value?.copy(filter = filter))
+        _state.postValue(getState().copy(filter = filter))
         applyFiltersAndSort()
     }
 
     fun onSortChange(sort: RecipesSort?) {
-        _state.postValue(_state.value?.copy(sort = sort))
+        _state.postValue( getState().copy(sort = sort))
         applyFiltersAndSort()
     }
 
     fun onSortOrderChange(sortOrder: SortOrder) {
-        _state.postValue(_state.value?.copy(sortOrder = sortOrder))
+        _state.postValue( getState().copy(sortOrder = sortOrder))
         applyFiltersAndSort()
     }
 
     private fun applyFiltersAndSort() {
         viewModelScope.launch {
             delay(50)
-            val currentState = _state.value ?: return@launch
+            val currentState = getState()
             var result = recipes
 
             if (currentState.searchText.isNotBlank()) {
@@ -82,4 +82,6 @@ class RecipesScreenViewModel @Inject constructor(
             _state.postValue(currentState.copy(recipes = result))
         }
     }
+
+    private fun getState() = _state.value ?: RecipesScreenState()
 }
