@@ -23,8 +23,8 @@ internal interface IngredientDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(ingredient: Ingredient): Long
 
-    @Insert
-    suspend fun insertAll(vararg ingredient: Ingredient)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAll(vararg ingredient: Ingredient): List<Long>
 
     @Update
     suspend fun update(ingredient: Ingredient)

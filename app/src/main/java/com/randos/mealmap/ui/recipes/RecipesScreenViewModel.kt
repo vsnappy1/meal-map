@@ -25,6 +25,10 @@ class RecipesScreenViewModel @Inject constructor(
 
     fun getRecipes() {
         viewModelScope.launch {
+            // TODO remove this when releasing app to production, this is only for demo purposes
+            if(recipeRepository.isEmpty()){
+                recipeRepository.populateSampleRecipes()
+            }
             recipes = recipeRepository.getRecipes()
             _state.postValue( getState().copy(recipes = recipes))
         }

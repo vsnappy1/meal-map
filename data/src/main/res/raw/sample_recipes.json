@@ -1,0 +1,340 @@
+[
+  {
+    "id": 1,
+    "title": "Spaghetti Bolognese",
+    "description": "Classic Italian pasta with a rich meat sauce.",
+    "imagePath": null,
+    "instructions": [
+      "Boil spaghetti until al dente.",
+      "Cook minced beef with onion and garlic.",
+      "Add tomatoes, simmer with herbs.",
+      "Mix with pasta and serve."
+    ],
+    "ingredients": [
+      { "ingredient": { "id": 1, "name": "Spaghetti" }, "quantity": 200, "unit": "gm" },
+      { "ingredient": { "id": 2, "name": "Ground Beef" }, "quantity": 300, "unit": "gm" },
+      { "ingredient": { "id": 3, "name": "Onion" }, "quantity": 1, "unit": null },
+      { "ingredient": { "id": 4, "name": "Garlic" }, "quantity": 2, "unit": "clove" },
+      { "ingredient": { "id": 5, "name": "Tomato" }, "quantity": 2, "unit": null }
+    ],
+    "prepTime": 15,
+    "cookTime": 45,
+    "servings": 4,
+    "tag": "Dinner",
+    "calories": 600,
+    "heaviness": "Heavy",
+    "dateCreated": "2025-09-18T10:00:00Z"
+  },
+  {
+    "id": 2,
+    "title": "Chicken Curry",
+    "description": "Spicy and flavorful Indian-style chicken curry.",
+    "imagePath": null,
+    "instructions": [
+      "Marinate chicken with spices.",
+      "Cook onion, garlic, and ginger.",
+      "Add tomatoes and chicken, simmer.",
+      "Serve with rice or naan."
+    ],
+    "ingredients": [
+      { "ingredient": { "id": 6, "name": "Chicken" }, "quantity": 500, "unit": "gm" },
+      { "ingredient": { "id": 3, "name": "Onion" }, "quantity": 1, "unit": null },
+      { "ingredient": { "id": 4, "name": "Garlic" }, "quantity": 3, "unit": "clove" },
+      { "ingredient": { "id": 7, "name": "Ginger" }, "quantity": 1, "unit": "tsp" },
+      { "ingredient": { "id": 5, "name": "Tomato" }, "quantity": 2, "unit": null }
+    ],
+    "prepTime": 20,
+    "cookTime": 40,
+    "servings": 4,
+    "tag": "Dinner",
+    "calories": 550,
+    "heaviness": "Medium",
+    "dateCreated": "2025-09-18T10:05:00Z"
+  },
+  {
+    "id": 3,
+    "title": "Vegetable Stir Fry",
+    "description": "Quick and healthy stir-fried vegetables.",
+    "imagePath": null,
+    "instructions": [
+      "Chop vegetables.",
+      "Heat oil and sauté garlic.",
+      "Add vegetables, stir fry with soy sauce.",
+      "Serve with rice or noodles."
+    ],
+    "ingredients": [
+      { "ingredient": { "id": 8, "name": "Broccoli" }, "quantity": 150, "unit": "gm" },
+      { "ingredient": { "id": 9, "name": "Carrot" }, "quantity": 2, "unit": null },
+      { "ingredient": { "id": 10, "name": "Bell Pepper" }, "quantity": 1, "unit": null },
+      { "ingredient": { "id": 4, "name": "Garlic" }, "quantity": 2, "unit": "clove" },
+      { "ingredient": { "id": 11, "name": "Soy Sauce" }, "quantity": 2, "unit": "tbsp" }
+    ],
+    "prepTime": 10,
+    "cookTime": 10,
+    "servings": 2,
+    "tag": "Lunch",
+    "calories": 250,
+    "heaviness": "Light",
+    "dateCreated": "2025-09-18T10:10:00Z"
+  },
+  {
+    "id": 4,
+    "title": "Pancakes",
+    "description": "Fluffy breakfast pancakes.",
+    "imagePath": null,
+    "instructions": [
+      "Mix flour, eggs, and milk.",
+      "Pour batter on a hot pan.",
+      "Flip until golden brown.",
+      "Serve with syrup."
+    ],
+    "ingredients": [
+      { "ingredient": { "id": 12, "name": "Flour" }, "quantity": 200, "unit": "gm" },
+      { "ingredient": { "id": 13, "name": "Egg" }, "quantity": 2, "unit": null },
+      { "ingredient": { "id": 14, "name": "Milk" }, "quantity": 250, "unit": "ml" }
+    ],
+    "prepTime": 10,
+    "cookTime": 15,
+    "servings": 4,
+    "tag": "Breakfast",
+    "calories": 350,
+    "heaviness": "Medium",
+    "dateCreated": "2025-09-18T10:15:00Z"
+  },
+  {
+    "id": 5,
+    "title": "Caesar Salad",
+    "description": "Fresh salad with Caesar dressing.",
+    "imagePath": null,
+    "instructions": [
+      "Chop lettuce.",
+      "Add croutons and Parmesan.",
+      "Mix with Caesar dressing."
+    ],
+    "ingredients": [
+      { "ingredient": { "id": 15, "name": "Lettuce" }, "quantity": 1, "unit": "head" },
+      { "ingredient": { "id": 16, "name": "Croutons" }, "quantity": 50, "unit": "gm" },
+      { "ingredient": { "id": 17, "name": "Parmesan" }, "quantity": 30, "unit": "gm" }
+    ],
+    "prepTime": 10,
+    "cookTime": 0,
+    "servings": 2,
+    "tag": "Lunch",
+    "calories": 200,
+    "heaviness": "Light",
+    "dateCreated": "2025-09-18T10:20:00Z"
+  },
+  {
+    "id": 6,
+    "title": "Tomato Soup",
+    "description": "Creamy and comforting tomato soup.",
+    "imagePath": null,
+    "instructions": [
+      "Cook onions and garlic.",
+      "Add tomatoes and simmer.",
+      "Blend until smooth.",
+      "Serve hot."
+    ],
+    "ingredients": [
+      { "ingredient": { "id": 3, "name": "Onion" }, "quantity": 1, "unit": null },
+      { "ingredient": { "id": 4, "name": "Garlic" }, "quantity": 2, "unit": "clove" },
+      { "ingredient": { "id": 5, "name": "Tomato" }, "quantity": 4, "unit": null }
+    ],
+    "prepTime": 10,
+    "cookTime": 20,
+    "servings": 3,
+    "tag": "Starter",
+    "calories": 150,
+    "heaviness": "Light",
+    "dateCreated": "2025-09-18T10:25:00Z"
+  },
+  {
+    "id": 7,
+    "title": "Grilled Cheese Sandwich",
+    "description": "Crispy bread with melted cheese.",
+    "imagePath": null,
+    "instructions": [
+      "Butter bread slices.",
+      "Add cheese between slices.",
+      "Grill until golden."
+    ],
+    "ingredients": [
+      { "ingredient": { "id": 18, "name": "Bread" }, "quantity": 2, "unit": "slice" },
+      { "ingredient": { "id": 19, "name": "Cheddar Cheese" }, "quantity": 2, "unit": "slice" },
+      { "ingredient": { "id": 20, "name": "Butter" }, "quantity": 1, "unit": "tbsp" }
+    ],
+    "prepTime": 5,
+    "cookTime": 5,
+    "servings": 1,
+    "tag": "Snack",
+    "calories": 300,
+    "heaviness": "Medium",
+    "dateCreated": "2025-09-18T10:30:00Z"
+  },
+  {
+    "id": 8,
+    "title": "Beef Burger",
+    "description": "Juicy burger with cheese and lettuce.",
+    "imagePath": null,
+    "instructions": [
+      "Form beef patties.",
+      "Grill until cooked.",
+      "Assemble with bun, cheese, and lettuce."
+    ],
+    "ingredients": [
+      { "ingredient": { "id": 2, "name": "Ground Beef" }, "quantity": 200, "unit": "gm" },
+      { "ingredient": { "id": 18, "name": "Bread" }, "quantity": 1, "unit": "bun" },
+      { "ingredient": { "id": 19, "name": "Cheddar Cheese" }, "quantity": 1, "unit": "slice" },
+      { "ingredient": { "id": 15, "name": "Lettuce" }, "quantity": 1, "unit": "leaf" }
+    ],
+    "prepTime": 15,
+    "cookTime": 15,
+    "servings": 1,
+    "tag": "Dinner",
+    "calories": 500,
+    "heaviness": "Heavy",
+    "dateCreated": "2025-09-18T10:35:00Z"
+  },
+  {
+    "id": 9,
+    "title": "Scrambled Eggs",
+    "description": "Simple fluffy scrambled eggs.",
+    "imagePath": null,
+    "instructions": [
+      "Beat eggs with milk.",
+      "Cook on low heat while stirring.",
+      "Serve with toast."
+    ],
+    "ingredients": [
+      { "ingredient": { "id": 13, "name": "Egg" }, "quantity": 3, "unit": null },
+      { "ingredient": { "id": 14, "name": "Milk" }, "quantity": 50, "unit": "ml" },
+      { "ingredient": { "id": 20, "name": "Butter" }, "quantity": 1, "unit": "tbsp" }
+    ],
+    "prepTime": 5,
+    "cookTime": 5,
+    "servings": 1,
+    "tag": "Breakfast",
+    "calories": 200,
+    "heaviness": "Light",
+    "dateCreated": "2025-09-18T10:40:00Z"
+  },
+  {
+    "id": 10,
+    "title": "Fish Tacos",
+    "description": "Fresh tacos with fried fish and salsa.",
+    "imagePath": null,
+    "instructions": [
+      "Fry fish fillets.",
+      "Prepare tortillas.",
+      "Assemble with salsa and lettuce."
+    ],
+    "ingredients": [
+      { "ingredient": { "id": 21, "name": "Fish Fillet" }, "quantity": 2, "unit": null },
+      { "ingredient": { "id": 22, "name": "Tortilla" }, "quantity": 2, "unit": null },
+      { "ingredient": { "id": 15, "name": "Lettuce" }, "quantity": 1, "unit": "leaf" },
+      { "ingredient": { "id": 5, "name": "Tomato" }, "quantity": 1, "unit": null }
+    ],
+    "prepTime": 15,
+    "cookTime": 15,
+    "servings": 2,
+    "tag": "Dinner",
+    "calories": 450,
+    "heaviness": "Medium",
+    "dateCreated": "2025-09-18T10:45:00Z"
+  },
+  {
+    "id": 11,
+    "title": "Omelette",
+    "description": "Egg omelette with vegetables.",
+    "imagePath": null,
+    "instructions": [
+      "Beat eggs with salt and pepper.",
+      "Cook in butter with vegetables.",
+      "Fold and serve."
+    ],
+    "ingredients": [
+      { "ingredient": { "id": 13, "name": "Egg" }, "quantity": 2, "unit": null },
+      { "ingredient": { "id": 9, "name": "Carrot" }, "quantity": 0.5, "unit": null },
+      { "ingredient": { "id": 10, "name": "Bell Pepper" }, "quantity": 0.5, "unit": null },
+      { "ingredient": { "id": 20, "name": "Butter" }, "quantity": 1, "unit": "tsp" }
+    ],
+    "prepTime": 5,
+    "cookTime": 10,
+    "servings": 1,
+    "tag": "Breakfast",
+    "calories": 180,
+    "heaviness": "Light",
+    "dateCreated": "2025-09-18T10:50:00Z"
+  },
+  {
+    "id": 12,
+    "title": "Pizza Margherita",
+    "description": "Classic Italian pizza with tomato and mozzarella.",
+    "imagePath": null,
+    "instructions": [
+      "Prepare pizza dough.",
+      "Spread tomato sauce.",
+      "Add mozzarella and basil.",
+      "Bake until golden."
+    ],
+    "ingredients": [
+      { "ingredient": { "id": 12, "name": "Flour" }, "quantity": 300, "unit": "gm" },
+      { "ingredient": { "id": 23, "name": "Mozzarella" }, "quantity": 100, "unit": "gm" },
+      { "ingredient": { "id": 5, "name": "Tomato" }, "quantity": 2, "unit": null },
+      { "ingredient": { "id": 24, "name": "Basil" }, "quantity": 5, "unit": "leave" }
+    ],
+    "prepTime": 30,
+    "cookTime": 20,
+    "servings": 2,
+    "tag": "Dinner",
+    "calories": 700,
+    "heaviness": "Heavy",
+    "dateCreated": "2025-09-18T10:55:00Z"
+  },
+  {
+    "id": 13,
+    "title": "Smoothie",
+    "description": "Refreshing fruit smoothie.",
+    "imagePath": null,
+    "instructions": [
+      "Blend banana, milk, and honey.",
+      "Serve chilled."
+    ],
+    "ingredients": [
+      { "ingredient": { "id": 25, "name": "Banana" }, "quantity": 1, "unit": null },
+      { "ingredient": { "id": 14, "name": "Milk" }, "quantity": 200, "unit": "ml" },
+      { "ingredient": { "id": 26, "name": "Honey" }, "quantity": 1, "unit": "tbsp" }
+    ],
+    "prepTime": 5,
+    "cookTime": 0,
+    "servings": 1,
+    "tag": "Beverage",
+    "calories": 180,
+    "heaviness": "Light",
+    "dateCreated": "2025-09-18T11:00:00Z"
+  },
+  {
+    "id": 14,
+    "title": "Fried Rice",
+    "description": "Quick fried rice with vegetables.",
+    "imagePath": null,
+    "instructions": [
+      "Cook rice.",
+      "Stir fry with vegetables and soy sauce.",
+      "Serve hot."
+    ],
+    "ingredients": [
+      { "ingredient": { "id": 27, "name": "Rice" }, "quantity": 200, "unit": "gm" },
+      { "ingredient": { "id": 9, "name": "Carrot" }, "quantity": 1, "unit": null },
+      { "ingredient": { "id": 10, "name": "Bell Pepper" }, "quantity": 1, "unit": null },
+      { "ingredient": { "id": 11, "name": "Soy Sauce" }, "quantity": 2, "unit": "tbsp" }
+    ],
+    "prepTime": 10,
+    "cookTime": 15,
+    "servings": 2,
+    "tag": "Lunch",
+    "calories": 400,
+    "heaviness": "Medium",
+    "dateCreated": "2025-09-18T11:05:00Z"
+  }
+]

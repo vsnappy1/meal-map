@@ -9,4 +9,9 @@ enum class IngredientUnit(val value: String) {
     PIECE("piece"),
     ML("ml"),
     LITER("l"),
+    CLOVE("clove"),
+    HEAD("head"),
+    SLICE("slice"),
+    BUN("bun"),
+    LEAF("leaf")
 }

@@ -14,7 +14,7 @@ import com.randos.mealmap.ui.recipes.RecipesScreen
 import com.randos.mealmap.ui.settings.SettingsScreen
 import com.randos.mealmap.ui.navigation.Destination.*
 
-val startDestination = Recipes
+val startDestination = Home
 
 @Composable
 fun MealMapNavHost(navController: NavHostController) {

@@ -16,4 +16,9 @@ internal object AndroidModule {
     fun provideSharedPreferences(application: Application): SharedPreferences {
         return application.getSharedPreferences("meal_map", Context.MODE_PRIVATE)
     }
+
+    @Provides
+    fun provideContext(application: Application): Context {
+        return application.applicationContext
+    }
 }

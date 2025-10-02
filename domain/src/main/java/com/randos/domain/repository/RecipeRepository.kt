@@ -8,4 +8,8 @@ interface RecipeRepository {
     suspend fun addRecipe(recipe: Recipe)
     suspend fun deleteRecipe(recipe: Recipe)
     suspend fun updateRecipe(recipe: Recipe)
+    suspend fun isEmpty(): Boolean
+    suspend fun batchInsert(list: List<Recipe>)
+
+    suspend fun populateSampleRecipes()
 }

@@ -30,4 +30,7 @@ internal interface RecipeDao {
 
     @Delete
     suspend fun delete(recipe: Recipe)
+
+    @Query("SELECT COUNT(*) FROM Recipe")
+    fun getRecipeCount(): Int
 }
