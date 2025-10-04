@@ -12,7 +12,6 @@ import com.randos.domain.repository.RecipeRepository
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
 import java.time.LocalDate
 
 internal class MealRepositoryImpl @Inject constructor(

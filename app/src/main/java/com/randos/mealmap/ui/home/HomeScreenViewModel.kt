@@ -1,6 +1,5 @@
 package com.randos.mealmap.ui.home
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.randos.domain.manager.SettingsManager
 import com.randos.domain.model.Meal
 import com.randos.domain.model.Recipe
-import com.randos.domain.repository.MealPlanRepository
 import com.randos.domain.repository.MealRepository
 import com.randos.domain.repository.RecipeRepository
 import com.randos.domain.type.Day
@@ -23,7 +21,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    private val mealPlanRepository: MealPlanRepository,
     private val mealRepository: MealRepository,
     private val recipeRepository: RecipeRepository,
     private val settingsManager: SettingsManager

@@ -14,7 +14,6 @@ import com.randos.domain.type.MealType
 import com.randos.domain.type.RecipeHeaviness
 import com.randos.domain.type.RecipeTag
 import java.time.LocalDate
-import java.util.Date
 
 internal object Utils {
     fun getMealMapDatabase(): MealMapDatabase {
