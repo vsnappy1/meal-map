@@ -55,6 +55,10 @@ internal class RecipeRepositoryImpl @Inject constructor(
         return recipeDao.get(id)?.toDomain(recipeIngredients)
     }
 
+    override suspend fun getSimpleRecipe(id: Long): Recipe? {
+        return recipeDao.get(id)?.toDomain(listOf())
+    }
+
     override suspend fun addRecipe(recipe: Recipe) {
         val recipeId = recipeDao.insert(recipe.toEntity())
         val recipeIngredients = recipe.ingredients.map { it.toEntity(recipeId, it.ingredient.id) }

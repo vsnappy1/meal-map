@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.randos.data.database.entity.Meal
+import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
 @Dao
@@ -24,7 +25,7 @@ internal interface MealDao {
     fun getByDate(date: LocalDate): List<Meal>
 
     @Query("SELECT * FROM Meal WHERE date BETWEEN :from AND :to")
-    suspend fun getByDateRange(from: LocalDate, to: LocalDate): List<Meal>
+    fun getByDateRange(from: LocalDate, to: LocalDate): Flow<List<Meal>>
 
     @Insert
     suspend fun insert(meal: Meal): Long

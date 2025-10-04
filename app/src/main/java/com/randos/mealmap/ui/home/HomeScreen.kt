@@ -323,6 +323,7 @@ private fun MealRow(
         }
         recipes.forEach { recipe ->
             Row(
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -343,6 +344,7 @@ private fun MealRow(
                 )
             }
         }
+        if (recipes.isNotEmpty()) Spacer(modifier = Modifier.height(6.dp))
     }
 }
 

@@ -1,5 +1,6 @@
 package com.randos.mealmap.ui.home
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -35,14 +36,13 @@ class HomeScreenViewModel @Inject constructor(
         viewModelScope.launch {
             settingsManager.setFirstDayOfTheWeek(Day.MONDAY)
             val (dateFrom, dateTo) = getWeekRange(getState().selectedWeek)
-            val mealMap = getTheMealMap(dateFrom, dateTo)
             _state.postValue(
                 getState().copy(
                     dateFrom = dateFrom,
                     dateTo = dateTo,
-                    mealMap = mealMap
                 )
             )
+            observesMealsForWeek(dateFrom, dateTo)
         }
     }
 
@@ -60,7 +60,6 @@ class HomeScreenViewModel @Inject constructor(
                     selectedWeek = week,
                     dateFrom = dateFrom,
                     dateTo = dateTo,
-                    mealMap = getTheMealMap(dateFrom, dateTo)
                 )
             )
         }
@@ -79,9 +78,13 @@ class HomeScreenViewModel @Inject constructor(
     fun onAddMeal(recipe: Recipe, mealType: MealType, date: LocalDate) {
         viewModelScope.launch {
             val meal = getState().mealMap[date]?.find { it.type == mealType }
-            val updatedMeal = meal?.copy(recipes = meal.recipes + recipe)
-            updatedMeal?.let {
-                mealRepository.addMeal(it)
+                ?: Meal(recipes = listOf(recipe), date = date, type = mealType)
+            if (meal.recipes.contains(recipe)) return@launch
+            if (meal.id == 0L) {
+                mealRepository.addMeal(meal)
+            } else {
+                val updatedMeal = meal.copy(recipes = meal.recipes + recipe)
+                mealRepository.updateMeal(updatedMeal)
             }
         }
     }
@@ -96,17 +99,27 @@ class HomeScreenViewModel @Inject constructor(
         return Pair(weekStartDate, weekEndDate)
     }
 
-    private suspend fun getTheMealMap(
+    private suspend fun observesMealsForWeek(
         dateFrom: LocalDate,
         dateTo: LocalDate
-    ): Map<LocalDate, List<Meal>> {
+    ) {
         val map = mutableMapOf<LocalDate, List<Meal>>()
-        val meals = mealRepository.getMealsForDateRange(dateFrom, dateTo).groupBy { it.date }
-        for (i in 0 until Day.entries.size) {
-            val date = dateFrom.plusDays(i.toLong())
-            map[date] = meals[date] ?: emptyList()
+        mealRepository.getMealsForDateRange(dateFrom, dateTo).collect { meals ->
+            meals.groupBy { it.date }
+            for (i in 0 until Day.entries.size) {
+                val date = dateFrom.plusDays(i.toLong())
+                map[date] = meals.filter { it.date == date }
+            }
+            delay(50)
+            _state.postValue(
+                getState().copy(
+                    isSelectingWeek = false,
+                    recipeSuggestions = emptyList(),
+                    currentMealEditing = null,
+                    mealMap = map,
+                )
+            )
         }
-        return map
     }
 
     private fun postRecipeSuggestions(query: String) {

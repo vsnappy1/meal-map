@@ -10,6 +10,9 @@ import com.randos.domain.model.Recipe
 import com.randos.domain.repository.MealRepository
 import com.randos.domain.repository.RecipeRepository
 import jakarta.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import java.time.LocalDate
 
 internal class MealRepositoryImpl @Inject constructor(
@@ -53,19 +56,21 @@ internal class MealRepositoryImpl @Inject constructor(
             .mapNotNull { mealDao.get(it.id)?.toDomain(getRecipesOfMeal(it.id)) }
     }
 
-    override suspend fun getMealsForDateRange(
+    override fun getMealsForDateRange(
         startDate: LocalDate,
         endDate: LocalDate
-    ): List<Meal> {
+    ): Flow<List<Meal>> {
         return mealDao.getByDateRange(startDate, endDate)
-            .mapNotNull { mealDao.get(it.id)?.toDomain(getRecipesOfMeal(it.id)) }
+            .map { list ->
+                list.map { it.toDomain(getRecipesOfMeal(it.id)) }
+            }
     }
 
     private suspend fun getRecipesOfMeal(mealId: Long): List<Recipe> {
         val recipeIds = mealRecipeCrossRefDao.getRecipesByMealId(mealId).map { it.recipeId }
         val recipes = mutableListOf<Recipe>()
         recipeIds.forEach { recipeId ->
-            recipeRepository.getRecipe(recipeId)?.let { recipes.add(it) }
+            recipeRepository.getSimpleRecipe(recipeId)?.let { recipes.add(it) }
         }
         return recipes
     }
