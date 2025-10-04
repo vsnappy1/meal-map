@@ -2,7 +2,8 @@ package com.randos.data.repository
 
 import android.content.Context
 import android.util.Log
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializer
 import com.google.gson.reflect.TypeToken
 import com.randos.data.R
 import com.randos.data.database.dao.IngredientDao
@@ -18,6 +19,7 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.InputStreamReader
+import java.time.LocalDate
 
 internal class RecipeRepositoryImpl @Inject constructor(
     private val recipeDao: RecipeDao,
@@ -27,6 +29,10 @@ internal class RecipeRepositoryImpl @Inject constructor(
 ) : RecipeRepository {
     override suspend fun getRecipes(): List<Recipe> {
         return recipeDao.getAll().map { it.toDomain(listOf()) }
+    }
+
+    override suspend fun getRecipesLike(name: String): List<Recipe> {
+        return recipeDao.getByName(name).map { it.toDomain(listOf()) }
     }
 
     override suspend fun getRecipe(id: Long): Recipe? {
@@ -119,7 +125,11 @@ internal class RecipeRepositoryImpl @Inject constructor(
             val inputStream = applicationContext.resources.openRawResource(R.raw.sample_recipes)
             val recipeListType = object : TypeToken<List<Recipe>>() {}.type
             val reader = InputStreamReader(inputStream)
-            val gson = Gson()
+            val gson = GsonBuilder()
+                .registerTypeAdapter(LocalDate::class.java, JsonDeserializer { json, _, _ ->
+                    LocalDate.parse(json.asString) // parse date string
+                })
+                .create()
             val recipes = gson.fromJson<List<Recipe>>(reader, recipeListType)
             batchInsert(recipes)
         } catch (e: Exception) {

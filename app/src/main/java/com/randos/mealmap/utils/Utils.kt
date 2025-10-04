@@ -24,7 +24,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
-import java.util.Date
+import java.time.LocalDate
+import java.util.Calendar
 import java.util.Locale
 
 object Utils {
@@ -57,7 +58,7 @@ object Utils {
         tags = listOf(RecipeTag.CHICKEN),
         calories = 100,
         heaviness = RecipeHeaviness.MEDIUM,
-        dateCreated = Date()
+        dateCreated = LocalDate.now()
     )
     val recipes = listOf(recipe)
 
@@ -209,4 +210,6 @@ object Utils {
                 null
             }
         }
+
+    fun getCurrentWeek(): Int = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)
 }

@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.randos.data.database.entity.Meal
+import java.time.LocalDate
 
 @Dao
 internal interface MealDao {
@@ -13,11 +14,17 @@ internal interface MealDao {
     @Query("SELECT * FROM Meal WHERE id=:id")
     suspend fun get(id: Long): Meal?
 
-    @Query("SELECT * FROM Meal WHERE meal_plan_id=:id")
+    @Query("SELECT * FROM Meal WHERE id=:id")
     suspend fun getByMealPlanId(id: Long): List<Meal>
 
     @Query("SELECT * FROM Meal")
     suspend fun getAll(): List<Meal>
+
+    @Query("SELECT * FROM Meal WHERE date=:date")
+    fun getByDate(date: LocalDate): List<Meal>
+
+    @Query("SELECT * FROM Meal WHERE date BETWEEN :from AND :to")
+    suspend fun getByDateRange(from: LocalDate, to: LocalDate): List<Meal>
 
     @Insert
     suspend fun insert(meal: Meal): Long

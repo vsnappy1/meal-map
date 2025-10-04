@@ -10,6 +10,7 @@ import com.randos.domain.model.Recipe
 import com.randos.domain.repository.MealRepository
 import com.randos.domain.repository.RecipeRepository
 import jakarta.inject.Inject
+import java.time.LocalDate
 
 internal class MealRepositoryImpl @Inject constructor(
     private val mealDao: MealDao,
@@ -27,28 +28,45 @@ internal class MealRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getMeal(id: Long): Meal? {
-        val recipeIds = mealRecipeCrossRefDao.getRecipesByMealId(id).map { it.recipeId }
-        val recipes = mutableListOf<Recipe>()
-        recipeIds.forEach { recipeId ->
-            recipeRepository.getRecipe(recipeId)?.let { recipes.add(it) }
-        }
-        return mealDao.get(id)?.toDomain(recipes)
+        return mealDao.get(id)?.toDomain(getRecipesOfMeal(id))
     }
 
-    override suspend fun addMeal(meal: Meal, mealPlanId: Long) {
-        val mealId = mealDao.insert(meal.toEntity(mealPlanId))
+    override suspend fun addMeal(meal: Meal) {
+        val mealId = mealDao.insert(meal.toEntity())
         val recipes = meal.recipes.map { MealRecipeCrossRef(mealId = mealId, recipeId = it.id) }
         mealRecipeCrossRefDao.insertAll(*recipes.toTypedArray())
     }
 
-    override suspend fun deleteMeal(meal: Meal, mealPlanId: Long) {
-        mealDao.delete(meal.toEntity(mealPlanId))
+    override suspend fun deleteMeal(meal: Meal) {
+        mealDao.delete(meal.toEntity())
     }
 
-    override suspend fun updateMeal(meal: Meal, mealPlanId: Long) {
-        mealDao.update(meal.toEntity(mealPlanId))
+    override suspend fun updateMeal(meal: Meal) {
+        mealDao.update(meal.toEntity())
         mealRecipeCrossRefDao.deleteByMealId(meal.id)
         val recipes = meal.recipes.map { MealRecipeCrossRef(mealId = meal.id, recipeId = it.id) }
         mealRecipeCrossRefDao.insertAll(*recipes.toTypedArray())
+    }
+
+    override suspend fun getMealsForDate(date: LocalDate): List<Meal> {
+        return mealDao.getByDate(date)
+            .mapNotNull { mealDao.get(it.id)?.toDomain(getRecipesOfMeal(it.id)) }
+    }
+
+    override suspend fun getMealsForDateRange(
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): List<Meal> {
+        return mealDao.getByDateRange(startDate, endDate)
+            .mapNotNull { mealDao.get(it.id)?.toDomain(getRecipesOfMeal(it.id)) }
+    }
+
+    private suspend fun getRecipesOfMeal(mealId: Long): List<Recipe> {
+        val recipeIds = mealRecipeCrossRefDao.getRecipesByMealId(mealId).map { it.recipeId }
+        val recipes = mutableListOf<Recipe>()
+        recipeIds.forEach { recipeId ->
+            recipeRepository.getRecipe(recipeId)?.let { recipes.add(it) }
+        }
+        return recipes
     }
 }

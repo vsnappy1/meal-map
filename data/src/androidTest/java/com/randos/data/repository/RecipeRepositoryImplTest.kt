@@ -1,5 +1,7 @@
 package com.randos.data.repository
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.randos.data.database.MealMapDatabase
 import com.randos.data.database.dao.IngredientDao
@@ -29,6 +31,7 @@ class RecipeRepositoryImplTest {
     private lateinit var ingredientDao: IngredientDao
     private lateinit var recipeIngredientDao: RecipeIngredientDao
     private lateinit var recipeRepository: RecipeRepository
+    private lateinit var applicationContext: Context
 
     @Before
     fun setUp() {
@@ -36,7 +39,13 @@ class RecipeRepositoryImplTest {
         recipeDao = database.recipeDao()
         ingredientDao = database.ingredientDao()
         recipeIngredientDao = database.recipeIngredientDao()
-        recipeRepository = RecipeRepositoryImpl(recipeDao, ingredientDao, recipeIngredientDao)
+        applicationContext = ApplicationProvider.getApplicationContext()
+        recipeRepository = RecipeRepositoryImpl(
+            recipeDao = recipeDao,
+            ingredientDao = ingredientDao,
+            recipeIngredientDao = recipeIngredientDao,
+            applicationContext = applicationContext
+        )
         runTest {
             ingredientDao.insert(ingredient1.toEntity())
             ingredientDao.insert(ingredient2.toEntity())

@@ -23,7 +23,7 @@
     "tag": "Dinner",
     "calories": 600,
     "heaviness": "Heavy",
-    "dateCreated": "2025-09-18T10:00:00Z"
+    "dateCreated": "2025-09-18"
   },
   {
     "id": 2,
@@ -49,7 +49,7 @@
     "tag": "Dinner",
     "calories": 550,
     "heaviness": "Medium",
-    "dateCreated": "2025-09-18T10:05:00Z"
+    "dateCreated": "2025-09-18"
   },
   {
     "id": 3,
@@ -75,7 +75,7 @@
     "tag": "Lunch",
     "calories": 250,
     "heaviness": "Light",
-    "dateCreated": "2025-09-18T10:10:00Z"
+    "dateCreated": "2025-09-18"
   },
   {
     "id": 4,
@@ -99,7 +99,7 @@
     "tag": "Breakfast",
     "calories": 350,
     "heaviness": "Medium",
-    "dateCreated": "2025-09-18T10:15:00Z"
+    "dateCreated": "2025-09-18"
   },
   {
     "id": 5,
@@ -122,7 +122,7 @@
     "tag": "Lunch",
     "calories": 200,
     "heaviness": "Light",
-    "dateCreated": "2025-09-18T10:20:00Z"
+    "dateCreated": "2025-09-18"
   },
   {
     "id": 6,
@@ -146,7 +146,7 @@
     "tag": "Starter",
     "calories": 150,
     "heaviness": "Light",
-    "dateCreated": "2025-09-18T10:25:00Z"
+    "dateCreated": "2025-09-18"
   },
   {
     "id": 7,
@@ -169,7 +169,7 @@
     "tag": "Snack",
     "calories": 300,
     "heaviness": "Medium",
-    "dateCreated": "2025-09-18T10:30:00Z"
+    "dateCreated": "2025-09-18"
   },
   {
     "id": 8,
@@ -193,7 +193,7 @@
     "tag": "Dinner",
     "calories": 500,
     "heaviness": "Heavy",
-    "dateCreated": "2025-09-18T10:35:00Z"
+    "dateCreated": "2025-09-18"
   },
   {
     "id": 9,
@@ -216,7 +216,7 @@
     "tag": "Breakfast",
     "calories": 200,
     "heaviness": "Light",
-    "dateCreated": "2025-09-18T10:40:00Z"
+    "dateCreated": "2025-09-18"
   },
   {
     "id": 10,
@@ -240,7 +240,7 @@
     "tag": "Dinner",
     "calories": 450,
     "heaviness": "Medium",
-    "dateCreated": "2025-09-18T10:45:00Z"
+    "dateCreated": "2025-09-18"
   },
   {
     "id": 11,
@@ -264,7 +264,7 @@
     "tag": "Breakfast",
     "calories": 180,
     "heaviness": "Light",
-    "dateCreated": "2025-09-18T10:50:00Z"
+    "dateCreated": "2025-09-18"
   },
   {
     "id": 12,
@@ -289,7 +289,7 @@
     "tag": "Dinner",
     "calories": 700,
     "heaviness": "Heavy",
-    "dateCreated": "2025-09-18T10:55:00Z"
+    "dateCreated": "2025-09-18"
   },
   {
     "id": 13,
@@ -311,7 +311,7 @@
     "tag": "Beverage",
     "calories": 180,
     "heaviness": "Light",
-    "dateCreated": "2025-09-18T11:00:00Z"
+    "dateCreated": "2025-09-18"
   },
   {
     "id": 14,
@@ -335,6 +335,6 @@
     "tag": "Lunch",
     "calories": 400,
     "heaviness": "Medium",
-    "dateCreated": "2025-09-18T11:05:00Z"
+    "dateCreated": "2025-09-18"
   }
 ]

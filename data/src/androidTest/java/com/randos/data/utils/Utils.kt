@@ -13,6 +13,7 @@ import com.randos.domain.type.IngredientUnit
 import com.randos.domain.type.MealType
 import com.randos.domain.type.RecipeHeaviness
 import com.randos.domain.type.RecipeTag
+import java.time.LocalDate
 import java.util.Date
 
 internal object Utils {
@@ -49,7 +50,7 @@ internal object Utils {
         tags = listOf(RecipeTag.CHICKEN),
         calories = 100,
         heaviness = RecipeHeaviness.MEDIUM,
-        dateCreated = Date()
+        dateCreated = LocalDate.now()
     )
 
     val recipe2 = Recipe(
@@ -68,26 +69,27 @@ internal object Utils {
         tags = listOf(RecipeTag.CHICKEN),
         calories = 100,
         heaviness = RecipeHeaviness.MEDIUM,
-        dateCreated = Date()
+        dateCreated = LocalDate.now()
     )
 
     val meal1 = Meal(
         id = 1,
         recipes = listOf(recipe1, recipe2),
         type = MealType.BREAKFAST,
-        date = Date()
+        date = LocalDate.now()
     )
 
     val meal2 = Meal(
         id = 2,
         recipes = listOf(recipe1, recipe2),
         type = MealType.LUNCH,
-        date = Date()
+        date = LocalDate.now()
     )
 
     val mealPlan = MealPlan(
         id = 1,
         meals = listOf(meal1, meal2),
-        week = 50
+        fromDate = LocalDate.now(),
+        toDate = LocalDate.now().plusDays(7)
     )
 }

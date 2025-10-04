@@ -8,7 +8,7 @@ import com.randos.data.database.util.RecipeTagListConverter
 import com.randos.data.database.util.StringListConverter // Assuming this will be the path to your converter
 import com.randos.domain.type.RecipeHeaviness
 import com.randos.domain.type.RecipeTag
-import java.util.Date
+import java.time.LocalDate
 
 @Entity()
 @TypeConverters(StringListConverter::class, RecipeTagListConverter::class, DateConverter::class)
@@ -25,5 +25,5 @@ internal data class Recipe(
     val tags: List<RecipeTag>,
     val calories: Int?,
     val heaviness: RecipeHeaviness?,
-    val dateCreated: Date
+    val dateCreated: LocalDate
 )

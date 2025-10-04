@@ -75,24 +75,25 @@ internal fun com.randos.data.database.entity.RecipeIngredient.toDomain(ingredien
 internal fun MealPlan.toEntity(): com.randos.data.database.entity.MealPlan {
     return com.randos.data.database.entity.MealPlan(
         id = id,
-        week = week
+        fromDate = fromDate,
+        toDate = toDate
     )
 }
 
 internal fun com.randos.data.database.entity.MealPlan.toDomain(meals: List<Meal>): MealPlan {
     return MealPlan(
         id = id,
-        week = week,
+        fromDate = fromDate,
+        toDate = toDate,
         meals = meals
     )
 }
 
-internal fun Meal.toEntity(mealPlanId: Long): com.randos.data.database.entity.Meal {
+internal fun Meal.toEntity(): com.randos.data.database.entity.Meal {
     return com.randos.data.database.entity.Meal(
         id = id,
         type = type,
         date = date,
-        mealPlanId = mealPlanId
     )
 }
 

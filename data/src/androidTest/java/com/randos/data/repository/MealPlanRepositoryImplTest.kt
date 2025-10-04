@@ -1,5 +1,8 @@
 package com.randos.data.repository
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.randos.data.database.MealMapDatabase
 import com.randos.data.database.dao.MealPlanDao
 import com.randos.data.mapper.toEntity
@@ -18,22 +21,27 @@ import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class MealPlanRepositoryImplTest {
 
     private lateinit var database: MealMapDatabase
     private lateinit var mealPlanDao: MealPlanDao
     private lateinit var mealRepository: MealRepository
     private lateinit var mealPlanRepository: MealPlanRepository
+    private lateinit var applicationContext: Context
 
     @Before
     fun setUp() {
         database = getMealMapDatabase()
         mealPlanDao = database.mealPlanDao()
+        applicationContext = ApplicationProvider.getApplicationContext()
         val recipeRepository = RecipeRepositoryImpl(
             recipeDao = database.recipeDao(),
             ingredientDao = database.ingredientDao(),
-            recipeIngredientDao = database.recipeIngredientDao()
+            recipeIngredientDao = database.recipeIngredientDao(),
+            applicationContext = applicationContext
         )
         mealRepository = MealRepositoryImpl(
             mealDao = database.mealDao(),

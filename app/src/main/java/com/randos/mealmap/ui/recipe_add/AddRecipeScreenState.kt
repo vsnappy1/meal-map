@@ -2,7 +2,7 @@ package com.randos.mealmap.ui.recipe_add
 
 import com.randos.domain.model.Ingredient
 import com.randos.domain.model.Recipe
-import java.util.Date
+import java.time.LocalDate
 
 data class AddRecipeScreenState(
     val recipe: Recipe = Recipe(
@@ -18,7 +18,7 @@ data class AddRecipeScreenState(
         tags = listOf(),
         calories = null,
         heaviness = null,
-        dateCreated = Date()
+        dateCreated = LocalDate.now()
     ),
     /**
      * The current text entered in the ingredient input field.

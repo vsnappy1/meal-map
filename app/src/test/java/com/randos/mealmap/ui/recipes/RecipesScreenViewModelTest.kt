@@ -20,7 +20,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import java.util.Date
+import java.time.LocalDate
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class RecipesScreenViewModelTest {
@@ -221,25 +221,26 @@ class RecipesScreenViewModelTest {
 
     @Test
     fun `onSortChange with different sort options`() = runTest {
+        val date = LocalDate.now()
         val recipes = listOf(
             recipe.copy(
                 id = 1,
                 title = "C",
-                dateCreated = Date(30000),
+                dateCreated = date,
                 calories = 300,
                 heaviness = RecipeHeaviness.HEAVY
             ),
             recipe.copy(
                 id = 2,
                 title = "A",
-                dateCreated = Date(10000),
+                dateCreated = date.minusDays(2),
                 calories = 100,
                 heaviness = RecipeHeaviness.LIGHT
             ),
             recipe.copy(
                 id = 3,
                 title = "B",
-                dateCreated = Date(20000),
+                dateCreated = date.minusDays(1),
                 calories = 200,
                 heaviness = RecipeHeaviness.MEDIUM
             )
@@ -261,7 +262,7 @@ class RecipesScreenViewModelTest {
         state = viewModel.state.getOrAwaitValue()
         assertEquals(RecipesSort.CREATED_DATE, state.sort)
         assertEquals(
-            listOf(Date(10000), Date(20000), Date(30000)),
+            listOf(date.minusDays(2), date.minusDays(1), date),
             state.recipes.map { it.dateCreated })
 
         // Sort by CALORIES
@@ -469,9 +470,9 @@ class RecipesScreenViewModelTest {
         // If dateCreated, calories, or heaviness can be null or have default values (e.g., 0 for calories),
         // verify the sorting behavior in such cases, especially for stability if multiple items have the same sort key value.
         val recipes = listOf(
-            recipe.copy(id = 1, title = "C", calories = 200, dateCreated = Date(3000)), // default date
-            recipe.copy(id = 2, title = "A", calories = 0, dateCreated = Date(1000)),   // 0 calories
-            recipe.copy(id = 3, title = "B", calories = 200, dateCreated = Date(2000))  // same calories as C
+            recipe.copy(id = 1, title = "C", calories = 200, dateCreated = LocalDate.now()), // default date
+            recipe.copy(id = 2, title = "A", calories = 0, dateCreated = LocalDate.now().minusDays(2)),   // 0 calories
+            recipe.copy(id = 3, title = "B", calories = 200, dateCreated = LocalDate.now().minusDays(1))  // same calories as C
         )
         coEvery { recipesRepository.getRecipes() } returns recipes
         viewModel.getRecipes()

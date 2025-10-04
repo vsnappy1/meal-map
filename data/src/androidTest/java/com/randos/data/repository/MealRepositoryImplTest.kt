@@ -1,5 +1,7 @@
 package com.randos.data.repository
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import com.randos.data.database.MealMapDatabase
 import com.randos.data.database.dao.MealDao
 import com.randos.data.database.dao.MealRecipeCrossRefDao
@@ -19,6 +21,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
+import java.time.LocalDate
 
 class MealRepositoryImplTest {
 
@@ -27,16 +30,19 @@ class MealRepositoryImplTest {
     private lateinit var mealRecipeCrossRefDao: MealRecipeCrossRefDao
     private lateinit var recipeRepository: RecipeRepository
     private lateinit var mealRepository: MealRepository
+    private lateinit var applicationContext: Context
 
     @Before
     fun setUp() {
         database = getMealMapDatabase()
         mealDao = database.mealDao()
         mealRecipeCrossRefDao = database.mealRecipeCrossRefDao()
+        applicationContext = ApplicationProvider.getApplicationContext()
         recipeRepository = RecipeRepositoryImpl(
             recipeDao = database.recipeDao(),
             ingredientDao = database.ingredientDao(),
-            recipeIngredientDao = database.recipeIngredientDao()
+            recipeIngredientDao = database.recipeIngredientDao(),
+            applicationContext = applicationContext
         )
         mealRepository = MealRepositoryImpl(mealDao, mealRecipeCrossRefDao, recipeRepository)
         runTest {
@@ -46,7 +52,7 @@ class MealRepositoryImplTest {
             }
             recipeRepository.addRecipe(meal1.recipes[0])
             recipeRepository.addRecipe(meal1.recipes[1])
-            database.mealPlanDao().insert(MealPlan(1, 50))
+            database.mealPlanDao().insert(MealPlan(1, LocalDate.now(), LocalDate.now().plusDays(7)))
         }
     }
 

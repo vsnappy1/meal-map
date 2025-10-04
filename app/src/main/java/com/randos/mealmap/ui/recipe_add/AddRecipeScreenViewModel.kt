@@ -25,7 +25,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.Date
+import java.time.LocalDate
 
 @HiltViewModel
 class AddRecipeScreenViewModel @Inject constructor(
@@ -54,7 +54,7 @@ class AddRecipeScreenViewModel @Inject constructor(
                 recipe = recipe.copy(imagePath = imagePath)
             }
             if (recipeId != null) recipesRepository.updateRecipe(recipe)
-            else recipesRepository.addRecipe(recipe.copy(dateCreated = Date()))
+            else recipesRepository.addRecipe(recipe.copy(dateCreated = LocalDate.now()))
             onSaved()
         }
     }

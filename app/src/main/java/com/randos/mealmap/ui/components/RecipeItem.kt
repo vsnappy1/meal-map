@@ -41,32 +41,15 @@ fun RecipeItem(
                 .fillMaxWidth()
                 .padding(8.dp),
         ) {
-            if (recipe.imagePath.isNullOrEmpty()) {
-                Image(
-                    painter = painterResource(id = R.drawable.round_soup_kitchen_24),
-                    contentDescription = stringResource(R.string.recipe_image),
-                    modifier = Modifier
-                        .size(75.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = MaterialTheme.shapes.small
-                        ),
-                    contentScale = ContentScale.Crop
-                )
-            } else {
-                AsyncImage(
-                    model = recipe.imagePath,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(75.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = MaterialTheme.shapes.small
-                        )
-                        .clip(MaterialTheme.shapes.small),
-                    contentScale = ContentScale.Crop,
-                )
-            }
+            RecipeItemImage(
+                modifier = Modifier
+                    .size(75.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = MaterialTheme.shapes.small
+                    )
+                , imagePath = recipe.imagePath
+            )
             Spacer(modifier = Modifier.width(8.dp))
             Column {
                 Text(

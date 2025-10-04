@@ -3,7 +3,7 @@ package com.randos.data.database.util
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
-import java.util.Date
+import java.time.LocalDate
 
 class DateConverterTest {
 
@@ -17,8 +17,8 @@ class DateConverterTest {
     @Test
     fun fromDate_should_convert_date_to_long() {
         // Given
-        val input = Date(1624137600000)
-        val expected = 1624137600000
+        val input = LocalDate.now()
+        val expected = input.toString()
 
         // When
         val result = converter.fromDate(input)
@@ -42,11 +42,12 @@ class DateConverterTest {
     @Test
     fun fromLong_should_convert_long_to_date() {
         // Given
-        val input = 1624137600000
-        val expected = Date(1624137600000)
+        val date = LocalDate.now()
+        val input = date.toString()
+        val expected = LocalDate.parse(date.toString())
 
         // When
-        val result = converter.fromLong(input)
+        val result = converter.fromString(input)
 
         // Then
         assertEquals(expected, result)
@@ -58,7 +59,7 @@ class DateConverterTest {
         val input = null
 
         // When
-        val result = converter.fromLong(input)
+        val result = converter.fromString(input)
 
         // Then
         assertNull(result)

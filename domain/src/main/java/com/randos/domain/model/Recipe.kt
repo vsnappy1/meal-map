@@ -2,7 +2,7 @@ package com.randos.domain.model
 
 import com.randos.domain.type.RecipeHeaviness
 import com.randos.domain.type.RecipeTag
-import java.util.Date
+import java.time.LocalDate
 
 data class Recipe(
     val id: Long = 0,
@@ -17,5 +17,5 @@ data class Recipe(
     val tags: List<RecipeTag>,
     val calories: Int?,
     val heaviness: RecipeHeaviness?,
-    val dateCreated: Date,
+    val dateCreated: LocalDate,
 )
