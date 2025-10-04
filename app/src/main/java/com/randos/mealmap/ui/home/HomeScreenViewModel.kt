@@ -12,6 +12,7 @@ import com.randos.domain.repository.RecipeRepository
 import com.randos.domain.type.Day
 import com.randos.domain.type.MealType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
@@ -28,6 +29,8 @@ class HomeScreenViewModel @Inject constructor(
 
     private val _state = MutableLiveData(HomeScreenState())
     val state: LiveData<HomeScreenState> = _state
+
+    private var observesMealsForWeekJob: Job? = null
 
     init {
         viewModelScope.launch {
@@ -59,6 +62,7 @@ class HomeScreenViewModel @Inject constructor(
                     dateTo = dateTo,
                 )
             )
+            observesMealsForWeek(dateFrom, dateTo)
         }
     }
 
@@ -75,10 +79,9 @@ class HomeScreenViewModel @Inject constructor(
     fun onAddMeal(recipe: Recipe, mealType: MealType, date: LocalDate) {
         viewModelScope.launch {
             val meal = getState().mealMap[date]?.find { it.type == mealType }
-                ?: Meal(recipes = listOf(recipe), date = date, type = mealType)
-            if (meal.recipes.contains(recipe)) return@launch
-            if (meal.id == 0L) {
-                mealRepository.addMeal(meal)
+            if (meal?.recipes?.contains(recipe) == true) return@launch
+            if (meal == null) {
+                mealRepository.addMeal(Meal(recipes = listOf(recipe), date = date, type = mealType))
             } else {
                 val updatedMeal = meal.copy(recipes = meal.recipes + recipe)
                 mealRepository.updateMeal(updatedMeal)
@@ -95,27 +98,30 @@ class HomeScreenViewModel @Inject constructor(
         val weekEndDate = weekStartDate.plusDays(6)
         return Pair(weekStartDate, weekEndDate)
     }
-
-    private suspend fun observesMealsForWeek(
+    
+    private fun observesMealsForWeek(
         dateFrom: LocalDate,
         dateTo: LocalDate
     ) {
-        val map = mutableMapOf<LocalDate, List<Meal>>()
-        mealRepository.getMealsForDateRange(dateFrom, dateTo).collect { meals ->
-            meals.groupBy { it.date }
-            for (i in 0 until Day.entries.size) {
-                val date = dateFrom.plusDays(i.toLong())
-                map[date] = meals.filter { it.date == date }
-            }
-            delay(50)
-            _state.postValue(
-                getState().copy(
-                    isSelectingWeek = false,
-                    recipeSuggestions = emptyList(),
-                    currentMealEditing = null,
-                    mealMap = map,
+        observesMealsForWeekJob?.cancel()
+        observesMealsForWeekJob = viewModelScope.launch {
+            val map = mutableMapOf<LocalDate, List<Meal>>()
+            mealRepository.getMealsForDateRange(dateFrom, dateTo).collect { meals ->
+                meals.groupBy { it.date }
+                for (i in 0 until Day.entries.size) {
+                    val date = dateFrom.plusDays(i.toLong())
+                    map[date] = meals.filter { it.date == date }
+                }
+                delay(50)
+                _state.postValue(
+                    getState().copy(
+                        isSelectingWeek = false,
+                        recipeSuggestions = emptyList(),
+                        currentMealEditing = null,
+                        mealMap = map,
+                    )
                 )
-            )
+            }
         }
     }
 

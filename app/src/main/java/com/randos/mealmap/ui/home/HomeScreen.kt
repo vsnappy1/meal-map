@@ -146,74 +146,76 @@ private fun MealDay(
         if (type == null || mealDate == null) return true
         return date == mealDate && type == mealType
     }
-
-    Text(
-        text = date.getDayName(),
-        style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.Bold
-    )
-    val map = meals.groupBy { it.type }.mapValues { it.value.firstOrNull()?.recipes ?: emptyList() }
-    HorizontalDivider()
-    MealRow(
-        mealType = "Breakfast",
-        mealIconPainter = painterResource(R.drawable.icon_bread_and_coffee),
-        mealEditText = if (shouldUpdate(MealType.BREAKFAST)) mealEditText.orEmpty() else "",
-        onMealEditTextUpdate = {
-            if (shouldUpdate(MealType.BREAKFAST)) onCurrentMealEditingUpdate(
-                Triple(date, MealType.BREAKFAST, it)
-            )
-        },
-        recipes = map[MealType.BREAKFAST] ?: emptyList(),
-        recipeSuggestions = if (shouldUpdate(MealType.BREAKFAST)) recipeSuggestions else emptyList(),
-        onRecipeSuggestionSelect = { onAddMeal(it, MealType.BREAKFAST, date) },
-        onFocusChanged = {
-            if (it) {
-                onCurrentMealEditingUpdate(
-                    Triple(date, MealType.BREAKFAST, "")
+    Column {
+        Text(
+            text = date.getDayName(),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold
+        )
+        val map =
+            meals.groupBy { it.type }.mapValues { it.value.firstOrNull()?.recipes ?: emptyList() }
+        HorizontalDivider()
+        MealRow(
+            mealType = "Breakfast",
+            mealIconPainter = painterResource(R.drawable.icon_bread_and_coffee),
+            mealEditText = if (shouldUpdate(MealType.BREAKFAST)) mealEditText.orEmpty() else "",
+            onMealEditTextUpdate = {
+                if (shouldUpdate(MealType.BREAKFAST)) onCurrentMealEditingUpdate(
+                    Triple(date, MealType.BREAKFAST, it)
                 )
+            },
+            recipes = map[MealType.BREAKFAST] ?: emptyList(),
+            recipeSuggestions = if (shouldUpdate(MealType.BREAKFAST)) recipeSuggestions else emptyList(),
+            onRecipeSuggestionSelect = { onAddMeal(it, MealType.BREAKFAST, date) },
+            onFocusChanged = {
+                if (it) {
+                    onCurrentMealEditingUpdate(
+                        Triple(date, MealType.BREAKFAST, "")
+                    )
+                }
             }
-        }
-    )
-    MealRow(
-        mealType = "Lunch",
-        mealIconPainter = painterResource(R.drawable.icon_salad),
-        mealEditText = if (shouldUpdate(MealType.LUNCH)) mealEditText.orEmpty() else "",
-        onMealEditTextUpdate = {
-            if (shouldUpdate(MealType.LUNCH)) onCurrentMealEditingUpdate(
-                Triple(date, MealType.LUNCH, it)
-            )
-        },
-        recipes = map[MealType.LUNCH] ?: emptyList(),
-        recipeSuggestions = if (shouldUpdate(MealType.LUNCH)) recipeSuggestions else emptyList(),
-        onRecipeSuggestionSelect = { onAddMeal(it, MealType.LUNCH, date) },
-        onFocusChanged = {
-            if (it) {
-                onCurrentMealEditingUpdate(
-                    Triple(date, MealType.LUNCH, "")
+        )
+        MealRow(
+            mealType = "Lunch",
+            mealIconPainter = painterResource(R.drawable.icon_salad),
+            mealEditText = if (shouldUpdate(MealType.LUNCH)) mealEditText.orEmpty() else "",
+            onMealEditTextUpdate = {
+                if (shouldUpdate(MealType.LUNCH)) onCurrentMealEditingUpdate(
+                    Triple(date, MealType.LUNCH, it)
                 )
+            },
+            recipes = map[MealType.LUNCH] ?: emptyList(),
+            recipeSuggestions = if (shouldUpdate(MealType.LUNCH)) recipeSuggestions else emptyList(),
+            onRecipeSuggestionSelect = { onAddMeal(it, MealType.LUNCH, date) },
+            onFocusChanged = {
+                if (it) {
+                    onCurrentMealEditingUpdate(
+                        Triple(date, MealType.LUNCH, "")
+                    )
+                }
             }
-        }
-    )
-    MealRow(
-        mealType = "Dinner",
-        mealIconPainter = painterResource(R.drawable.icon_ramen_noodle),
-        mealEditText = if (shouldUpdate(MealType.DINNER)) mealEditText.orEmpty() else "",
-        onMealEditTextUpdate = {
-            if (shouldUpdate(MealType.DINNER)) onCurrentMealEditingUpdate(
-                Triple(date, MealType.DINNER, it)
-            )
-        },
-        recipes = map[MealType.DINNER] ?: emptyList(),
-        recipeSuggestions = if (shouldUpdate(MealType.DINNER)) recipeSuggestions else emptyList(),
-        onRecipeSuggestionSelect = { onAddMeal(it, MealType.DINNER, date) },
-        onFocusChanged = {
-            if (it) {
-                onCurrentMealEditingUpdate(
-                    Triple(date, MealType.DINNER, "")
+        )
+        MealRow(
+            mealType = "Dinner",
+            mealIconPainter = painterResource(R.drawable.icon_ramen_noodle),
+            mealEditText = if (shouldUpdate(MealType.DINNER)) mealEditText.orEmpty() else "",
+            onMealEditTextUpdate = {
+                if (shouldUpdate(MealType.DINNER)) onCurrentMealEditingUpdate(
+                    Triple(date, MealType.DINNER, it)
                 )
+            },
+            recipes = map[MealType.DINNER] ?: emptyList(),
+            recipeSuggestions = if (shouldUpdate(MealType.DINNER)) recipeSuggestions else emptyList(),
+            onRecipeSuggestionSelect = { onAddMeal(it, MealType.DINNER, date) },
+            onFocusChanged = {
+                if (it) {
+                    onCurrentMealEditingUpdate(
+                        Triple(date, MealType.DINNER, "")
+                    )
+                }
             }
-        }
-    )
+        )
+    }
 }
 
 @Composable
@@ -315,27 +317,34 @@ private fun MealRow(
                 onSuggestionItemSelected = onRecipeSuggestionSelect
             )
         }
-        recipes.forEach { recipe ->
-            Row(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                RecipeItemImage(
-                    modifier = Modifier
-                        .size(32.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = MaterialTheme.shapes.small
-                        ),
-                    imagePath = recipe.imagePath
-                )
-                Text(
-                    modifier = Modifier.weight(1f),
-                    text = recipe.title,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+        VerticalAnimatedContent(
+            targetState = recipes,
+            label = "MealDayAnimation"
+        ) { recipes ->
+            Column {
+                recipes.forEach { recipe ->
+                    Row(
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        RecipeItemImage(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .background(
+                                    color = MaterialTheme.colorScheme.primary,
+                                    shape = MaterialTheme.shapes.small
+                                ),
+                            imagePath = recipe.imagePath
+                        )
+                        Text(
+                            modifier = Modifier.weight(1f),
+                            text = recipe.title,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
             }
         }
         if (recipes.isNotEmpty()) Spacer(modifier = Modifier.height(6.dp))
