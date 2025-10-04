@@ -36,7 +36,6 @@ fun RecipeItemImage(
             )
         }
     }
-
 }
 
 @Preview

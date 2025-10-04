@@ -56,7 +56,11 @@ internal class RecipeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getSimpleRecipe(id: Long): Recipe? {
-        return recipeDao.get(id)?.toDomain(listOf())
+        return recipeDao.get(id)?.copy(
+            description = null,
+            instructions = emptyList(),
+            tags = emptyList(),
+        )?.toDomain(listOf())
     }
 
     override suspend fun addRecipe(recipe: Recipe) {

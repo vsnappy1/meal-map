@@ -33,6 +33,7 @@ import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -74,7 +75,8 @@ fun HomeScreen(
         onIsSelectingWeekUpdate = viewModel::onIsSelectingWeekUpdate,
         onSelectedWeekTextUpdate = viewModel::onSelectedWeekTextUpdate,
         onCurrentMealEditingUpdate = viewModel::onCurrentMealEditingUpdate,
-        onAddMeal = viewModel::onAddMeal
+        onAddMeal = viewModel::onAddMeal,
+        onRemoveMeal = viewModel::onRemoveMeal
     )
 }
 
@@ -84,7 +86,8 @@ private fun HomeScreen(
     onIsSelectingWeekUpdate: (Boolean) -> Unit = {},
     onSelectedWeekTextUpdate: (Int, String) -> Unit = { _, _ -> },
     onCurrentMealEditingUpdate: (Triple<LocalDate, MealType, String>?) -> Unit = {},
-    onAddMeal: (Recipe, MealType, LocalDate) -> Unit = { _, _, _ -> }
+    onAddMeal: (Recipe, MealType, LocalDate) -> Unit = { _, _, _ -> },
+    onRemoveMeal: (Recipe, MealType, LocalDate) -> Unit = { _, _, _ -> }
 ) {
     val focusManager = LocalFocusManager.current
     Column(
@@ -118,7 +121,8 @@ private fun HomeScreen(
                         currentMealEditing = state.currentMealEditing,
                         recipeSuggestions = state.recipeSuggestions,
                         onCurrentMealEditingUpdate = onCurrentMealEditingUpdate,
-                        onAddMeal = onAddMeal
+                        onAddMeal = onAddMeal,
+                        onRemoveMeal = onRemoveMeal
                     )
                 }
             }
@@ -136,7 +140,8 @@ private fun MealDay(
     currentMealEditing: Triple<LocalDate, MealType, String>?,
     recipeSuggestions: List<Recipe>,
     onCurrentMealEditingUpdate: (Triple<LocalDate, MealType, String>?) -> Unit,
-    onAddMeal: (Recipe, MealType, LocalDate) -> Unit
+    onAddMeal: (Recipe, MealType, LocalDate) -> Unit,
+    onRemoveMeal: (Recipe, MealType, LocalDate) -> Unit
 ) {
     val mealDate = currentMealEditing?.first
     val mealType = currentMealEditing?.second
@@ -173,7 +178,8 @@ private fun MealDay(
                         Triple(date, MealType.BREAKFAST, "")
                     )
                 }
-            }
+            },
+            onRemoveMeal = { onRemoveMeal(it, MealType.BREAKFAST, date) }
         )
         MealRow(
             mealType = "Lunch",
@@ -193,7 +199,8 @@ private fun MealDay(
                         Triple(date, MealType.LUNCH, "")
                     )
                 }
-            }
+            },
+            onRemoveMeal = { onRemoveMeal(it, MealType.LUNCH, date) }
         )
         MealRow(
             mealType = "Dinner",
@@ -213,7 +220,8 @@ private fun MealDay(
                         Triple(date, MealType.DINNER, "")
                     )
                 }
-            }
+            },
+            onRemoveMeal = { onRemoveMeal(it, MealType.DINNER, date) }
         )
     }
 }
@@ -227,7 +235,8 @@ private fun MealRow(
     recipeSuggestions: List<Recipe>,
     onRecipeSuggestionSelect: (Recipe) -> Unit,
     onMealEditTextUpdate: (String) -> Unit,
-    onFocusChanged: (Boolean) -> Unit
+    onFocusChanged: (Boolean) -> Unit,
+    onRemoveMeal: (Recipe) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
     Card(
@@ -333,8 +342,9 @@ private fun MealRow(
                                 .size(32.dp)
                                 .background(
                                     color = MaterialTheme.colorScheme.primary,
-                                    shape = MaterialTheme.shapes.small
-                                ),
+                                    shape = MaterialTheme.shapes.extraSmall
+                                )
+                                .clip(shape = MaterialTheme.shapes.extraSmall),
                             imagePath = recipe.imagePath
                         )
                         Text(
@@ -343,6 +353,15 @@ private fun MealRow(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
+                        IconButton(
+                            modifier = Modifier.size(24.dp),
+                            onClick = { onRemoveMeal(recipe) }) {
+                            Icon(
+                                modifier = Modifier.padding(2.dp),
+                                imageVector = Icons.Rounded.Clear,
+                                contentDescription = stringResource(R.string.clear_text)
+                            )
+                        }
                     }
                 }
             }
