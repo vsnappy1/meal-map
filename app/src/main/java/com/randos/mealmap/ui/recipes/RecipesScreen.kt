@@ -60,6 +60,7 @@ import com.randos.domain.type.SortOrder
 import com.randos.mealmap.R
 import com.randos.mealmap.ui.components.RecipeItem
 import com.randos.mealmap.ui.components.RecipePill
+import com.randos.mealmap.ui.components.VerticalAnimatedContent
 import com.randos.mealmap.utils.Utils
 
 @Composable
@@ -114,15 +115,10 @@ private fun RecipesScreen(
             onAddNewRecipe = onAddNewRecipe,
             onSortOrderChange = onSortOrderChange
         )
-        AnimatedContent(
+        VerticalAnimatedContent(
             modifier = Modifier.fillMaxSize(),
             targetState = state.recipes,
             label = "RecipeListAnimation",
-            contentAlignment = Alignment.TopCenter,
-            transitionSpec = {
-                slideInVertically(initialOffsetY = { -it / 3 }) + fadeIn() togetherWith
-                        slideOutVertically(targetOffsetY = { it / 3 }) + fadeOut()
-            }
         ) { recipes ->
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -139,11 +135,12 @@ private fun RecipesScreen(
                     }
                 }
                 item {
-                    if(recipes.isEmpty() && (state.filter != null || state.searchText.isNotEmpty()) ){
+                    if (recipes.isEmpty() && (state.filter != null || state.searchText.isNotEmpty())) {
                         Text(
                             modifier = Modifier.fillMaxSize(),
                             text = stringResource(R.string.no_recipes_found),
-                            textAlign = TextAlign.Center)
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
                 item {

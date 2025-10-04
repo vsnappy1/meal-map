@@ -111,15 +111,10 @@ fun RecipeAddTextField(
         HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
     }
 
-    AnimatedContent(
+    VerticalAnimatedContent(
         modifier = Modifier.fillMaxWidth(),
         targetState = suggestions,
         label = "IngredientSuggestionAnimation",
-        contentAlignment = Alignment.TopCenter,
-        transitionSpec = {
-            slideInVertically(initialOffsetY = { -it / 3 }) + fadeIn() togetherWith
-                    slideOutVertically(targetOffsetY = { it / 3 }) + fadeOut()
-        }
     ) { suggestions ->
         RecipeIngredientSuggestion(
             modifier = if (isEditing) Modifier.padding(bottom = 4.dp) else Modifier,

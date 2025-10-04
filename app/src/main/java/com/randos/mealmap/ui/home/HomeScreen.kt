@@ -61,6 +61,7 @@ import com.randos.domain.type.MealType
 import com.randos.mealmap.R
 import com.randos.mealmap.ui.components.RecipeItemImage
 import com.randos.mealmap.ui.components.RecipeSuggestion
+import com.randos.mealmap.ui.components.VerticalAnimatedContent
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
@@ -304,15 +305,10 @@ private fun MealRow(
                 it()
             }
         }
-        AnimatedContent(
+        VerticalAnimatedContent(
             modifier = Modifier.fillMaxWidth(),
             targetState = recipeSuggestions,
-            label = "IngredientSuggestionAnimation",
-            contentAlignment = Alignment.TopCenter,
-            transitionSpec = {
-                slideInVertically(initialOffsetY = { -it / 3 }) + fadeIn() togetherWith
-                        slideOutVertically(targetOffsetY = { it / 3 }) + fadeOut()
-            }
+            label = "RecipeSuggestionAnimation",
         ) { suggestions ->
             val padding by animateDpAsState(if (suggestions.isEmpty()) 0.dp else 8.dp)
             RecipeSuggestion(
