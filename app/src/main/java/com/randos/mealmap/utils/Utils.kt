@@ -24,7 +24,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
+import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters
 import java.util.Locale
 
 object Utils {
@@ -79,6 +81,12 @@ object Utils {
         Icons.Rounded.Icecream,
         Icons.Rounded.DinnerDining,
         Icons.Rounded.Liquor
+    )
+
+    val listOfWeeksAvailable = listOf(
+        Pair(-1, "Previous Week"),
+        Pair(0, "This Week"),
+        Pair(1, "Next Week")
     )
 
     fun recipeToShareableText(recipe: Recipe): String {
@@ -209,4 +217,14 @@ object Utils {
                 null
             }
         }
+
+    fun getWeekStartAndEnd(
+        week: Int,
+        firstDayOfTheWeek: DayOfWeek
+    ): Pair<LocalDate, LocalDate> {
+        val week = LocalDate.now().plusWeeks(week.toLong())
+        val weekStartDate = week.with(TemporalAdjusters.previous(firstDayOfTheWeek))
+        val weekEndDate = weekStartDate.plusDays(6)
+        return Pair(weekStartDate, weekEndDate)
+    }
 }

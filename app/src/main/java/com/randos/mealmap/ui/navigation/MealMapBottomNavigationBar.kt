@@ -20,7 +20,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.randos.mealmap.ui.navigation.Destination.Account
 import com.randos.mealmap.ui.navigation.Destination.Grocery
 import com.randos.mealmap.ui.navigation.Destination.Home

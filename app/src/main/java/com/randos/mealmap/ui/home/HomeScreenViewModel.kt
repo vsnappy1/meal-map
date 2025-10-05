@@ -11,12 +11,12 @@ import com.randos.domain.repository.MealRepository
 import com.randos.domain.repository.RecipeRepository
 import com.randos.domain.type.Day
 import com.randos.domain.type.MealType
+import com.randos.mealmap.utils.Utils.getWeekStartAndEnd
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
 
 @HiltViewModel
@@ -125,10 +125,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun getWeekRange(week: Int): Pair<LocalDate, LocalDate> {
         val firstDayOfTheWeek = settingsManager.getFirstDayOfTheWeek().toDayOfWeek()
-        val week = LocalDate.now().plusWeeks(week.toLong())
-        val weekStartDate = week.with(TemporalAdjusters.previous(firstDayOfTheWeek))
-        val weekEndDate = weekStartDate.plusDays(6)
-        return Pair(weekStartDate, weekEndDate)
+        return getWeekStartAndEnd(week, firstDayOfTheWeek)
     }
 
     private suspend fun getTheMealMap(
