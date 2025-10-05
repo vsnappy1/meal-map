@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.randos.mealmap.ui.navigation.Destination.Account
 import com.randos.mealmap.ui.navigation.Destination.Grocery
 import com.randos.mealmap.ui.navigation.Destination.Home
@@ -42,10 +43,11 @@ private val navigationItems = listOf(
 
 @Composable
 fun MealMapBottomNavigationBar(modifier: Modifier = Modifier, navController: NavController) {
-    var selectedDestination: Destination by rememberSaveable(stateSaver = DestinationSaver()) {
-        mutableStateOf(startDestination)
+    val destinationSaver = DestinationSaver()
+    var selectedDestination: Destination by rememberSaveable(stateSaver = destinationSaver) {
+        val currentDestinationRoute = navController.currentDestination?.route.orEmpty()
+        mutableStateOf(destinationSaver.restore(currentDestinationRoute) ?: Home)
     }
-
     NavigationBar(modifier = modifier) {
         navigationItems.forEach { item ->
             NavigationBarItem(
@@ -64,20 +66,23 @@ fun MealMapBottomNavigationBar(modifier: Modifier = Modifier, navController: Nav
             )
         }
     }
+    navController.addOnDestinationChangedListener { _, destination, _ ->
+        selectedDestination = DestinationSaver().restore(destination.route.orEmpty()) ?: Home
+    }
 }
 
 private class DestinationSaver : Saver<Destination, String> {
     override fun SaverScope.save(value: Destination): String? {
-        return value::class.simpleName
+        return value::class.qualifiedName
     }
 
     override fun restore(value: String): Destination? {
         return when (value) {
-            Grocery::class.simpleName -> return Grocery
-            Recipes::class.simpleName -> return Recipes
-            Home::class.simpleName -> return Home
-            Account::class.simpleName -> return Account
-            Settings::class.simpleName -> return Settings
+            Grocery::class.qualifiedName -> return Grocery
+            Recipes::class.qualifiedName -> return Recipes
+            Home::class.qualifiedName -> return Home
+            Account::class.qualifiedName -> return Account
+            Settings::class.qualifiedName -> return Settings
             else -> null
         }
     }
