@@ -7,6 +7,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -20,5 +22,10 @@ internal object AndroidModule {
     @Provides
     fun provideContext(application: Application): Context {
         return application.applicationContext
+    }
+
+    @Provides
+    fun provideDispatcher(): CoroutineDispatcher {
+        return Dispatchers.IO
     }
 }

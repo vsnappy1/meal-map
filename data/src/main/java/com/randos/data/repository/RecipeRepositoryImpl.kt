@@ -1,7 +1,6 @@
 package com.randos.data.repository
 
 import android.content.Context
-import android.util.Log
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import com.google.gson.reflect.TypeToken
@@ -16,7 +15,7 @@ import com.randos.domain.model.Recipe
 import com.randos.domain.model.RecipeIngredient
 import com.randos.domain.repository.RecipeRepository
 import jakarta.inject.Inject
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import java.io.InputStreamReader
 import java.time.LocalDate
@@ -25,17 +24,18 @@ internal class RecipeRepositoryImpl @Inject constructor(
     private val recipeDao: RecipeDao,
     private val ingredientDao: IngredientDao,
     private val recipeIngredientDao: RecipeIngredientDao,
-    private val applicationContext: Context
+    private val applicationContext: Context,
+    private val dispatcher: CoroutineDispatcher
 ) : RecipeRepository {
-    override suspend fun getRecipes(): List<Recipe> {
-        return recipeDao.getAll().map { it.toDomain(listOf()) }
+    override suspend fun getRecipes(): List<Recipe> = withContext(dispatcher) {
+        return@withContext recipeDao.getAll().map { it.toDomain(listOf()) }
     }
 
-    override suspend fun getRecipesLike(name: String): List<Recipe> {
-        return recipeDao.getByName(name).map { it.toDomain(listOf()) }
+    override suspend fun getRecipesLike(name: String): List<Recipe> = withContext(dispatcher) {
+        return@withContext recipeDao.getByName(name).map { it.toDomain(listOf()) }
     }
 
-    override suspend fun getRecipe(id: Long): Recipe? {
+    override suspend fun getRecipe(id: Long): Recipe? = withContext(dispatcher) {
         val recipeIngredients = recipeIngredientDao.getByRecipeId(id)
             .map { recipeIngredient ->
                 Triple(
@@ -52,18 +52,18 @@ internal class RecipeRepositoryImpl @Inject constructor(
                     unit = it.third
                 )
             }
-        return recipeDao.get(id)?.toDomain(recipeIngredients)
+        return@withContext recipeDao.get(id)?.toDomain(recipeIngredients)
     }
 
-    override suspend fun getSimpleRecipe(id: Long): Recipe? {
-        return recipeDao.get(id)?.copy(
+    override suspend fun getSimpleRecipe(id: Long): Recipe? = withContext(dispatcher) {
+        return@withContext recipeDao.get(id)?.copy(
             description = null,
             instructions = emptyList(),
             tags = emptyList(),
         )?.toDomain(listOf())
     }
 
-    override suspend fun addRecipe(recipe: Recipe) {
+    override suspend fun addRecipe(recipe: Recipe) = withContext(dispatcher) {
         val recipeId = recipeDao.insert(recipe.toEntity())
         val recipeIngredients = recipe.ingredients.map { it.toEntity(recipeId, it.ingredient.id) }
         /*
@@ -76,27 +76,23 @@ internal class RecipeRepositoryImpl @Inject constructor(
         recipeIngredientDao.insertAll(*recipeIngredients.toTypedArray())
     }
 
-    override suspend fun deleteRecipe(recipe: Recipe) {
+    override suspend fun deleteRecipe(recipe: Recipe) = withContext(dispatcher) {
         recipeDao.delete(recipe.toEntity())
     }
 
-    override suspend fun updateRecipe(recipe: Recipe) {
+    override suspend fun updateRecipe(recipe: Recipe) = withContext(dispatcher) {
         recipeDao.update(recipe.toEntity())
         recipeIngredientDao.deleteByRecipeId(recipe.id)
         val recipeIngredients = recipe.ingredients.map { it.toEntity(recipe.id, it.ingredient.id) }
         recipeIngredientDao.insertAll(*recipeIngredients.toTypedArray())
     }
 
-    override suspend fun isEmpty(): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun isEmpty(): Boolean = withContext(dispatcher) {
         return@withContext recipeDao.getRecipeCount() == 0
     }
 
-    override suspend fun batchInsert(list: List<Recipe>) = withContext(Dispatchers.IO) {
+    override suspend fun batchInsert(list: List<Recipe>) = withContext(dispatcher) {
         // 1. Prepare and insert all unique ingredients from all recipes
-        //    We set id to 0 for new ingredients to let Room auto-generate IDs.
-        //    If an ingredient might already exist based on its name, you'll need
-        //    a more sophisticated "upsert" (insert or update) logic for ingredients.
-        //    For simplicity, this example assumes new ingredients or you handle duplicates elsewhere.
         val allIngredientsFromRecipes =
             list.flatMap { it.ingredients.map { recipeIngredient -> recipeIngredient.ingredient } }
         val uniqueIngredientEntities = allIngredientsFromRecipes
@@ -107,7 +103,6 @@ internal class RecipeRepositoryImpl @Inject constructor(
             ingredientDao.insertAll(*uniqueIngredientEntities.toTypedArray())
 
         // 2. Create a map of ingredient name (or another unique property) to its new ID
-        //    This helps in quickly finding the ID of an ingredient when creating RecipeIngredient.
         val ingredientToIdMap = mutableMapOf<String, Long>()
         uniqueIngredientEntities.forEachIndexed { index, ingredientEntity ->
             // Assuming ingredientEntity has a 'name' property that was used for distinctness
@@ -128,7 +123,7 @@ internal class RecipeRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun populateSampleRecipes() = withContext(Dispatchers.IO) {
+    override suspend fun populateSampleRecipes() = withContext(dispatcher) {
         try {
             val inputStream = applicationContext.resources.openRawResource(R.raw.sample_recipes)
             val recipeListType = object : TypeToken<List<Recipe>>() {}.type
@@ -141,7 +136,6 @@ internal class RecipeRepositoryImpl @Inject constructor(
             val recipes = gson.fromJson<List<Recipe>>(reader, recipeListType)
             batchInsert(recipes)
         } catch (e: Exception) {
-            Log.e("TAG", "populateSampleRecipes: ", e)
             e.printStackTrace()
         }
     }
