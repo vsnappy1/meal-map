@@ -80,8 +80,8 @@ class HomeScreenViewModel @Inject constructor(
             if (meal?.recipes?.contains(recipe) == true) return@launch
             val updatedMeal = if (meal == null) {
                 val meal = Meal(recipes = listOf(recipe), date = date, type = mealType)
-                mealRepository.addMeal(Meal(recipes = listOf(recipe), date = date, type = mealType))
-                meal
+                val id = mealRepository.addMeal(Meal(recipes = listOf(recipe), date = date, type = mealType))
+                meal.copy(id = id)
             } else {
                 val updatedMeal = meal.copy(recipes = meal.recipes + recipe)
                 mealRepository.updateMeal(updatedMeal)
@@ -107,11 +107,17 @@ class HomeScreenViewModel @Inject constructor(
         mealType: MealType,
         date: LocalDate,
     ) {
-        val meals = getState().mealMap[date]?.map {
-            if (it.type == mealType) meal else it
-        }
+        val currentMealsForDate = getState().mealMap[date] ?: emptyList()
+        val mealExistsForType = currentMealsForDate.any { it.type == mealType }
+
+        val meals = if (mealExistsForType) {
+            currentMealsForDate.map { if (it.type == mealType) meal else it }
+        } else {
+            currentMealsForDate + meal
+        }.filter { it.recipes.isNotEmpty() }
+
         val newMealMap = getState().mealMap.toMutableMap()
-        newMealMap[date] = meals ?: emptyList()
+        newMealMap[date] = meals
         _state.postValue(
             getState().copy(
                 mealMap = newMealMap,

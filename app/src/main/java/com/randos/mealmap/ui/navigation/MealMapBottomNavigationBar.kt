@@ -66,7 +66,7 @@ fun MealMapBottomNavigationBar(modifier: Modifier = Modifier, navController: Nav
         }
     }
     navController.addOnDestinationChangedListener { _, destination, _ ->
-        selectedDestination = DestinationSaver().restore(destination.route.orEmpty()) ?: Home
+        selectedDestination = destinationSaver.restore(destination.route.orEmpty()) ?: Home
     }
 }
 

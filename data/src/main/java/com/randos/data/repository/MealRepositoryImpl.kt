@@ -35,10 +35,11 @@ internal class MealRepositoryImpl @Inject constructor(
         return@withContext mealDao.get(id)?.toDomain(getRecipesOfMeal(id))
     }
 
-    override suspend fun addMeal(meal: Meal) = withContext(dispatcher) {
+    override suspend fun addMeal(meal: Meal): Long = withContext(dispatcher) {
         val mealId = mealDao.insert(meal.toEntity())
         val recipes = meal.recipes.map { MealRecipeCrossRef(mealId = mealId, recipeId = it.id) }
         mealRecipeCrossRefDao.insertAll(*recipes.toTypedArray())
+        return@withContext mealId
     }
 
     override suspend fun deleteMeal(meal: Meal) = withContext(dispatcher) {

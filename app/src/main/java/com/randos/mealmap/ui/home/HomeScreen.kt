@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
@@ -67,6 +68,7 @@ import java.util.Locale
 
 @Composable
 fun HomeScreen(
+    onRecipeClick: (Recipe) -> Unit,
     viewModel: HomeScreenViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.observeAsState(HomeScreenState())
@@ -76,7 +78,8 @@ fun HomeScreen(
         onSelectedWeekTextUpdate = viewModel::onSelectedWeekTextUpdate,
         onCurrentMealEditingUpdate = viewModel::onCurrentMealEditingUpdate,
         onAddMeal = viewModel::onAddMeal,
-        onRemoveMeal = viewModel::onRemoveMeal
+        onRemoveMeal = viewModel::onRemoveMeal,
+        onRecipeClick = onRecipeClick
     )
 }
 
@@ -87,7 +90,8 @@ private fun HomeScreen(
     onSelectedWeekTextUpdate: (Int, String) -> Unit = { _, _ -> },
     onCurrentMealEditingUpdate: (Triple<LocalDate, MealType, String>?) -> Unit = {},
     onAddMeal: (Recipe, MealType, LocalDate) -> Unit = { _, _, _ -> },
-    onRemoveMeal: (Recipe, MealType, LocalDate) -> Unit = { _, _, _ -> }
+    onRemoveMeal: (Recipe, MealType, LocalDate) -> Unit = { _, _, _ -> },
+    onRecipeClick: (Recipe) -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
     Column(
@@ -113,18 +117,18 @@ private fun HomeScreen(
         DateView(state.dateFrom, state.dateTo)
         Spacer(modifier = Modifier.padding(bottom = 8.dp))
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            state.mealMap.entries.forEach { (date, meals) ->
-                item {
-                    MealDay(
-                        date = date,
-                        meals = meals,
-                        currentMealEditing = state.currentMealEditing,
-                        recipeSuggestions = state.recipeSuggestions,
-                        onCurrentMealEditingUpdate = onCurrentMealEditingUpdate,
-                        onAddMeal = onAddMeal,
-                        onRemoveMeal = onRemoveMeal
-                    )
-                }
+            items(items = state.mealMap.entries.toList(),
+                key = { (date, meals) -> "$date _ ${meals.hashCode()}" }) { (date, meals) ->
+                MealDay(
+                    date = date,
+                    meals = meals,
+                    currentMealEditing = state.currentMealEditing,
+                    recipeSuggestions = state.recipeSuggestions,
+                    onCurrentMealEditingUpdate = onCurrentMealEditingUpdate,
+                    onAddMeal = onAddMeal,
+                    onRemoveMeal = onRemoveMeal,
+                    onRecipeClick = onRecipeClick
+                )
             }
             item {
                 Spacer(modifier = Modifier.padding(bottom = 8.dp))
@@ -141,7 +145,8 @@ private fun MealDay(
     recipeSuggestions: List<Recipe>,
     onCurrentMealEditingUpdate: (Triple<LocalDate, MealType, String>?) -> Unit,
     onAddMeal: (Recipe, MealType, LocalDate) -> Unit,
-    onRemoveMeal: (Recipe, MealType, LocalDate) -> Unit
+    onRemoveMeal: (Recipe, MealType, LocalDate) -> Unit,
+    onRecipeClick: (Recipe) -> Unit,
 ) {
     val map = meals
         .groupBy { it.type }
@@ -162,7 +167,8 @@ private fun MealDay(
             recipeSuggestions = recipeSuggestions,
             onCurrentMealEditingUpdate = onCurrentMealEditingUpdate,
             onAddMeal = onAddMeal,
-            onRemoveMeal = onRemoveMeal
+            onRecipeClick = onRecipeClick,
+            onRemoveMeal = onRemoveMeal,
         )
         MealRowItem(
             originalMealType = MealType.LUNCH,
@@ -173,7 +179,8 @@ private fun MealDay(
             recipeSuggestions = recipeSuggestions,
             onCurrentMealEditingUpdate = onCurrentMealEditingUpdate,
             onAddMeal = onAddMeal,
-            onRemoveMeal = onRemoveMeal
+            onRecipeClick = onRecipeClick,
+            onRemoveMeal = onRemoveMeal,
         )
         MealRowItem(
             originalMealType = MealType.DINNER,
@@ -184,7 +191,8 @@ private fun MealDay(
             recipeSuggestions = recipeSuggestions,
             onCurrentMealEditingUpdate = onCurrentMealEditingUpdate,
             onAddMeal = onAddMeal,
-            onRemoveMeal = onRemoveMeal
+            onRemoveMeal = onRemoveMeal,
+            onRecipeClick = onRecipeClick,
         )
     }
 }
@@ -199,7 +207,8 @@ private fun MealRowItem(
     recipeSuggestions: List<Recipe>,
     onCurrentMealEditingUpdate: (Triple<LocalDate, MealType, String>?) -> Unit,
     onAddMeal: (Recipe, MealType, LocalDate) -> Unit,
-    onRemoveMeal: (Recipe, MealType, LocalDate) -> Unit
+    onRemoveMeal: (Recipe, MealType, LocalDate) -> Unit,
+    onRecipeClick: (Recipe) -> Unit,
 ) {
     val mealDate = currentMealEditing?.first
     val mealType = currentMealEditing?.second
@@ -220,6 +229,7 @@ private fun MealRowItem(
         },
         recipes = recipes,
         recipeSuggestions = if (shouldUpdate(originalMealType)) recipeSuggestions else emptyList(),
+        onRecipeClick = onRecipeClick,
         onRecipeSuggestionSelect = { onAddMeal(it, originalMealType, date) },
         onFocusChanged = {
             if (it) {
@@ -239,10 +249,11 @@ private fun MealRow(
     mealEditText: String,
     recipes: List<Recipe>,
     recipeSuggestions: List<Recipe>,
+    onRecipeClick: (Recipe) -> Unit,
     onRecipeSuggestionSelect: (Recipe) -> Unit,
     onMealEditTextUpdate: (String) -> Unit,
     onFocusChanged: (Boolean) -> Unit,
-    onRemoveMeal: (Recipe) -> Unit
+    onRemoveMeal: (Recipe) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
     Card(
@@ -329,7 +340,10 @@ private fun MealRow(
             RecipeSuggestion(
                 modifier = Modifier.padding(start = padding, end = padding, bottom = padding),
                 suggestions = suggestions,
-                onSuggestionItemSelected = onRecipeSuggestionSelect
+                onSuggestionItemSelected = {
+                    onRecipeSuggestionSelect(it)
+                    focusManager.clearFocus()
+                }
             )
         }
         VerticalAnimatedContent(
@@ -341,27 +355,38 @@ private fun MealRow(
                     Row(
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        RecipeItemImage(
+                        Row(
                             modifier = Modifier
-                                .size(32.dp)
-                                .background(
-                                    color = MaterialTheme.colorScheme.primary,
-                                    shape = MaterialTheme.shapes.extraSmall
-                                )
-                                .clip(shape = MaterialTheme.shapes.extraSmall),
-                            imagePath = recipe.imagePath
-                        )
-                        Text(
-                            modifier = Modifier.weight(1f),
-                            text = recipe.title,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                                .weight(1f)
+                                .clip(MaterialTheme.shapes.extraSmall)
+                                .clickable { onRecipeClick(recipe) },
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            RecipeItemImage(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.primary,
+                                        shape = MaterialTheme.shapes.extraSmall
+                                    )
+                                    .clip(shape = MaterialTheme.shapes.extraSmall),
+                                imagePath = recipe.imagePath
+                            )
+                            Text(
+                                modifier = Modifier.weight(1f),
+                                text = recipe.title,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                         IconButton(
                             modifier = Modifier.size(24.dp),
-                            onClick = { onRemoveMeal(recipe) }) {
+                            onClick = {
+                                onRemoveMeal(recipe)
+                                focusManager.clearFocus()
+                            }) {
                             Icon(
                                 modifier = Modifier.padding(2.dp),
                                 imageVector = Icons.Rounded.Clear,

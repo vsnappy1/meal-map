@@ -23,7 +23,7 @@ fun MealMapNavHost(navController: NavHostController) {
         startDestination = startDestination
     ) {
         composable<Home> {
-            HomeScreen()
+            HomeScreen(onRecipeClick = { navController.navigate(RecipeDetails(it.id)) })
         }
 
         composable<Recipes> {
