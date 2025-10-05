@@ -143,6 +143,64 @@ private fun MealDay(
     onAddMeal: (Recipe, MealType, LocalDate) -> Unit,
     onRemoveMeal: (Recipe, MealType, LocalDate) -> Unit
 ) {
+    val map = meals
+        .groupBy { it.type }
+        .mapValues { it.value.firstOrNull()?.recipes ?: emptyList() }
+    Column {
+        Text(
+            text = date.getDayName(),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold
+        )
+        HorizontalDivider()
+        MealRowItem(
+            originalMealType = MealType.BREAKFAST,
+            mealIconPainter = painterResource(R.drawable.icon_bread_and_coffee),
+            date = date,
+            currentMealEditing = currentMealEditing,
+            recipes = map[MealType.BREAKFAST] ?: emptyList(),
+            recipeSuggestions = recipeSuggestions,
+            onCurrentMealEditingUpdate = onCurrentMealEditingUpdate,
+            onAddMeal = onAddMeal,
+            onRemoveMeal = onRemoveMeal
+        )
+        MealRowItem(
+            originalMealType = MealType.LUNCH,
+            mealIconPainter = painterResource(R.drawable.icon_salad),
+            date = date,
+            currentMealEditing = currentMealEditing,
+            recipes = map[MealType.LUNCH] ?: emptyList(),
+            recipeSuggestions = recipeSuggestions,
+            onCurrentMealEditingUpdate = onCurrentMealEditingUpdate,
+            onAddMeal = onAddMeal,
+            onRemoveMeal = onRemoveMeal
+        )
+        MealRowItem(
+            originalMealType = MealType.DINNER,
+            mealIconPainter = painterResource(R.drawable.icon_ramen_noodle),
+            date = date,
+            currentMealEditing = currentMealEditing,
+            recipes = map[MealType.DINNER] ?: emptyList(),
+            recipeSuggestions = recipeSuggestions,
+            onCurrentMealEditingUpdate = onCurrentMealEditingUpdate,
+            onAddMeal = onAddMeal,
+            onRemoveMeal = onRemoveMeal
+        )
+    }
+}
+
+@Composable
+private fun MealRowItem(
+    originalMealType: MealType,
+    mealIconPainter: Painter,
+    date: LocalDate,
+    currentMealEditing: Triple<LocalDate, MealType, String>?,
+    recipes: List<Recipe>,
+    recipeSuggestions: List<Recipe>,
+    onCurrentMealEditingUpdate: (Triple<LocalDate, MealType, String>?) -> Unit,
+    onAddMeal: (Recipe, MealType, LocalDate) -> Unit,
+    onRemoveMeal: (Recipe, MealType, LocalDate) -> Unit
+) {
     val mealDate = currentMealEditing?.first
     val mealType = currentMealEditing?.second
     val mealEditText = currentMealEditing?.third
@@ -151,79 +209,27 @@ private fun MealDay(
         if (type == null || mealDate == null) return true
         return date == mealDate && type == mealType
     }
-    Column {
-        Text(
-            text = date.getDayName(),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
-        )
-        val map =
-            meals.groupBy { it.type }.mapValues { it.value.firstOrNull()?.recipes ?: emptyList() }
-        HorizontalDivider()
-        MealRow(
-            mealType = "Breakfast",
-            mealIconPainter = painterResource(R.drawable.icon_bread_and_coffee),
-            mealEditText = if (shouldUpdate(MealType.BREAKFAST)) mealEditText.orEmpty() else "",
-            onMealEditTextUpdate = {
-                if (shouldUpdate(MealType.BREAKFAST)) onCurrentMealEditingUpdate(
-                    Triple(date, MealType.BREAKFAST, it)
+    MealRow(
+        mealType = originalMealType.value,
+        mealIconPainter = mealIconPainter,
+        mealEditText = if (shouldUpdate(originalMealType)) mealEditText.orEmpty() else "",
+        onMealEditTextUpdate = {
+            if (shouldUpdate(originalMealType)) onCurrentMealEditingUpdate(
+                Triple(date, originalMealType, it)
+            )
+        },
+        recipes = recipes,
+        recipeSuggestions = if (shouldUpdate(originalMealType)) recipeSuggestions else emptyList(),
+        onRecipeSuggestionSelect = { onAddMeal(it, originalMealType, date) },
+        onFocusChanged = {
+            if (it) {
+                onCurrentMealEditingUpdate(
+                    Triple(date, originalMealType, "")
                 )
-            },
-            recipes = map[MealType.BREAKFAST] ?: emptyList(),
-            recipeSuggestions = if (shouldUpdate(MealType.BREAKFAST)) recipeSuggestions else emptyList(),
-            onRecipeSuggestionSelect = { onAddMeal(it, MealType.BREAKFAST, date) },
-            onFocusChanged = {
-                if (it) {
-                    onCurrentMealEditingUpdate(
-                        Triple(date, MealType.BREAKFAST, "")
-                    )
-                }
-            },
-            onRemoveMeal = { onRemoveMeal(it, MealType.BREAKFAST, date) }
-        )
-        MealRow(
-            mealType = "Lunch",
-            mealIconPainter = painterResource(R.drawable.icon_salad),
-            mealEditText = if (shouldUpdate(MealType.LUNCH)) mealEditText.orEmpty() else "",
-            onMealEditTextUpdate = {
-                if (shouldUpdate(MealType.LUNCH)) onCurrentMealEditingUpdate(
-                    Triple(date, MealType.LUNCH, it)
-                )
-            },
-            recipes = map[MealType.LUNCH] ?: emptyList(),
-            recipeSuggestions = if (shouldUpdate(MealType.LUNCH)) recipeSuggestions else emptyList(),
-            onRecipeSuggestionSelect = { onAddMeal(it, MealType.LUNCH, date) },
-            onFocusChanged = {
-                if (it) {
-                    onCurrentMealEditingUpdate(
-                        Triple(date, MealType.LUNCH, "")
-                    )
-                }
-            },
-            onRemoveMeal = { onRemoveMeal(it, MealType.LUNCH, date) }
-        )
-        MealRow(
-            mealType = "Dinner",
-            mealIconPainter = painterResource(R.drawable.icon_ramen_noodle),
-            mealEditText = if (shouldUpdate(MealType.DINNER)) mealEditText.orEmpty() else "",
-            onMealEditTextUpdate = {
-                if (shouldUpdate(MealType.DINNER)) onCurrentMealEditingUpdate(
-                    Triple(date, MealType.DINNER, it)
-                )
-            },
-            recipes = map[MealType.DINNER] ?: emptyList(),
-            recipeSuggestions = if (shouldUpdate(MealType.DINNER)) recipeSuggestions else emptyList(),
-            onRecipeSuggestionSelect = { onAddMeal(it, MealType.DINNER, date) },
-            onFocusChanged = {
-                if (it) {
-                    onCurrentMealEditingUpdate(
-                        Triple(date, MealType.DINNER, "")
-                    )
-                }
-            },
-            onRemoveMeal = { onRemoveMeal(it, MealType.DINNER, date) }
-        )
-    }
+            }
+        },
+        onRemoveMeal = { onRemoveMeal(it, originalMealType, date) }
+    )
 }
 
 @Composable
