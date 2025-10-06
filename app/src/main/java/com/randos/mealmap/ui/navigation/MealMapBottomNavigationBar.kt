@@ -11,6 +11,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
@@ -64,8 +65,16 @@ fun MealMapBottomNavigationBar(modifier: Modifier = Modifier, navController: Nav
             )
         }
     }
-    navController.addOnDestinationChangedListener { nav, destination, _ ->
-        selectedDestination = destinationSaver.getDestination(nav) ?: Home()
+    DisposableEffect(navController) {
+        val listener = NavController.OnDestinationChangedListener { controller, destination, _ ->
+            destinationSaver.getDestination(controller)?.let {
+                selectedDestination = it
+            }
+        }
+        navController.addOnDestinationChangedListener(listener)
+        onDispose {
+            navController.removeOnDestinationChangedListener(listener)
+        }
     }
 }
 
