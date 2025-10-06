@@ -33,19 +33,18 @@ private data class NavigationItem<T>(
 )
 
 private val navigationItems = listOf(
-    NavigationItem("Grocery", Icons.Rounded.ShoppingCart, Grocery),
-    NavigationItem("Recipes", Icons.Rounded.SoupKitchen, Recipes),
-    NavigationItem("Home", Icons.Rounded.Home, Home),
-    NavigationItem("Account", Icons.Rounded.Person, Account),
-    NavigationItem("Settings", Icons.Rounded.Settings, Settings),
+    NavigationItem("Grocery", Icons.Rounded.ShoppingCart, Grocery()),
+    NavigationItem("Recipes", Icons.Rounded.SoupKitchen, Recipes()),
+    NavigationItem("Home", Icons.Rounded.Home, Home()),
+    NavigationItem("Account", Icons.Rounded.Person, Account()),
+    NavigationItem("Settings", Icons.Rounded.Settings, Settings()),
 )
 
 @Composable
 fun MealMapBottomNavigationBar(modifier: Modifier = Modifier, navController: NavController) {
     val destinationSaver = DestinationSaver()
     var selectedDestination: Destination by rememberSaveable(stateSaver = destinationSaver) {
-        val currentDestinationRoute = navController.currentDestination?.route.orEmpty()
-        mutableStateOf(destinationSaver.restore(currentDestinationRoute) ?: Home)
+        mutableStateOf(destinationSaver.getDestination(navController) ?: Home())
     }
     NavigationBar(modifier = modifier) {
         navigationItems.forEach { item ->
@@ -65,24 +64,36 @@ fun MealMapBottomNavigationBar(modifier: Modifier = Modifier, navController: Nav
             )
         }
     }
-    navController.addOnDestinationChangedListener { _, destination, _ ->
-        selectedDestination = destinationSaver.restore(destination.route.orEmpty()) ?: Home
+    navController.addOnDestinationChangedListener { nav, destination, _ ->
+        selectedDestination = destinationSaver.getDestination(nav) ?: Home()
     }
 }
 
 private class DestinationSaver : Saver<Destination, String> {
     override fun SaverScope.save(value: Destination): String? {
-        return value::class.qualifiedName
+        return when (value) {
+            is Grocery -> Grocery::class.simpleName
+            is Recipes -> Recipes::class.simpleName
+            is Home -> Home::class.simpleName
+            is Account -> Account::class.simpleName
+            is Settings -> Settings::class.simpleName
+            else -> null
+        }
     }
 
     override fun restore(value: String): Destination? {
         return when (value) {
-            Grocery::class.qualifiedName -> return Grocery
-            Recipes::class.qualifiedName -> return Recipes
-            Home::class.qualifiedName -> return Home
-            Account::class.qualifiedName -> return Account
-            Settings::class.qualifiedName -> return Settings
+            Grocery::class.simpleName -> return Grocery()
+            Recipes::class.simpleName -> return Recipes()
+            Home::class.simpleName -> return Home()
+            Account::class.simpleName -> return Account()
+            Settings::class.simpleName -> return Settings()
             else -> null
         }
+    }
+
+    fun getDestination(navController: NavController): Destination? {
+        val name = navController.currentBackStackEntry?.arguments?.getString("name").orEmpty()
+        return restore(name)
     }
 }

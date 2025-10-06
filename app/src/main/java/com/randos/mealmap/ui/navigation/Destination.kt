@@ -5,19 +5,19 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed class Destination {
     @Serializable
-    object Home : Destination()
+    data class Home(val name: String? = Home::class.simpleName) : Destination()
 
     @Serializable
-    object Recipes : Destination()
+    data class Recipes(val name: String? = Recipes::class.simpleName) : Destination()
 
     @Serializable
-    object Grocery : Destination()
+    data class Grocery(val name: String? = Grocery::class.simpleName) : Destination()
 
     @Serializable
-    object Settings : Destination()
+    data class Settings(val name: String? = Settings::class.simpleName) : Destination()
 
     @Serializable
-    object Account : Destination()
+    data class Account(val name: String? = Account::class.simpleName) : Destination()
 
     @Serializable
     data class RecipeDetails(val id: Long) : Destination()
