@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -45,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -99,8 +101,13 @@ private fun HomeScreen(
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
-        Spacer(modifier = Modifier.padding(top = 16.dp))
-        Text(text = "Welcome User,", style = MaterialTheme.typography.headlineMedium)
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 24.dp, bottom = 8.dp),
+            text = "Welcome User,",
+            style = MaterialTheme.typography.headlineLarge
+        )
         WeekSelector(
             isSelectingWeek = state.isSelectingWeek,
             selectedWeekText = state.selectedWeekText,
@@ -117,8 +124,9 @@ private fun HomeScreen(
         DateView(state.dateFrom, state.dateTo)
         Spacer(modifier = Modifier.padding(bottom = 8.dp))
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            items(items = state.mealMap.entries.toList(),
-                key = { (date, meals) -> "$date _ ${meals.hashCode()}" }) { (date, meals) ->
+            items(
+                items = state.mealMap.entries.toList(),
+                key = { (date, _) -> date }) { (date, meals) ->
                 MealDay(
                     date = date,
                     meals = meals,
@@ -151,13 +159,16 @@ private fun MealDay(
     val map = meals
         .groupBy { it.type }
         .mapValues { it.value.firstOrNull()?.recipes ?: emptyList() }
-    Column {
-        Text(
-            text = date.getDayName(),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
-        )
-        HorizontalDivider()
+    Text(
+        text = date.getDayName(),
+        style = MaterialTheme.typography.headlineSmall,
+        fontWeight = FontWeight.W600
+    )
+    HorizontalDivider(modifier = Modifier.padding(bottom = 8.dp))
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         MealRowItem(
             originalMealType = MealType.BREAKFAST,
             mealIconPainter = painterResource(R.drawable.icon_bread_and_coffee),
@@ -259,7 +270,6 @@ private fun MealRow(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 4.dp)
     ) {
         Row(
             modifier = Modifier.padding(6.dp),
@@ -274,10 +284,11 @@ private fun MealRow(
             )
             Text(
                 modifier = Modifier
-                    .width(70.dp),
+                    .width(80.dp),
                 text = mealType,
                 maxLines = 1,
-                style = MaterialTheme.typography.labelLarge
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             BasicTextField(
                 modifier = Modifier
@@ -295,7 +306,8 @@ private fun MealRow(
                 value = mealEditText,
                 onValueChange = onMealEditTextUpdate,
                 singleLine = true,
-                textStyle = MaterialTheme.typography.labelLarge
+                textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.primary)
             ) {
                 Box(
                     modifier = Modifier.fillMaxWidth(),
@@ -319,11 +331,11 @@ private fun MealRow(
                         )
                     }
                 }
-
                 Text(
                     modifier = Modifier
+                        .padding(top = 2.dp)
                         .alpha(if (mealEditText.isEmpty()) 1f else 0f)
-                        .fillMaxWidth(),
+                        .fillMaxSize(),
                     text = "Add meal",
                     color = MaterialTheme.colorScheme.outline,
                     style = MaterialTheme.typography.labelLarge
@@ -378,7 +390,8 @@ private fun MealRow(
                                 modifier = Modifier.weight(1f),
                                 text = recipe.title,
                                 maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                                overflow = TextOverflow.Ellipsis,
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                         IconButton(
@@ -403,7 +416,7 @@ private fun MealRow(
 
 @Composable
 private fun DateView(dateFrom: LocalDate, dateTo: LocalDate, onAutoPlanClick: () -> Unit = {}) {
-    Row {
+    Row(modifier = Modifier.padding(top = 8.dp)) {
         AnimatedContent(
             modifier = Modifier.weight(1f),
             targetState = dateFrom,
@@ -412,8 +425,8 @@ private fun DateView(dateFrom: LocalDate, dateTo: LocalDate, onAutoPlanClick: ()
             Text(
                 modifier = Modifier.weight(1f),
                 text = "${dateFrom.format()} - ${dateTo.format()}",
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.W600
             )
         }
 
@@ -427,8 +440,8 @@ private fun DateView(dateFrom: LocalDate, dateTo: LocalDate, onAutoPlanClick: ()
                 )
                 .padding(horizontal = 12.dp, vertical = 4.dp),
             text = "Auto Plan",
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Bold
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.W600
         )
     }
 }
@@ -498,9 +511,12 @@ private fun WeekText(text: String, onClick: () -> Unit = {}) {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            modifier = Modifier.padding(vertical = 4.dp),
+            modifier = Modifier.padding(vertical = 8.dp),
             text = text,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+            fontWeight = FontWeight.W600
         )
     }
 }
