@@ -385,7 +385,7 @@ private fun MealRow(
             targetState = recipeSuggestions,
             label = "RecipeSuggestionAnimation",
         ) { suggestions ->
-            val padding by animateDpAsState(if (suggestions.isEmpty()) 0.dp else 8.dp)
+            val padding by animateDpAsState(if (suggestions.isNotEmpty() || mealEditText.length >= 2) 8.dp else 0.dp)
             RecipeSuggestion(
                 modifier = Modifier.padding(start = padding, end = padding, bottom = padding),
                 suggestions = suggestions,

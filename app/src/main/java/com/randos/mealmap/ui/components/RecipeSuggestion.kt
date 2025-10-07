@@ -3,6 +3,7 @@ package com.randos.mealmap.ui.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,10 +27,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.randos.domain.model.Recipe
+import com.randos.mealmap.R
 import com.randos.mealmap.utils.Utils
 import kotlin.math.min
 
@@ -45,7 +49,7 @@ fun RecipeSuggestion(
     val maxVisibleItems = 3
     val dropdownHeight = itemHeight * min(suggestions.size, maxVisibleItems)
     fun shouldShowAddRecipe(): Boolean = suggestions.isEmpty() && recipeName.length >= 2
-    val height by animateDpAsState(if(shouldShowAddRecipe()) itemHeight else dropdownHeight)
+    val height by animateDpAsState(if (shouldShowAddRecipe()) itemHeight else dropdownHeight)
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -54,7 +58,9 @@ fun RecipeSuggestion(
             .background(
                 color = MaterialTheme.colorScheme.surfaceDim,
                 shape = MaterialTheme.shapes.medium
-            ),
+            )
+            .clip(MaterialTheme.shapes.medium)
+            .clickable(shouldShowAddRecipe()) { onRecipeAddClick() },
         verticalArrangement = Arrangement.Center
     ) {
         suggestions.forEachIndexed { index, recipe ->
@@ -108,13 +114,19 @@ fun RecipeSuggestion(
                     modifier = Modifier.weight(1f),
                     text = recipeName,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.W500,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
-                IconButton(onClick = onRecipeAddClick) {
+                IconButton(
+                    modifier = Modifier.size(28.dp),
+                    onClick = onRecipeAddClick
+                ) {
                     Icon(
-                        modifier = Modifier.size(24.dp),
+                        modifier = Modifier.padding(2.dp),
                         imageVector = Icons.Rounded.Add,
-                        contentDescription = null
+                        contentDescription = stringResource(R.string.add_button_text)
                     )
                 }
             }
