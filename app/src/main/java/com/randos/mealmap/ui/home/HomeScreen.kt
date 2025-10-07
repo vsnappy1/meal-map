@@ -93,6 +93,9 @@ fun HomeScreen(
         onRecipeClick = onRecipeClick,
         onAddNewRecipe = viewModel::onAddNewRecipe
     )
+    LaunchedEffect(Unit) {
+        viewModel.getWeekPlan()
+    }
 }
 
 @Composable

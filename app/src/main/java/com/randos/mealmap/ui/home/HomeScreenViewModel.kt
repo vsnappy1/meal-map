@@ -29,7 +29,7 @@ class HomeScreenViewModel @Inject constructor(
     private val _state = MutableLiveData(HomeScreenState())
     val state: LiveData<HomeScreenState> = _state
 
-    init {
+    fun getWeekPlan() {
         viewModelScope.launch {
             val (dateFrom, dateTo) = getWeekRange(getState().selectedWeek)
             val mealMap = getTheMealMap(dateFrom, dateTo)
