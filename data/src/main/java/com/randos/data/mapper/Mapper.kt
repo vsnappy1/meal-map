@@ -2,7 +2,6 @@ package com.randos.data.mapper
 
 import com.randos.domain.model.Ingredient
 import com.randos.domain.model.Meal
-import com.randos.domain.model.MealPlan
 import com.randos.domain.model.Recipe
 import com.randos.domain.model.RecipeIngredient
 
@@ -69,23 +68,6 @@ internal fun com.randos.data.database.entity.RecipeIngredient.toDomain(ingredien
         ingredient = ingredient,
         quantity = quantity,
         unit = unit,
-    )
-}
-
-internal fun MealPlan.toEntity(): com.randos.data.database.entity.MealPlan {
-    return com.randos.data.database.entity.MealPlan(
-        id = id,
-        fromDate = fromDate,
-        toDate = toDate
-    )
-}
-
-internal fun com.randos.data.database.entity.MealPlan.toDomain(meals: List<Meal>): MealPlan {
-    return MealPlan(
-        id = id,
-        fromDate = fromDate,
-        toDate = toDate,
-        meals = meals
     )
 }
 

@@ -35,7 +35,4 @@ internal object DatabaseModule {
 
     @Provides
     fun MealRecipeCrossRefDao(database: MealMapDatabase) = database.mealRecipeCrossRefDao()
-
-    @Provides
-    fun provideMealPlanDao(database: MealMapDatabase) = database.mealPlanDao()
 }

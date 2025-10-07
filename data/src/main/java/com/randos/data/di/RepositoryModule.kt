@@ -1,11 +1,9 @@
 package com.randos.data.di
 
 import com.randos.data.repository.IngredientRepositoryImpl
-import com.randos.data.repository.MealPlanRepositoryImpl
 import com.randos.data.repository.MealRepositoryImpl
 import com.randos.data.repository.RecipeRepositoryImpl
 import com.randos.domain.repository.IngredientRepository
-import com.randos.domain.repository.MealPlanRepository
 import com.randos.domain.repository.MealRepository
 import com.randos.domain.repository.RecipeRepository
 import dagger.Binds
@@ -26,8 +24,5 @@ internal abstract class RepositoryModule {
 
     @Binds
     abstract fun bindMealRepository(impl: MealRepositoryImpl): MealRepository
-
-    @Binds
-    abstract fun bindMealPlanRepository(impl: MealPlanRepositoryImpl): MealPlanRepository
 
 }

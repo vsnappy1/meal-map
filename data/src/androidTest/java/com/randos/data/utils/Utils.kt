@@ -6,7 +6,6 @@ import androidx.test.core.app.ApplicationProvider
 import com.randos.data.database.MealMapDatabase
 import com.randos.domain.model.Ingredient
 import com.randos.domain.model.Meal
-import com.randos.domain.model.MealPlan
 import com.randos.domain.model.Recipe
 import com.randos.domain.model.RecipeIngredient
 import com.randos.domain.type.IngredientUnit
@@ -83,12 +82,5 @@ internal object Utils {
         recipes = listOf(recipe1, recipe2),
         type = MealType.LUNCH,
         date = LocalDate.now()
-    )
-
-    val mealPlan = MealPlan(
-        id = 1,
-        meals = listOf(meal1, meal2),
-        fromDate = LocalDate.now(),
-        toDate = LocalDate.now().plusDays(7)
     )
 }

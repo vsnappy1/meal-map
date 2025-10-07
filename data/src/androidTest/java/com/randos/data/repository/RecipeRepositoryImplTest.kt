@@ -16,6 +16,7 @@ import com.randos.data.utils.Utils.recipe2
 import com.randos.domain.model.RecipeIngredient
 import com.randos.domain.repository.RecipeRepository
 import com.randos.domain.type.IngredientUnit
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -24,7 +25,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class RecipeRepositoryImplTest {
+internal class RecipeRepositoryImplTest {
 
     private lateinit var database: MealMapDatabase
     private lateinit var recipeDao: RecipeDao
@@ -32,6 +33,7 @@ class RecipeRepositoryImplTest {
     private lateinit var recipeIngredientDao: RecipeIngredientDao
     private lateinit var recipeRepository: RecipeRepository
     private lateinit var applicationContext: Context
+    private val dispatcher = StandardTestDispatcher()
 
     @Before
     fun setUp() {
@@ -44,7 +46,8 @@ class RecipeRepositoryImplTest {
             recipeDao = recipeDao,
             ingredientDao = ingredientDao,
             recipeIngredientDao = recipeIngredientDao,
-            applicationContext = applicationContext
+            applicationContext = applicationContext,
+            dispatcher = dispatcher
         )
         runTest {
             ingredientDao.insert(ingredient1.toEntity())
@@ -58,7 +61,7 @@ class RecipeRepositoryImplTest {
     }
 
     @Test
-    fun getRecipes_should_return_list_of_recipes() = runTest {
+    fun getRecipes_should_return_list_of_recipes() = runTest(dispatcher) {
         // Given
         recipeRepository.addRecipe(recipe1)
         recipeRepository.addRecipe(recipe2)
@@ -72,7 +75,7 @@ class RecipeRepositoryImplTest {
     }
 
     @Test
-    fun getRecipe_should_return_recipe_with_ingredients() = runTest {
+    fun getRecipe_should_return_recipe_with_ingredients() = runTest(dispatcher) {
         // Given
         recipeRepository.addRecipe(recipe1)
 
@@ -84,7 +87,7 @@ class RecipeRepositoryImplTest {
     }
 
     @Test
-    fun addRecipe_should_insert_recipe_and_ingredients() = runTest {
+    fun addRecipe_should_insert_recipe_and_ingredients() = runTest(dispatcher) {
         // When
         recipeRepository.addRecipe(recipe1)
 
@@ -96,7 +99,7 @@ class RecipeRepositoryImplTest {
     }
 
     @Test
-    fun deleteRecipe_should_delete_recipe_and_ingredients() = runTest {
+    fun deleteRecipe_should_delete_recipe_and_ingredients() = runTest(dispatcher) {
         // Given
         recipeRepository.addRecipe(recipe1)
 
@@ -111,7 +114,7 @@ class RecipeRepositoryImplTest {
     }
 
     @Test
-    fun updateRecipe_should_update_recipe_and_ingredients() = runTest() {
+    fun updateRecipe_should_update_recipe_and_ingredients() = runTest(dispatcher) {
         // Given
         recipeRepository.addRecipe(recipe1)
 

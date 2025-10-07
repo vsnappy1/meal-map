@@ -9,6 +9,7 @@ import com.randos.data.utils.Utils.getMealMapDatabase
 import com.randos.data.utils.Utils.ingredient1
 import com.randos.data.utils.Utils.ingredient2
 import com.randos.domain.repository.IngredientRepository
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -23,13 +24,14 @@ internal class IngredientRepositoryImplTest {
     private lateinit var recipeIngredientDao: RecipeIngredientDao
     private lateinit var mealMapDatabase: MealMapDatabase
     private lateinit var ingredientRepository: IngredientRepository
+    private val dispatcher = StandardTestDispatcher()
 
     @Before
     fun setUp() {
         mealMapDatabase = getMealMapDatabase()
         ingredientDao = mealMapDatabase.ingredientDao()
         recipeIngredientDao = mealMapDatabase.recipeIngredientDao()
-        ingredientRepository = IngredientRepositoryImpl(ingredientDao, recipeIngredientDao)
+        ingredientRepository = IngredientRepositoryImpl(ingredientDao, recipeIngredientDao, dispatcher)
     }
 
     @After
@@ -38,7 +40,7 @@ internal class IngredientRepositoryImplTest {
     }
 
     @Test
-    fun getIngredients_should_return_ingredients_from_database() = runTest {
+    fun getIngredients_should_return_ingredients_from_database() = runTest(dispatcher) {
         // Given
         ingredientDao.insert(ingredient1.toEntity())
         ingredientDao.insert(ingredient2.toEntity())
@@ -52,7 +54,7 @@ internal class IngredientRepositoryImplTest {
     }
 
     @Test
-    fun getIngredient_should_return_ingredient_from_database() = runTest {
+    fun getIngredient_should_return_ingredient_from_database() = runTest(dispatcher) {
         // Given
         ingredientDao.insert(ingredient1.toEntity())
 
@@ -64,7 +66,7 @@ internal class IngredientRepositoryImplTest {
     }
 
     @Test
-    fun addIngredient_should_add_ingredient_to_database() = runTest {
+    fun addIngredient_should_add_ingredient_to_database() = runTest(dispatcher) {
         // When
         ingredientRepository.addIngredient(ingredient1)
 
@@ -74,7 +76,7 @@ internal class IngredientRepositoryImplTest {
     }
 
     @Test
-    fun deleteIngredient_should_delete_ingredient_from_database() = runTest {
+    fun deleteIngredient_should_delete_ingredient_from_database() = runTest(dispatcher) {
         // Given
         ingredientDao.insert(ingredient1.toEntity())
 
@@ -87,7 +89,7 @@ internal class IngredientRepositoryImplTest {
     }
 
     @Test
-    fun updateIngredient_should_update_ingredient_in_database() = runTest {
+    fun updateIngredient_should_update_ingredient_in_database() = runTest(dispatcher) {
         // Given
         ingredientDao.insert(ingredient1.toEntity())
 
