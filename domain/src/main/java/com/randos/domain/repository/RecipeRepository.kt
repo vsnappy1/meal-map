@@ -7,7 +7,7 @@ interface RecipeRepository {
     suspend fun getRecipesLike(name: String): List<Recipe>
     suspend fun getRecipe(id: Long): Recipe?
     suspend fun getSimpleRecipe(id: Long): Recipe?
-    suspend fun addRecipe(recipe: Recipe)
+    suspend fun addRecipe(recipe: Recipe): Long
     suspend fun deleteRecipe(recipe: Recipe)
     suspend fun updateRecipe(recipe: Recipe)
     suspend fun isEmpty(): Boolean

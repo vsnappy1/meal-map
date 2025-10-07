@@ -80,7 +80,13 @@ class HomeScreenViewModel @Inject constructor(
             if (meal?.recipes?.contains(recipe) == true) return@launch
             val updatedMeal = if (meal == null) {
                 val meal = Meal(recipes = listOf(recipe), date = date, type = mealType)
-                val id = mealRepository.addMeal(Meal(recipes = listOf(recipe), date = date, type = mealType))
+                val id = mealRepository.addMeal(
+                    Meal(
+                        recipes = listOf(recipe),
+                        date = date,
+                        type = mealType
+                    )
+                )
                 meal.copy(id = id)
             } else {
                 val updatedMeal = meal.copy(recipes = meal.recipes + recipe)
@@ -91,6 +97,15 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
+    fun onAddNewRecipe(title: String, mealType: MealType, date: LocalDate) {
+        viewModelScope.launch {
+            var recipe = Recipe(title = title, dateCreated = LocalDate.now())
+            val recipeId = recipeRepository.addRecipe(recipe)
+            recipe = recipe.copy(id = recipeId)
+            onAddMeal(recipe, mealType, date)
+        }
+    }
+
     fun onRemoveMeal(recipe: Recipe, mealType: MealType, date: LocalDate) {
         viewModelScope.launch {
             val meal = getState().mealMap[date]?.find { it.type == mealType } ?: return@launch
@@ -98,7 +113,7 @@ class HomeScreenViewModel @Inject constructor(
             recipes.remove(recipe)
             val updatedMeal = meal.copy(recipes = recipes)
             mealRepository.updateMeal(updatedMeal)
-            if(recipes.isEmpty()){
+            if (recipes.isEmpty()) {
                 mealRepository.deleteMeal(updatedMeal)
             }
             updateMeal(updatedMeal, mealType, date)

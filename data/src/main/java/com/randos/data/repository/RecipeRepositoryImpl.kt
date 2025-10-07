@@ -63,7 +63,7 @@ internal class RecipeRepositoryImpl @Inject constructor(
         )?.toDomain(listOf())
     }
 
-    override suspend fun addRecipe(recipe: Recipe) = withContext(dispatcher) {
+    override suspend fun addRecipe(recipe: Recipe): Long = withContext(dispatcher) {
         val recipeId = recipeDao.insert(recipe.toEntity())
         val recipeIngredients = recipe.ingredients.map { it.toEntity(recipeId, it.ingredient.id) }
         /*
@@ -74,6 +74,7 @@ internal class RecipeRepositoryImpl @Inject constructor(
             So, `insertAll(*arrayOf(item1, item2))` becomes `insertAll(item1, item2)`.
          */
         recipeIngredientDao.insertAll(*recipeIngredients.toTypedArray())
+        return@withContext recipeId
     }
 
     override suspend fun deleteRecipe(recipe: Recipe) = withContext(dispatcher) {

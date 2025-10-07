@@ -30,6 +30,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
@@ -57,6 +58,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -87,7 +90,8 @@ fun HomeScreen(
         onCurrentMealEditingUpdate = viewModel::onCurrentMealEditingUpdate,
         onAddMeal = viewModel::onAddMeal,
         onRemoveMeal = viewModel::onRemoveMeal,
-        onRecipeClick = onRecipeClick
+        onRecipeClick = onRecipeClick,
+        onAddNewRecipe = viewModel::onAddNewRecipe
     )
 }
 
@@ -99,7 +103,8 @@ private fun HomeScreen(
     onCurrentMealEditingUpdate: (Triple<LocalDate, MealType, String>?) -> Unit = {},
     onAddMeal: (Recipe, MealType, LocalDate) -> Unit = { _, _, _ -> },
     onRemoveMeal: (Recipe, MealType, LocalDate) -> Unit = { _, _, _ -> },
-    onRecipeClick: (Recipe) -> Unit = {}
+    onRecipeClick: (Recipe) -> Unit = {},
+    onAddNewRecipe: (String, MealType, LocalDate) -> Unit = { _, _, _ -> }
 ) {
     val focusManager = LocalFocusManager.current
     val lazyListState = rememberLazyListState()
@@ -146,7 +151,8 @@ private fun HomeScreen(
                     onCurrentMealEditingUpdate = onCurrentMealEditingUpdate,
                     onAddMeal = onAddMeal,
                     onRemoveMeal = onRemoveMeal,
-                    onRecipeClick = onRecipeClick
+                    onRecipeClick = onRecipeClick,
+                    onAddNewRecipe = onAddNewRecipe
                 )
             }
             item {
@@ -175,6 +181,7 @@ private fun MealDay(
     onAddMeal: (Recipe, MealType, LocalDate) -> Unit,
     onRemoveMeal: (Recipe, MealType, LocalDate) -> Unit,
     onRecipeClick: (Recipe) -> Unit,
+    onAddNewRecipe: (String, MealType, LocalDate) -> Unit
 ) {
     val map = meals
         .groupBy { it.type }
@@ -200,6 +207,7 @@ private fun MealDay(
             onAddMeal = onAddMeal,
             onRecipeClick = onRecipeClick,
             onRemoveMeal = onRemoveMeal,
+            onAddNewRecipe = { onAddNewRecipe(it, MealType.BREAKFAST, date) }
         )
         MealRowItem(
             originalMealType = MealType.LUNCH,
@@ -212,6 +220,7 @@ private fun MealDay(
             onAddMeal = onAddMeal,
             onRecipeClick = onRecipeClick,
             onRemoveMeal = onRemoveMeal,
+            onAddNewRecipe = { onAddNewRecipe(it, MealType.LUNCH, date) }
         )
         MealRowItem(
             originalMealType = MealType.DINNER,
@@ -224,6 +233,7 @@ private fun MealDay(
             onAddMeal = onAddMeal,
             onRemoveMeal = onRemoveMeal,
             onRecipeClick = onRecipeClick,
+            onAddNewRecipe = { onAddNewRecipe(it, MealType.LUNCH, date) }
         )
     }
 }
@@ -240,6 +250,7 @@ private fun MealRowItem(
     onAddMeal: (Recipe, MealType, LocalDate) -> Unit,
     onRemoveMeal: (Recipe, MealType, LocalDate) -> Unit,
     onRecipeClick: (Recipe) -> Unit,
+    onAddNewRecipe: (String) -> Unit
 ) {
     val mealDate = currentMealEditing?.first
     val mealType = currentMealEditing?.second
@@ -269,7 +280,8 @@ private fun MealRowItem(
                 )
             }
         },
-        onRemoveMeal = { onRemoveMeal(it, originalMealType, date) }
+        onRemoveMeal = { onRemoveMeal(it, originalMealType, date) },
+        onAddNewRecipe = onAddNewRecipe
     )
 }
 
@@ -285,6 +297,7 @@ private fun MealRow(
     onMealEditTextUpdate: (String) -> Unit,
     onFocusChanged: (Boolean) -> Unit,
     onRemoveMeal: (Recipe) -> Unit,
+    onAddNewRecipe: (String) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
     Card(
@@ -325,6 +338,10 @@ private fun MealRow(
                     .padding(horizontal = 8.dp, vertical = 4.dp),
                 value = mealEditText,
                 onValueChange = onMealEditTextUpdate,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Text,
+                    capitalization = KeyboardCapitalization.Sentences
+                ),
                 singleLine = true,
                 textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
                 cursorBrush = SolidColor(MaterialTheme.colorScheme.primary)
@@ -374,6 +391,11 @@ private fun MealRow(
                 suggestions = suggestions,
                 onSuggestionItemSelected = {
                     onRecipeSuggestionSelect(it)
+                    focusManager.clearFocus()
+                },
+                recipeName = mealEditText,
+                onRecipeAddClick = {
+                    onAddNewRecipe(mealEditText)
                     focusManager.clearFocus()
                 }
             )
