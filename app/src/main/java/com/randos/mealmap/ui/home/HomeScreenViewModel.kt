@@ -98,6 +98,9 @@ class HomeScreenViewModel @Inject constructor(
             recipes.remove(recipe)
             val updatedMeal = meal.copy(recipes = recipes)
             mealRepository.updateMeal(updatedMeal)
+            if(recipes.isEmpty()){
+                mealRepository.deleteMeal(updatedMeal)
+            }
             updateMeal(updatedMeal, mealType, date)
         }
     }

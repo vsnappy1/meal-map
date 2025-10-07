@@ -9,6 +9,5 @@ interface IngredientRepository {
     suspend fun addIngredient(ingredient: Ingredient): Ingredient
     suspend fun deleteIngredient(ingredient: Ingredient)
     suspend fun updateIngredient(ingredient: Ingredient)
-
     suspend fun isThisIngredientUsedInAnyRecipe(ingredient: Ingredient): Boolean
 }

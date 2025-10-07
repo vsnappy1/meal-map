@@ -21,16 +21,6 @@ internal class MealRepositoryImpl @Inject constructor(
     private val dispatcher: CoroutineDispatcher
 ) : MealRepository {
 
-    override suspend fun getMealsForMealPlan(mealPlanId: Long): List<Meal> =
-        withContext(dispatcher) {
-            val meals = mutableListOf<Meal>()
-            val mealEntities = mealDao.getByMealPlanId(mealPlanId)
-            mealEntities.forEach { meal ->
-                getMeal(meal.id)?.let { meals.add(it) }
-            }
-            return@withContext meals
-        }
-
     override suspend fun getMeal(id: Long): Meal? = withContext(dispatcher) {
         return@withContext mealDao.get(id)?.toDomain(getRecipesOfMeal(id))
     }
