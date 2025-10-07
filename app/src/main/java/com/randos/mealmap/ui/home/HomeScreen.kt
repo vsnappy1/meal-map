@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
@@ -39,8 +40,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -64,6 +69,7 @@ import com.randos.mealmap.R
 import com.randos.mealmap.ui.components.RecipeItemImage
 import com.randos.mealmap.ui.components.RecipeSuggestion
 import com.randos.mealmap.ui.components.VerticalAnimatedContent
+import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
@@ -96,6 +102,8 @@ private fun HomeScreen(
     onRecipeClick: (Recipe) -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
+    val lazyListState = rememberLazyListState()
+    var isFirstLaunch by rememberSaveable { mutableStateOf(true) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -123,7 +131,10 @@ private fun HomeScreen(
         }
         DateView(state.dateFrom, state.dateTo)
         Spacer(modifier = Modifier.padding(bottom = 8.dp))
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        LazyColumn(
+            state = lazyListState,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             items(
                 items = state.mealMap.entries.toList(),
                 key = { (date, _) -> date }) { (date, meals) ->
@@ -141,6 +152,15 @@ private fun HomeScreen(
             item {
                 Spacer(modifier = Modifier.padding(bottom = 8.dp))
             }
+        }
+    }
+    LaunchedEffect(Unit) {
+        if (isFirstLaunch) {
+            val index: Int = state.mealMap.entries.map { it.key }.indexOf(LocalDate.now())
+            if (index == -1) return@LaunchedEffect
+            delay(500)
+            lazyListState.animateScrollToItem(index)
+            isFirstLaunch = false
         }
     }
 }
