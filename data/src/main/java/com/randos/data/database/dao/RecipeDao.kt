@@ -16,7 +16,7 @@ internal interface RecipeDao {
     @Query("SELECT * FROM Recipe WHERE title LIKE '%' || :title || '%'")
     suspend fun getByName(title: String): List<Recipe>
 
-    @Query("SELECT * FROM Recipe")
+    @Query("SELECT * FROM Recipe ORDER BY title ASC")
     suspend fun getAll(): List<Recipe>
 
     @Insert

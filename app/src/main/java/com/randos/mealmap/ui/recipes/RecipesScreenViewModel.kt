@@ -26,16 +26,16 @@ class RecipesScreenViewModel @Inject constructor(
     fun getRecipes() {
         viewModelScope.launch {
             // TODO remove this when releasing app to production, this is only for demo purposes
-            if(recipeRepository.isEmpty()){
+            if (recipeRepository.isEmpty()) {
                 recipeRepository.populateSampleRecipes()
             }
             recipes = recipeRepository.getRecipes()
-            _state.postValue( getState().copy(recipes = recipes))
+            _state.postValue(getState().copy(recipes = recipes))
         }
     }
 
     fun onSearchTextChange(text: String) {
-        _state.postValue( getState().copy(searchText = text))
+        _state.postValue(getState().copy(searchText = text))
         applyFiltersAndSort()
     }
 
@@ -45,12 +45,17 @@ class RecipesScreenViewModel @Inject constructor(
     }
 
     fun onSortChange(sort: RecipesSort?) {
-        _state.postValue( getState().copy(sort = sort))
+        _state.postValue(
+            getState().copy(
+                sort = sort,
+                sortOrder = if (sort == null) SortOrder.ASCENDING else SortOrder.DESCENDING
+            )
+        )
         applyFiltersAndSort()
     }
 
     fun onSortOrderChange(sortOrder: SortOrder) {
-        _state.postValue( getState().copy(sortOrder = sortOrder))
+        _state.postValue(getState().copy(sortOrder = sortOrder))
         applyFiltersAndSort()
     }
 
