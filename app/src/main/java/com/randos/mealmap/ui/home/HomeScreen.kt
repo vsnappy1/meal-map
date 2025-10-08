@@ -17,11 +17,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,6 +33,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Clear
@@ -45,6 +49,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -98,6 +103,7 @@ fun HomeScreen(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun HomeScreen(
     state: HomeScreenState = HomeScreenState(),
@@ -111,6 +117,7 @@ private fun HomeScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val lazyListState = rememberLazyListState()
+    val isKeyboardVisible by rememberUpdatedState(WindowInsets.isImeVisible)
     var isFirstLaunch by rememberSaveable { mutableStateOf(true) }
     Column(
         modifier = Modifier
@@ -159,7 +166,8 @@ private fun HomeScreen(
                 )
             }
             item {
-                Spacer(modifier = Modifier.padding(bottom = 8.dp))
+                val height by animateDpAsState(if (isKeyboardVisible) 350.dp else 8.dp)
+                Spacer(modifier = Modifier.height(height))
             }
         }
     }
@@ -171,6 +179,25 @@ private fun HomeScreen(
             lazyListState.animateScrollToItem(index)
             isFirstLaunch = false
         }
+    }
+    LaunchedEffect(state.recipeSuggestions.isNotEmpty()) {
+        if (state.recipeSuggestions.isEmpty()) return@LaunchedEffect
+        val (date, mealType, _) = state.currentMealEditing ?: return@LaunchedEffect
+        val index = state.mealMap.keys.indexOf(date)
+        val dayMealPlan = state.mealMap[date]
+
+        val breakfastRecipesCount = dayMealPlan?.filter { it.type == MealType.BREAKFAST }
+            ?.flatMap { it.recipes }?.size ?: 0
+        val lunchRecipesCount = dayMealPlan?.filter { it.type == MealType.LUNCH }
+            ?.flatMap { it.recipes }?.size ?: 0
+
+        val offset: Double = when (mealType) {
+            MealType.BREAKFAST -> 0.0
+            MealType.LUNCH -> 1.4 + breakfastRecipesCount
+            MealType.DINNER -> 2.8 + (breakfastRecipesCount + lunchRecipesCount)
+            else -> 0.0
+        }
+        if (index != -1) lazyListState.animateScrollToItem(index, (offset * 110).toInt())
     }
 }
 
@@ -345,12 +372,18 @@ private fun MealRow(
                     keyboardType = KeyboardType.Text,
                     capitalization = KeyboardCapitalization.Sentences
                 ),
+                keyboardActions = KeyboardActions {
+                    onMealEditTextUpdate("")
+                    focusManager.clearFocus()
+                },
                 singleLine = true,
                 textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
                 cursorBrush = SolidColor(MaterialTheme.colorScheme.primary)
             ) {
                 Box(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 2.dp),
                     contentAlignment = Alignment.CenterEnd
                 ) {
                     this@Row.AnimatedVisibility(
