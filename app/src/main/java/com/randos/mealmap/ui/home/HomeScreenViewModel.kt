@@ -31,7 +31,7 @@ class HomeScreenViewModel @Inject constructor(
 
     fun getWeekPlan() {
         viewModelScope.launch {
-            val (dateFrom, dateTo) = getWeekRange(getState().selectedWeek)
+            val (dateFrom, dateTo) = getWeekRange(getState().selectedWeek.first)
             val mealMap = getTheMealMap(dateFrom, dateTo)
             _state.postValue(
                 getState().copy(
@@ -47,13 +47,12 @@ class HomeScreenViewModel @Inject constructor(
         _state.postValue(getState().copy(isSelectingWeek = isSelectingWeek))
     }
 
-    fun onSelectedWeekTextUpdate(week: Int, selectedWeekText: String) {
-        val (dateFrom, dateTo) = getWeekRange(week)
+    fun onSelectedWeekTextUpdate(week: Pair<Int, String>) {
+        val (dateFrom, dateTo) = getWeekRange(week.first)
         viewModelScope.launch {
             val mealMap = getTheMealMap(dateFrom, dateTo)
             _state.postValue(
                 getState().copy(
-                    selectedWeekText = selectedWeekText,
                     isSelectingWeek = false,
                     selectedWeek = week,
                     dateFrom = dateFrom,

@@ -1,16 +1,9 @@
 package com.randos.mealmap.ui.home
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -37,7 +30,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Clear
-import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -65,7 +57,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -74,13 +65,14 @@ import com.randos.domain.model.Meal
 import com.randos.domain.model.Recipe
 import com.randos.domain.type.MealType
 import com.randos.mealmap.R
+import com.randos.mealmap.ui.components.DateView
 import com.randos.mealmap.ui.components.RecipeItemImage
 import com.randos.mealmap.ui.components.RecipeSuggestion
 import com.randos.mealmap.ui.components.VerticalAnimatedContent
+import com.randos.mealmap.ui.components.WeekSelector
+import com.randos.mealmap.utils.getDayName
 import kotlinx.coroutines.delay
 import java.time.LocalDate
-import java.time.format.TextStyle
-import java.util.Locale
 
 @Composable
 fun HomeScreen(
@@ -108,7 +100,7 @@ fun HomeScreen(
 private fun HomeScreen(
     state: HomeScreenState = HomeScreenState(),
     onIsSelectingWeekUpdate: (Boolean) -> Unit = {},
-    onSelectedWeekTextUpdate: (Int, String) -> Unit = { _, _ -> },
+    onSelectedWeekTextUpdate: (Pair<Int, String>) -> Unit = { },
     onCurrentMealEditingUpdate: (Triple<LocalDate, MealType, String>?) -> Unit = {},
     onAddMeal: (Recipe, MealType, LocalDate) -> Unit = { _, _, _ -> },
     onRemoveMeal: (Recipe, MealType, LocalDate) -> Unit = { _, _, _ -> },
@@ -133,18 +125,36 @@ private fun HomeScreen(
         )
         WeekSelector(
             isSelectingWeek = state.isSelectingWeek,
-            selectedWeekText = state.selectedWeekText,
-            weeksAvailable = state.weeksAvailable,
+            selectedWeek = state.selectedWeek.second,
             onIsSelectingWeekUpdate = onIsSelectingWeekUpdate,
-            onSelectedWeekTextUpdate = { week, text ->
+            onSelectedWeekUpdate = { week, text ->
                 focusManager.clearFocus()
-                onSelectedWeekTextUpdate(week, text)
+                onSelectedWeekTextUpdate(Pair(week, text))
             }
         )
         AnimatedVisibility(visible = state.isSelectingWeek) {
             Spacer(modifier = Modifier.height(8.dp))
         }
-        DateView(state.dateFrom, state.dateTo)
+        Row(modifier = Modifier.padding(top = 8.dp)) {
+            DateView(
+                modifier = Modifier.weight(1f),
+                dateFrom = state.dateFrom,
+                dateTo = state.dateTo
+            )
+            Text(
+                modifier = Modifier
+                    .clip(MaterialTheme.shapes.small)
+                    .clickable { }
+                    .background(
+                        MaterialTheme.colorScheme.primaryContainer,
+                        MaterialTheme.shapes.small
+                    )
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
+                text = "Auto Plan",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.W600
+            )
+        }
         Spacer(modifier = Modifier.padding(bottom = 8.dp))
         LazyColumn(
             state = lazyListState,
@@ -492,128 +502,10 @@ private fun MealRow(
     }
 }
 
-@Composable
-private fun DateView(dateFrom: LocalDate, dateTo: LocalDate, onAutoPlanClick: () -> Unit = {}) {
-    Row(modifier = Modifier.padding(top = 8.dp)) {
-        AnimatedContent(
-            modifier = Modifier.weight(1f),
-            targetState = dateFrom,
-            transitionSpec = { fadeIn() togetherWith fadeOut() }
-        ) { dateFrom ->
-            Text(
-                modifier = Modifier.weight(1f),
-                text = "${dateFrom.format()} - ${dateTo.format()}",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.W600
-            )
-        }
-
-        Text(
-            modifier = Modifier
-                .clip(MaterialTheme.shapes.small)
-                .clickable { onAutoPlanClick() }
-                .background(
-                    MaterialTheme.colorScheme.primaryContainer,
-                    MaterialTheme.shapes.small
-                )
-                .padding(horizontal = 12.dp, vertical = 4.dp),
-            text = "Auto Plan",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.W600
-        )
-    }
-}
-
-@Composable
-private fun WeekSelector(
-    isSelectingWeek: Boolean,
-    selectedWeekText: String,
-    weeksAvailable: List<Pair<Int, String>>,
-    onIsSelectingWeekUpdate: (Boolean) -> Unit,
-    onSelectedWeekTextUpdate: (Int, String) -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = { onIsSelectingWeekUpdate(true) }) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            this@Card.AnimatedVisibility(
-                visible = !isSelectingWeek,
-                enter = fadeIn(),
-                exit = fadeOut(animationSpec = tween(durationMillis = 100)),
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(horizontal = 8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.KeyboardArrowDown, contentDescription = null
-                )
-            }
-            Column {
-                weeksAvailable.forEachIndexed { index, (week, text) ->
-                    AnimatedVisibility(
-                        visible = selectedWeekText == text || isSelectingWeek,
-                        enter = expandVertically(),
-                        exit = shrinkVertically()
-                    ) {
-                        WeekText(
-                            text = text,
-                            onClick = {
-                                if (isSelectingWeek) {
-                                    onSelectedWeekTextUpdate(week, text)
-                                } else {
-                                    onIsSelectingWeekUpdate(true)
-                                }
-                            })
-                    }
-                    AnimatedVisibility(
-                        modifier = Modifier.fillMaxWidth(),
-                        visible = index < weeksAvailable.size - 1 && isSelectingWeek,
-                        enter = scaleIn() + fadeIn(),
-                        exit = scaleOut() + fadeOut()
-                    ) {
-                        HorizontalDivider(Modifier.padding(horizontal = 8.dp))
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun WeekText(text: String, onClick: () -> Unit = {}) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.medium)
-            .clickable { onClick() },
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            modifier = Modifier.padding(vertical = 8.dp),
-            text = text,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface,
-            fontWeight = FontWeight.W600
-        )
-    }
-}
-
-
 @Preview(showSystemUi = true)
 @Composable
 private fun HomeScreenPreview() {
     MaterialTheme {
         HomeScreen(state = HomeScreenState())
     }
-}
-
-private fun LocalDate.format(): String {
-    val dayOfWeek = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-    val month = month.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-    return "$dayOfWeek / $dayOfMonth $month"
-}
-
-private fun LocalDate.getDayName(): String {
-    return dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
 }
