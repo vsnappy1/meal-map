@@ -163,6 +163,7 @@ private fun AddRecipeScreen(
     onDeleteSuggestedIngredient: (Ingredient) -> Unit = {},
 ) {
     val recipe = state.recipe
+    val scrollState = rememberScrollState()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -171,7 +172,7 @@ private fun AddRecipeScreen(
         Column(
             modifier = Modifier
                 .padding(top = 20.dp)
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(scrollState),
         ) {
             Spacer(modifier = Modifier.height(50.dp))
             RecipeImage(
@@ -251,6 +252,12 @@ private fun AddRecipeScreen(
             onSave = onSave,
             isEdit = id != null
         )
+    }
+    LaunchedEffect(state.currentIngredientText) {
+        if (state.currentIngredientText.isNotEmpty()) {
+            val count = state.recipe.ingredients.size
+            scrollState.animateScrollTo(500 + count * 110)
+        }
     }
 }
 
