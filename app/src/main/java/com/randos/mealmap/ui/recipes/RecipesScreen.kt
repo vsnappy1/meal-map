@@ -58,6 +58,7 @@ import com.randos.domain.type.SortOrder
 import com.randos.mealmap.R
 import com.randos.mealmap.ui.components.RecipeItem
 import com.randos.mealmap.ui.components.RecipePill
+import com.randos.mealmap.ui.components.ScreenHeadingText
 import com.randos.mealmap.ui.components.VerticalAnimatedContent
 import com.randos.mealmap.utils.Utils
 
@@ -95,13 +96,9 @@ private fun RecipesScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
     ) {
-        Text(
-            text = stringResource(R.string.recipes_title),
-            style = MaterialTheme.typography.headlineLarge
-        )
-        Spacer(modifier = Modifier.height(64.dp))
+        ScreenHeadingText(text = stringResource(R.string.recipes_title))
+        Spacer(modifier = Modifier.height(50.dp))
         SearchBar(
             text = state.searchText,
             onSearchTextChange = onSearchTextChange
@@ -191,15 +188,16 @@ private fun ActionButtons(
 ) {
     Row(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(top = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         DropDownButton(
             text = stringResource(R.string.filter_button_text),
             items = Utils.recipeTags,
-            onItemSelect = { onFilterChange(it as? RecipeTag) },
-            displayValue = { (it as RecipeTag).value },
+            onItemSelect = { onFilterChange(it) },
+            displayValue = { it.value },
             selectedItem = state.filter
         )
         Spacer(modifier = Modifier.width(8.dp))

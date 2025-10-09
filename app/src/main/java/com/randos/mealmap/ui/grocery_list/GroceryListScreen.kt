@@ -1,9 +1,17 @@
 package com.randos.mealmap.ui.grocery_list
 
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import com.randos.mealmap.ui.components.ScreenHeadingText
 
 @Composable
-fun GroceryListScreen(){
-    Text(text = "Grocery List")
+fun GroceryListScreen() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        ScreenHeadingText(text = "Grocery List")
+    }
 }

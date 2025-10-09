@@ -83,7 +83,6 @@ private fun RecipeDetailsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
             .verticalScroll(rememberScrollState())
     ) {
         Spacer(modifier = Modifier.height(16.dp))
@@ -246,16 +245,21 @@ private fun RecipeExtraDetails(modifier: Modifier = Modifier, recipe: Recipe) {
                 title2 = stringResource(R.string.cook_time_label),
                 value2 = formatTime(recipe.cookTime),
                 title3 = stringResource(R.string.recipe_servings_label),
-                value3 = recipe.servings?.toString() ?: stringResource(R.string.default_value_for_no_value)
+                value3 = recipe.servings?.toString()
+                    ?: stringResource(R.string.default_value_for_no_value)
             )
             Spacer(modifier = Modifier.height(8.dp))
             RecipeExtraRow(
                 title1 = stringResource(R.string.recipe_tags_label),
-                value1 = if (recipe.tags.isEmpty()) stringResource(R.string.default_value_for_no_value) else recipe.tags.joinToString(", ") { it.value },
+                value1 = if (recipe.tags.isEmpty()) stringResource(R.string.default_value_for_no_value) else recipe.tags.joinToString(
+                    ", "
+                ) { it.value },
                 title2 = stringResource(R.string.recipe_heaviness_label),
-                value2 = recipe.heaviness?.value ?: stringResource(R.string.default_value_for_no_value),
+                value2 = recipe.heaviness?.value
+                    ?: stringResource(R.string.default_value_for_no_value),
                 title3 = stringResource(R.string.recipe_total_calories_label),
-                value3 = recipe.calories?.toString() ?: stringResource(R.string.default_value_for_no_value)
+                value3 = recipe.calories?.toString()
+                    ?: stringResource(R.string.default_value_for_no_value)
             )
         }
     }
@@ -331,6 +335,7 @@ private fun DeleteConfirmationDialog(
         }
     )
 }
+
 @Composable
 private fun ActionButton(
     modifier: Modifier = Modifier,

@@ -3,6 +3,9 @@ package com.randos.mealmap.utils
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
@@ -24,4 +27,8 @@ fun LocalDate.format(): String {
 
 fun LocalDate.getDayName(): String {
     return dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
+}
+
+fun Modifier.defaultMainContainerPadding(): Modifier {
+    return this.padding(start = 16.dp, end = 16.dp, top = 16.dp)
 }

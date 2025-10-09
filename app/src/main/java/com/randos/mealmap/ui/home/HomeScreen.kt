@@ -68,6 +68,7 @@ import com.randos.mealmap.R
 import com.randos.mealmap.ui.components.DateView
 import com.randos.mealmap.ui.components.RecipeItemImage
 import com.randos.mealmap.ui.components.RecipeSuggestion
+import com.randos.mealmap.ui.components.ScreenHeadingText
 import com.randos.mealmap.ui.components.VerticalAnimatedContent
 import com.randos.mealmap.ui.components.WeekSelector
 import com.randos.mealmap.utils.getDayName
@@ -114,15 +115,8 @@ private fun HomeScreen(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
     ) {
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 24.dp, bottom = 8.dp),
-            text = "Welcome User,",
-            style = MaterialTheme.typography.headlineLarge
-        )
+        ScreenHeadingText(text = "Welcome User,")
         WeekSelector(
             isSelectingWeek = state.isSelectingWeek,
             selectedWeek = state.selectedWeek.second,
@@ -146,13 +140,14 @@ private fun HomeScreen(
                     .clip(MaterialTheme.shapes.small)
                     .clickable { }
                     .background(
-                        MaterialTheme.colorScheme.primaryContainer,
+                        MaterialTheme.colorScheme.primary,
                         MaterialTheme.shapes.small
                     )
                     .padding(horizontal = 12.dp, vertical = 4.dp),
                 text = "Auto Plan",
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.W600
+                fontWeight = FontWeight.W600,
+                color = MaterialTheme.colorScheme.onPrimary
             )
         }
         Spacer(modifier = Modifier.padding(bottom = 8.dp))
