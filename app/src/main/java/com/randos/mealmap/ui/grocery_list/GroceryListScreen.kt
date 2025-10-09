@@ -18,14 +18,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.randos.domain.model.GroceryIngredient
+import com.randos.domain.type.IngredientUnit
 import com.randos.mealmap.R
 import com.randos.mealmap.ui.components.DateView
 import com.randos.mealmap.ui.components.ScreenHeadingText
@@ -91,33 +95,48 @@ private fun GroceryListScreen(
 
 @Composable
 fun GroceryListItem(groceryIngredient: GroceryIngredient) {
+    var isChecked by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(end = 4.dp, top = 4.dp, bottom = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
             modifier = Modifier.size(32.dp),
-            checked = false,
-            onCheckedChange = {})
-        val recipeIngredient = groceryIngredient.recipeIngredient
+            checked = isChecked,
+            onCheckedChange = { isChecked = !isChecked })
         Text(
-            modifier = Modifier.weight(1f),
-            text = recipeIngredient.ingredient.name,
-            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
+                .weight(1f)
+                .padding(top = 4.dp),
+            text = groceryIngredient.name,
+            style = MaterialTheme.typography.bodyLarge.copy(textDecoration = if (isChecked) TextDecoration.LineThrough else TextDecoration.None),
             color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.W400
         )
-        val quantity = formatQuantity(recipeIngredient.quantity)
-        val unit = recipeIngredient.unit?.value ?: stringResource(R.string.ingredient_default_unit)
         Text(
-            text = "$quantity $unit",
-            style = MaterialTheme.typography.bodyLarge,
+            text = getIngredientAmountsByUnitText(
+                groceryIngredient.amountsByUnit,
+                stringResource(R.string.ingredient_default_unit)
+            ),
+            style = MaterialTheme.typography.bodyLarge.copy(textDecoration = if (isChecked) TextDecoration.LineThrough else TextDecoration.None),
             color = MaterialTheme.colorScheme.onSurface
         )
     }
+}
+
+private fun getIngredientAmountsByUnitText(
+    amountsByUnit: List<Pair<IngredientUnit?, Double>>,
+    defaultUnit: String
+): String {
+    val stringBuilder = StringBuilder()
+    amountsByUnit.forEach { (unit, quantity) ->
+        val quantityText = formatQuantity(quantity)
+        val unitText = unit?.value ?: defaultUnit
+        stringBuilder.append("$quantityText $unitText\n")
+    }
+    return stringBuilder.toString().trim()
 }
 
 @Preview

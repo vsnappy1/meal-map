@@ -5,9 +5,9 @@ import com.randos.data.database.dao.MealRecipeCrossRefDao
 import com.randos.data.database.entity.MealRecipeCrossRef
 import com.randos.data.mapper.toDomain
 import com.randos.data.mapper.toEntity
-import com.randos.domain.model.GroceryIngredient
 import com.randos.domain.model.Meal
 import com.randos.domain.model.Recipe
+import com.randos.domain.model.RecipeIngredient
 import com.randos.domain.repository.MealRepository
 import com.randos.domain.repository.RecipeRepository
 import jakarta.inject.Inject
@@ -58,15 +58,14 @@ internal class MealRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getGroceryIngredientsForDateRange(
+    override suspend fun getRecipeIngredientsForDateRange(
         startDate: LocalDate,
         endDate: LocalDate
-    ): List<GroceryIngredient> = withContext(dispatcher) {
+    ): List<RecipeIngredient> = withContext(dispatcher) {
         val meals = getMealsForDateRange(startDate, endDate)
         val recipes = meals.flatMap { it.recipes }
         return@withContext recipes
             .flatMap { recipeRepository.getIngredientsForRecipe(it.id) }
-            .map { GroceryIngredient(it) }
     }
 
     private suspend fun getRecipesOfMeal(mealId: Long): List<Recipe> = withContext(dispatcher) {

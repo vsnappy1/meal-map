@@ -1,6 +1,9 @@
 package com.randos.domain.model
 
+import com.randos.domain.type.IngredientUnit
+
 data class GroceryIngredient(
-    val recipeIngredient: RecipeIngredient,
-    val isChecked: Boolean = false
+    val isChecked: Boolean = false,
+    val name: String,
+    val amountsByUnit: List<Pair<IngredientUnit?, Double>>
 )

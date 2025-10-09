@@ -26,14 +26,8 @@ class GroceryListScreenViewModel @Inject constructor(
     fun getGroceryIngredients() {
         val (dateFrom, dateTo) = getWeekRange(getState().selectedWeek.first)
         viewModelScope.launch {
-            _state.postValue(
-                getState().copy(
-                    groceryIngredients = getGroceryIngredients(
-                        dateFrom,
-                        dateTo
-                    )
-                )
-            )
+            val groceryIngredients = getGroceryIngredients(dateFrom, dateTo)
+            _state.postValue(getState().copy(groceryIngredients = groceryIngredients))
         }
     }
 
@@ -60,9 +54,18 @@ class GroceryListScreenViewModel @Inject constructor(
         dateFrom: LocalDate,
         dateTo: LocalDate
     ): List<GroceryIngredient> {
-        return mealRepository
-            .getGroceryIngredientsForDateRange(dateFrom, dateTo)
-            .sortedBy { it.recipeIngredient.ingredient.name }
+        val ingredients = mealRepository.getRecipeIngredientsForDateRange(dateFrom, dateTo)
+        return ingredients
+            .groupBy { it.ingredient.name }
+            .map { (name, ingredients) ->
+                GroceryIngredient(
+                    name = name,
+                    amountsByUnit = ingredients
+                        .groupBy { it.unit }
+                        .map { (unit, ingredients) -> unit to ingredients.sumOf { it.quantity } }
+                )
+            }
+            .sortedBy { it.name }
     }
 
     private fun getWeekRange(week: Int): Pair<LocalDate, LocalDate> {

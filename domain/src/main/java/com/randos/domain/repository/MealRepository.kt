@@ -1,7 +1,7 @@
 package com.randos.domain.repository
 
-import com.randos.domain.model.GroceryIngredient
 import com.randos.domain.model.Meal
+import com.randos.domain.model.RecipeIngredient
 import java.time.LocalDate
 
 interface MealRepository {
@@ -11,5 +11,5 @@ interface MealRepository {
     suspend fun updateMeal(meal: Meal)
     suspend fun getMealsForDate(date: LocalDate): List<Meal>
     suspend fun getMealsForDateRange(startDate: LocalDate, endDate: LocalDate): List<Meal>
-    suspend fun getGroceryIngredientsForDateRange(startDate: LocalDate, endDate: LocalDate): List<GroceryIngredient>
+    suspend fun getRecipeIngredientsForDateRange(startDate: LocalDate, endDate: LocalDate): List<RecipeIngredient>
 }
