@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.randos.domain.manager.GroceryListManager
 import com.randos.domain.manager.SettingsManager
 import com.randos.domain.model.GroceryIngredient
 import com.randos.domain.repository.MealRepository
@@ -18,16 +19,16 @@ import java.time.LocalDate
 @HiltViewModel
 class GroceryListScreenViewModel @Inject constructor(
     private val mealRepository: MealRepository,
-    private val settingsManager: SettingsManager
+    private val settingsManager: SettingsManager,
+    private val groceryListManager: GroceryListManager
 ) : ViewModel() {
 
     private val _state = MutableLiveData(GroceryListScreenState())
     val state: LiveData<GroceryListScreenState> = _state
 
     fun getGroceryIngredients() {
-        val (dateFrom, dateTo) = getWeekRange(getState().selectedWeek.first)
         viewModelScope.launch {
-            val groceryIngredients = getGroceryIngredients(dateFrom, dateTo)
+            val groceryIngredients = getGroceryIngredients(getState().selectedWeek.first)
             _state.postValue(getState().copy(groceryIngredients = groceryIngredients))
         }
     }
@@ -45,17 +46,32 @@ class GroceryListScreenViewModel @Inject constructor(
                     selectedWeek = week,
                     dateFrom = dateFrom,
                     dateTo = dateTo,
-                    groceryIngredients = getGroceryIngredients(dateFrom, dateTo)
+                    groceryIngredients = getGroceryIngredients(week.first)
                 )
             )
         }
     }
 
-    private suspend fun getGroceryIngredients(
-        dateFrom: LocalDate,
-        dateTo: LocalDate
-    ): List<GroceryIngredient> {
+    fun onIngredientCheckedUpdate(index: Int, checked: Boolean) {
+        viewModelScope.launch {
+            val week = getState().selectedWeek.first
+            val groceryIngredients = getState().groceryIngredients.toMutableList()
+            val ingredient = groceryIngredients[index]
+
+            if (checked) {
+                groceryListManager.markIngredientAsChecked(ingredient, week)
+            } else {
+                groceryListManager.markIngredientAsUnchecked(ingredient, week)
+            }
+            groceryIngredients[index] = ingredient.copy(isChecked = checked)
+            _state.postValue(getState().copy(groceryIngredients = groceryIngredients))
+        }
+    }
+
+    private suspend fun getGroceryIngredients(weekOffset: Int): List<GroceryIngredient> {
+        val (dateFrom, dateTo) = getWeekRange(weekOffset)
         val ingredients = mealRepository.getRecipeIngredientsForDateRange(dateFrom, dateTo)
+        val checkedIngredients = groceryListManager.getCheckedGroceryIngredientsForWeek(weekOffset)
         return ingredients
             .groupBy { it.ingredient.name }
             .map { (name, ingredients) ->
@@ -63,10 +79,11 @@ class GroceryListScreenViewModel @Inject constructor(
                     name = name,
                     amountsByUnit = ingredients
                         .groupBy { it.unit }
-                        .map { (unit, ingredients) -> unit to ingredients.sumOf { it.quantity } }
+                        .map { (unit, ingredients) -> unit to ingredients.sumOf { it.quantity } },
                 )
             }
             .map { it.copy(amountsByUnit = mergeUnits(it.amountsByUnit)) }
+            .map { it.copy(isChecked = checkedIngredients.contains(it)) }
             .sortedBy { it.name }
     }
 

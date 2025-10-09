@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,9 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -47,7 +44,8 @@ fun GroceryListScreen(
     GroceryListScreen(
         state = state,
         onIsSelectingWeekUpdate = viewModel::onIsSelectingWeekUpdate,
-        onSelectedWeekTextUpdate = viewModel::onSelectedWeekTextUpdate
+        onSelectedWeekTextUpdate = viewModel::onSelectedWeekTextUpdate,
+        onIngredientCheckedUpdate = viewModel::onIngredientCheckedUpdate
     )
     LaunchedEffect(Unit) {
         viewModel.getGroceryIngredients()
@@ -59,6 +57,7 @@ private fun GroceryListScreen(
     state: GroceryListScreenState = GroceryListScreenState(),
     onIsSelectingWeekUpdate: (Boolean) -> Unit = {},
     onSelectedWeekTextUpdate: (Pair<Int, String>) -> Unit = { },
+    onIngredientCheckedUpdate: (Int, Boolean) -> Unit = { _, _ -> }
 ) {
     Column(
         modifier = Modifier
@@ -82,12 +81,16 @@ private fun GroceryListScreen(
             dateTo = state.dateTo
         )
         VerticalAnimatedContent(
-            targetState = state.groceryIngredients,
+            targetState = state.groceryIngredients.map { it.name },
             label = "GroceryListAnimation"
         ) { groceryIngredients ->
             LazyColumn {
-                items(groceryIngredients) { ingredient ->
-                    GroceryListItem(groceryIngredient = ingredient)
+                itemsIndexed(
+                    items = state.groceryIngredients,
+                    key = { _, ingredient -> ingredient.name }) { index, ingredient ->
+                    GroceryListItem(
+                        groceryIngredient = ingredient,
+                        onCheckedChange = { checked -> onIngredientCheckedUpdate(index, checked) })
                 }
             }
         }
@@ -95,8 +98,10 @@ private fun GroceryListScreen(
 }
 
 @Composable
-fun GroceryListItem(groceryIngredient: GroceryIngredient) {
-    var isChecked by remember { mutableStateOf(false) }
+fun GroceryListItem(groceryIngredient: GroceryIngredient, onCheckedChange: (Boolean) -> Unit) {
+    val isChecked = groceryIngredient.isChecked
+    val textStyle =
+        MaterialTheme.typography.bodyLarge.copy(textDecoration = if (isChecked) TextDecoration.LineThrough else TextDecoration.None)
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -106,13 +111,13 @@ fun GroceryListItem(groceryIngredient: GroceryIngredient) {
         Checkbox(
             modifier = Modifier.size(32.dp),
             checked = isChecked,
-            onCheckedChange = { isChecked = !isChecked })
+            onCheckedChange = { onCheckedChange(!isChecked) })
         Text(
             modifier = Modifier
                 .weight(1f)
                 .padding(top = 4.dp),
             text = groceryIngredient.name,
-            style = MaterialTheme.typography.bodyLarge.copy(textDecoration = if (isChecked) TextDecoration.LineThrough else TextDecoration.None),
+            style = textStyle,
             color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.W400
         )
@@ -121,7 +126,7 @@ fun GroceryListItem(groceryIngredient: GroceryIngredient) {
                 groceryIngredient.amountsByUnit,
                 stringResource(R.string.ingredient_default_unit)
             ),
-            style = MaterialTheme.typography.bodyLarge.copy(textDecoration = if (isChecked) TextDecoration.LineThrough else TextDecoration.None),
+            style = textStyle,
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.End
         )

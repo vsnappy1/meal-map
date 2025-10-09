@@ -1,19 +1,21 @@
 package com.randos.data.di
 
-import android.content.SharedPreferences
+import com.randos.data.manager.GroceryListManagerImpl
 import com.randos.data.manager.SettingsManagerImpl
+import com.randos.domain.manager.GroceryListManager
 import com.randos.domain.manager.SettingsManager
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal object ManagerModule {
+internal abstract class ManagerModule {
 
-    @Provides
-    fun provideSettingsManager(sharedPreferences: SharedPreferences): SettingsManager {
-        return SettingsManagerImpl(sharedPreferences)
-    }
+    @Binds
+    abstract fun provideSettingsManager(settingsManagerImpl: SettingsManagerImpl): SettingsManager
+
+    @Binds
+    abstract fun provideGroceryListManager(groceryListManagerImpl: GroceryListManagerImpl): GroceryListManager
 }
