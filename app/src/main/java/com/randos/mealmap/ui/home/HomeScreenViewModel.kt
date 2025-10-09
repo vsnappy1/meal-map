@@ -12,10 +12,10 @@ import com.randos.domain.repository.RecipeRepository
 import com.randos.domain.type.Day
 import com.randos.domain.type.MealType
 import com.randos.mealmap.utils.Utils.getWeekStartAndEnd
+import com.randos.mealmap.utils.toDayOfWeek
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.DayOfWeek
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -173,18 +173,6 @@ class HomeScreenViewModel @Inject constructor(
             }
             val suggestions = recipeRepository.getRecipesLike(query)
             _state.postValue(getState().copy(recipeSuggestions = suggestions))
-        }
-    }
-
-    private fun Day.toDayOfWeek(): DayOfWeek {
-        return when (this) {
-            Day.MONDAY -> DayOfWeek.MONDAY
-            Day.TUESDAY -> DayOfWeek.TUESDAY
-            Day.WEDNESDAY -> DayOfWeek.WEDNESDAY
-            Day.THURSDAY -> DayOfWeek.THURSDAY
-            Day.FRIDAY -> DayOfWeek.FRIDAY
-            Day.SATURDAY -> DayOfWeek.SATURDAY
-            Day.SUNDAY -> DayOfWeek.SUNDAY
         }
     }
 }

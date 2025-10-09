@@ -140,4 +140,16 @@ internal class RecipeRepositoryImpl @Inject constructor(
             e.printStackTrace()
         }
     }
+
+    override suspend fun getIngredientsForRecipe(recipeId: Long): List<RecipeIngredient> {
+        val recipeIngredients = recipeIngredientDao.getByRecipeId(recipeId)
+        val ingredients = recipeIngredients.mapNotNull { recipeIngredient ->
+            ingredientDao.get(recipeIngredient.ingredientId)
+                ?.toDomain()
+                ?.let {
+                    recipeIngredient.toDomain(it)
+                }
+        }
+        return ingredients
+    }
 }

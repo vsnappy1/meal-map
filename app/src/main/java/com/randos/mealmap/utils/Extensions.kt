@@ -6,6 +6,8 @@ import android.content.ContextWrapper
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.randos.domain.type.Day
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
@@ -31,4 +33,16 @@ fun LocalDate.getDayName(): String {
 
 fun Modifier.defaultMainContainerPadding(): Modifier {
     return this.padding(start = 16.dp, end = 16.dp, top = 16.dp)
+}
+
+fun Day.toDayOfWeek(): DayOfWeek {
+    return when (this) {
+        Day.MONDAY -> DayOfWeek.MONDAY
+        Day.TUESDAY -> DayOfWeek.TUESDAY
+        Day.WEDNESDAY -> DayOfWeek.WEDNESDAY
+        Day.THURSDAY -> DayOfWeek.THURSDAY
+        Day.FRIDAY -> DayOfWeek.FRIDAY
+        Day.SATURDAY -> DayOfWeek.SATURDAY
+        Day.SUNDAY -> DayOfWeek.SUNDAY
+    }
 }

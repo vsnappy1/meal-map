@@ -1,6 +1,7 @@
 package com.randos.domain.repository
 
 import com.randos.domain.model.Recipe
+import com.randos.domain.model.RecipeIngredient
 
 interface RecipeRepository {
     suspend fun getRecipes(): List<Recipe>
@@ -13,4 +14,6 @@ interface RecipeRepository {
     suspend fun isEmpty(): Boolean
     suspend fun batchInsert(list: List<Recipe>)
     suspend fun populateSampleRecipes()
+
+    suspend fun getIngredientsForRecipe(recipeId: Long): List<RecipeIngredient>
 }

@@ -11,7 +11,7 @@ import java.time.LocalDate
 data class HomeScreenState(
     val username: String? = null,
     val isSelectingWeek: Boolean = false,
-    val selectedWeek: Pair<Int, String> = listOfWeeksAvailable.first(),
+    val selectedWeek: Pair<Int, String> = listOfWeeksAvailable[1],
     val dateFrom: LocalDate = getWeekStartAndEnd(selectedWeek.first, DayOfWeek.MONDAY).first,
     val dateTo: LocalDate = getWeekStartAndEnd(selectedWeek.first, DayOfWeek.MONDAY).second,
     val currentMealEditing: Triple<LocalDate, MealType, String>? = null,
