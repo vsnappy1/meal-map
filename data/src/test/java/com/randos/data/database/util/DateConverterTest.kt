@@ -7,11 +7,11 @@ import java.time.LocalDate
 
 class DateConverterTest {
 
-    private lateinit var converter: DateConverter
+    private lateinit var converter: LocalDateConverter
 
     @Before
     fun setUp() {
-        converter = DateConverter()
+        converter = LocalDateConverter()
     }
 
     @Test

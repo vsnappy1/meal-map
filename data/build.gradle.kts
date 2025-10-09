@@ -4,7 +4,9 @@ plugins {
     alias(libs.plugins.android.room)
     alias(libs.plugins.android.ksp)
     alias(libs.plugins.android.hilt)
+    jacoco
 }
+apply(from = "../gradle/jacoco.gradle.kts")
 
 android {
     namespace = "com.randos.data"
@@ -18,8 +20,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            enableAndroidTestCoverage = true
+            enableUnitTestCoverage = true
+        }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
