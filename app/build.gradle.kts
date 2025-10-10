@@ -7,7 +7,9 @@ plugins {
     alias(libs.plugins.android.ksp)
     alias(libs.plugins.android.hilt)
     alias(libs.plugins.kotlin.serialization)
+    jacoco
 }
+apply(from = "../gradle/jacoco.gradle.kts")
 
 android {
     namespace = "com.randos.mealmap"
@@ -26,7 +28,7 @@ android {
     val properties = Properties()
     properties.load(rootProject.file("local.properties").inputStream())
     signingConfigs {
-        create("release"){
+        create("release") {
             keyAlias = "${properties["keyAlias"]}"
             keyPassword = "${properties["keyPassword"]}"
             storeFile = file("keystore.jks")
@@ -35,6 +37,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            enableAndroidTestCoverage = true
+            enableUnitTestCoverage = true
+        }
         release {
             signingConfig = signingConfigs.getByName("release")
             isShrinkResources = true
@@ -90,7 +96,7 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
 
     testImplementation(libs.junit)
-    testImplementation (libs.mockk.android)
+    testImplementation(libs.mockk.android)
     testImplementation(libs.androidx.core.testing)
     testImplementation(libs.kotlinx.coroutines.test)
 

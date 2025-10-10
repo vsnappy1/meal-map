@@ -48,7 +48,7 @@ class RecipesScreenViewModel @Inject constructor(
         _state.postValue(
             getState().copy(
                 sort = sort,
-                sortOrder = if (sort == null) SortOrder.ASCENDING else SortOrder.DESCENDING
+                sortOrder = if (sort == null) SortOrder.ASCENDING else getState().sortOrder
             )
         )
         applyFiltersAndSort()

@@ -194,9 +194,9 @@ class RecipesScreenViewModelTest {
     @Test
     fun `onSortChange with null sort`() = runTest {
         val recipes = listOf(
-            recipe.copy(id = 1, title = "C"),
-            recipe.copy(id = 2, title = "A"),
-            recipe.copy(id = 3, title = "B")
+            recipe.copy(id = 1, title = "A"),
+            recipe.copy(id = 2, title = "B"),
+            recipe.copy(id = 3, title = "C")
         )
         coEvery { recipesRepository.getRecipes() } returns recipes
         viewModel.getRecipes()
@@ -216,7 +216,7 @@ class RecipesScreenViewModelTest {
         val state = viewModel.state.getOrAwaitValue()
         assertNull(state.sort)
         // Order should revert to original
-        assertEquals(listOf("C", "A", "B"), state.recipes.map { it.title })
+        assertEquals(listOf("A", "B", "C"), state.recipes.map { it.title })
     }
 
     @Test
@@ -378,7 +378,7 @@ class RecipesScreenViewModelTest {
     }
 
     @Test
-    fun `Interaction  Clear search text after filtering and sorting`() = runTest {
+    fun `Interaction Clear search text after filtering and sorting`() = runTest {
         val recipes = listOf(
             recipe.copy(id = 1, title = "A", tags = listOf(RecipeTag.QUICK), calories = 200),
             recipe.copy(id = 2, title = "B", tags = listOf(RecipeTag.QUICK), calories = 100),
@@ -413,10 +413,10 @@ class RecipesScreenViewModelTest {
     }
 
     @Test
-    fun `Interaction  Clear filter after searching and sorting`() = runTest {
+    fun `Interaction Clear filter after searching and sorting`() = runTest {
         val recipes = listOf(
-            recipe.copy(id = 1, title = "Apple Pie", tags = listOf(RecipeTag.QUICK), calories = 300),
-            recipe.copy(id = 2, title = "Apple Crumble", tags = listOf(RecipeTag.VEGETABLE), calories = 400),
+            recipe.copy(id = 1, title = "Apple Crumble", tags = listOf(RecipeTag.QUICK), calories = 300),
+            recipe.copy(id = 2, title = "Apple Pie", tags = listOf(RecipeTag.VEGETABLE), calories = 400),
             recipe.copy(id = 3, title = "Banana Bread", tags = listOf(RecipeTag.QUICK), calories = 200)
         )
         coEvery { recipesRepository.getRecipes() } returns recipes
@@ -443,7 +443,7 @@ class RecipesScreenViewModelTest {
         assertEquals("Apple", state.searchText)
         assertEquals(RecipesSort.CALORIES, state.sort)
         assertEquals(2, state.recipes.size)
-        assertEquals(listOf("Apple Pie", "Apple Crumble"), state.recipes.map { it.title }) // Sorted by calories ASC
+        assertEquals(listOf("Apple Crumble", "Apple Pie"), state.recipes.map { it.title }) // Sorted by calories ASC
         assertEquals(listOf(300, 400), state.recipes.map { it.calories })
     }
 
@@ -470,9 +470,9 @@ class RecipesScreenViewModelTest {
         // If dateCreated, calories, or heaviness can be null or have default values (e.g., 0 for calories),
         // verify the sorting behavior in such cases, especially for stability if multiple items have the same sort key value.
         val recipes = listOf(
-            recipe.copy(id = 1, title = "C", calories = 200, dateCreated = LocalDate.now()), // default date
-            recipe.copy(id = 2, title = "A", calories = 0, dateCreated = LocalDate.now().minusDays(2)),   // 0 calories
-            recipe.copy(id = 3, title = "B", calories = 200, dateCreated = LocalDate.now().minusDays(1))  // same calories as C
+            recipe.copy(id = 1, title = "A", calories = 200, dateCreated = LocalDate.now()), // default date
+            recipe.copy(id = 2, title = "B", calories = 0, dateCreated = LocalDate.now().minusDays(2)),   // 0 calories
+            recipe.copy(id = 3, title = "C", calories = 200, dateCreated = LocalDate.now().minusDays(1))  // same calories as C
         )
         coEvery { recipesRepository.getRecipes() } returns recipes
         viewModel.getRecipes()
@@ -484,7 +484,7 @@ class RecipesScreenViewModelTest {
 
         var state = viewModel.state.getOrAwaitValue()
         assertEquals(
-            listOf("A", "C", "B"),
+            listOf("B", "A", "C"),
             state.recipes.map { it.title }
         )
         assertEquals(
@@ -497,7 +497,7 @@ class RecipesScreenViewModelTest {
         advanceUntilIdle()
         state = viewModel.state.getOrAwaitValue()
         assertEquals(
-            listOf("B", "C", "A"),
+            listOf("C", "A", "B"),
             state.recipes.map { it.title }
         )
         assertEquals(

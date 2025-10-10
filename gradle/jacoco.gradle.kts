@@ -4,10 +4,20 @@ val exclusions = listOf(
     "**/BuildConfig.*",
     "**/Manifest*.*",
     "**/*Test*.*",
+    // Specifically for data module
     "**/hilt_*/*",
     "**/*Module.class",
     "**/*Module_*",
     "**/*_Impl*",
+    // Specifically for app module
+    "**/dagger*/*",
+    "**/Hilt_*",
+    "**/ComposableSingletons*.*",
+    "**/*ScreenKt.class",
+    "**/*ScreenKt$*.class",
+    "**/ui/components/*",
+    "**/ui/theme/*",
+    "**/ui/navigation/*",
 )
 
 tasks.withType(Test::class) {
