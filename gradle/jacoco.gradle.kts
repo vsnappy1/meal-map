@@ -28,26 +28,34 @@ tasks.register<JacocoReport>("jacocoCoverageReport") {
     reports {
         html.required.set(true)
     }
-    // Set source directories to the main source directory
-    sourceDirectories.setFrom(layout.projectDirectory.dir("src/main"))
-    // Set class directories to compiled Java and Kotlin classes, excluding specified exclusions
-    classDirectories.setFrom(
-        files(
-            fileTree(layout.buildDirectory.dir("intermediates/javac/")) {
+
+    val allProjects = subprojects + project
+
+    sourceDirectories.setFrom(files(allProjects.map { p ->
+        listOf(
+            p.layout.projectDirectory.dir("src/main/java"),
+            p.layout.projectDirectory.dir("src/main/kotlin")
+        )
+    }))
+
+    classDirectories.setFrom(files(allProjects.map { p ->
+        listOf(
+            fileTree(p.layout.buildDirectory.dir("intermediates/javac")) {
                 exclude(exclusions)
             },
-            fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/")) {
+            fileTree(p.layout.buildDirectory.dir("tmp/kotlin-classes")) {
                 exclude(exclusions)
             }
-        ))
-    // Collect execution data from .exec and .ec files generated during test execution
-    executionData.setFrom(
-        files(
-            fileTree(layout.buildDirectory) { include(listOf("**/*.exec", "**/*.ec")) }
-        ))
+        )
+    }))
+
+    executionData.setFrom(files(allProjects.map { p ->
+        fileTree(p.layout.buildDirectory) { include(listOf("**/*.exec", "**/*.ec")) }
+    }))
+
     doLast {
         val reportUrl =
-            layout.buildDirectory.file("reports/jacoco/jacocoDebugCodeCoverage/html/index.html")
+            layout.buildDirectory.file("reports/jacoco/jacocoCoverageReport/html/index.html")
                 .get().asFile.toURI()
         println("Jacoco report generated at: file://${reportUrl.path}")
     }
@@ -76,18 +84,28 @@ tasks.register<JacocoCoverageVerification>("jacocoCoverageVerification") {
             }
         }
     }
-    sourceDirectories.setFrom(layout.projectDirectory.dir("src/main"))
-    classDirectories.setFrom(
-        files(
-            fileTree(layout.buildDirectory.dir("intermediates/javac/")) {
+
+    val allProjects = subprojects + project
+
+    sourceDirectories.setFrom(files(allProjects.map { p ->
+        listOf(
+            p.layout.projectDirectory.dir("src/main/java"),
+            p.layout.projectDirectory.dir("src/main/kotlin")
+        )
+    }))
+
+    classDirectories.setFrom(files(allProjects.map { p ->
+        listOf(
+            fileTree(p.layout.buildDirectory.dir("intermediates/javac")) {
                 exclude(exclusions)
             },
-            fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/")) {
+            fileTree(p.layout.buildDirectory.dir("tmp/kotlin-classes")) {
                 exclude(exclusions)
             }
-        ))
-    executionData.setFrom(
-        files(
-            fileTree(layout.buildDirectory) { include(listOf("**/*.exec", "**/*.ec")) }
-        ))
+        )
+    }))
+
+    executionData.setFrom(files(allProjects.map { p ->
+        fileTree(p.layout.buildDirectory) { include(listOf("**/*.exec", "**/*.ec")) }
+    }))
 }
