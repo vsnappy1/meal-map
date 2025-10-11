@@ -14,7 +14,7 @@ import java.time.LocalDate
 @TypeConverters(StringListConverter::class, RecipeTagListConverter::class, LocalDateConverter::class)
 internal data class Recipe(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    val id: Long,
     val title: String,
     val description: String?,
     val imagePath: String?,

@@ -7,6 +7,6 @@ import androidx.room.PrimaryKey
 @Entity(indices = [Index(value = ["name"], unique = true)])
 internal data class Ingredient(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    val id: Long,
     val name: String,
 )

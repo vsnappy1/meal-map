@@ -20,9 +20,11 @@ import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.time.LocalDate
 
 @RunWith(AndroidJUnit4::class)
 internal class MealRepositoryImplTest {
@@ -138,4 +140,49 @@ internal class MealRepositoryImplTest {
         assertEquals(1, recipes.size)
         assertEquals(recipes[0].recipeId, updatedMeal.recipes[0].id)
     }
+
+    @Test
+    fun getMealsForDateRange_should_return_meals_for_date_range() = runTest(dispatcher) {
+        // Given
+        val date = LocalDate.of(2023, 1, 1)
+        val meal1 = meal1.copy(date = date)
+        val meal2 = meal1.copy(id = 2, date = date.plusDays(1))
+        val meal3 = meal1.copy(id = 3, date = date.plusDays(2))
+        val meal4 = meal1.copy(id = 4, date = date.plusWeeks(2))
+
+        mealRepository.addMeal(meal1)
+        mealRepository.addMeal(meal2)
+        mealRepository.addMeal(meal3)
+        mealRepository.addMeal(meal4)
+
+        // When
+        val meals = mealRepository.getMealsForDateRange(date, date.plusWeeks(1))
+
+        // Then
+        assertEquals(3, meals.size)
+        assertTrue(meals.map { it.id }.containsAll(listOf(meal1.id, meal2.id, meal3.id)))
+    }
+
+    @Test
+    fun getRecipeIngredientsForDateRange_should_return_recipe_ingredients_for_date_range() =
+        runTest(dispatcher) {
+            // Given
+            val date = LocalDate.of(2023, 1, 1)
+            val meal1 = meal1.copy(date = date)
+            val meal2 = meal1.copy(id = 2, date = date.plusDays(1))
+            val meal3 = meal1.copy(id = 3, date = date.plusDays(2))
+            val meal4 = meal1.copy(id = 4, date = date.plusWeeks(2))
+
+            mealRepository.addMeal(meal1)
+            mealRepository.addMeal(meal2)
+            mealRepository.addMeal(meal3)
+            mealRepository.addMeal(meal4)
+
+            // When
+            val recipeIngredients =
+                mealRepository.getRecipeIngredientsForDateRange(date, date.plusWeeks(1))
+
+            // Then
+            assertEquals(2, recipeIngredients.size)
+        }
 }

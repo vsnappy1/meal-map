@@ -44,11 +44,6 @@ internal class MealRepositoryImpl @Inject constructor(
         mealRecipeCrossRefDao.insertAll(*recipes.toTypedArray())
     }
 
-    override suspend fun getMealsForDate(date: LocalDate): List<Meal> = withContext(dispatcher) {
-        return@withContext mealDao.getByDate(date)
-            .mapNotNull { mealDao.get(it.id)?.toDomain(getRecipesOfMeal(it.id)) }
-    }
-
     override suspend fun getMealsForDateRange(
         startDate: LocalDate,
         endDate: LocalDate
@@ -63,9 +58,18 @@ internal class MealRepositoryImpl @Inject constructor(
         endDate: LocalDate
     ): List<RecipeIngredient> = withContext(dispatcher) {
         val meals = getMealsForDateRange(startDate, endDate)
-        val recipes = meals.flatMap { it.recipes }
-        return@withContext recipes
+        return@withContext meals
+            .flatMap { it.recipes }
             .flatMap { recipeRepository.getIngredientsForRecipe(it.id) }
+            .groupBy { it.ingredient to it.unit }
+            .map { (pair, recipeIngredients) ->
+                val (ingredient, unit) = pair
+                RecipeIngredient(
+                    ingredient = ingredient,
+                    quantity = recipeIngredients.sumOf { it.quantity },
+                    unit = unit
+                )
+            }
     }
 
     private suspend fun getRecipesOfMeal(mealId: Long): List<Recipe> = withContext(dispatcher) {

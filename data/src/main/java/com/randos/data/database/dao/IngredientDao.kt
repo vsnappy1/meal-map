@@ -20,10 +20,10 @@ internal interface IngredientDao {
     @Query("SELECT * FROM Ingredient")
     suspend fun getAll(): List<Ingredient>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(ingredient: Ingredient): Long
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg ingredient: Ingredient): List<Long>
 
     @Update

@@ -60,6 +60,15 @@ class SettingsManagerImplTest {
     }
 
     @Test
+    fun getFirstDayOfTheWeek_when_not_set_should_return_monday_by_default() {
+        // When
+        val result = settingsManager.getFirstDayOfTheWeek()
+
+        // Then
+        assertEquals(Day.MONDAY, result)
+    }
+
+    @Test
     fun getDaysOfWeek_returns_correct_list() {
         // Given
         val expected = listOf(

@@ -24,7 +24,7 @@ import com.randos.domain.type.IngredientUnit
 )
 internal data class RecipeIngredient(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    val id: Long,
     @ColumnInfo(name = "ingredient_id", index = true)
     val ingredientId: Long,
     @ColumnInfo(name = "recipe_id", index = true)

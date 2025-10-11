@@ -56,6 +56,7 @@ internal fun com.randos.data.database.entity.Recipe.toDomain(ingredients: List<R
 
 internal fun RecipeIngredient.toEntity(recipeId: Long, ingredientId: Long): com.randos.data.database.entity.RecipeIngredient {
     return com.randos.data.database.entity.RecipeIngredient(
+        id = 0,
         recipeId = recipeId,
         ingredientId = ingredientId,
         quantity = quantity,

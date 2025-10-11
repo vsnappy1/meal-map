@@ -11,7 +11,7 @@ import java.time.LocalDate
 @TypeConverters(LocalDateConverter::class)
 internal data class Meal(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    val id: Long,
     val type: MealType,
     val date: LocalDate,
 )
