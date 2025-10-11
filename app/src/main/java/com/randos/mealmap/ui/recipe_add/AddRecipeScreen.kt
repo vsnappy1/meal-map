@@ -58,8 +58,8 @@ import com.randos.mealmap.ui.components.RecipeInstruction
 import com.randos.mealmap.ui.components.RecipePill
 import com.randos.mealmap.ui.components.VerticalAnimatedContent
 import com.randos.mealmap.ui.theme.buttonColors
-import com.randos.mealmap.utils.Utils
-import com.randos.mealmap.utils.Utils.copyUriToAppStorage
+import com.randos.mealmap.utils.Constants
+import com.randos.mealmap.utils.ContextUtils.copyUriToAppStorage
 import kotlinx.coroutines.launch
 
 @Composable
@@ -266,7 +266,7 @@ private fun Servings(servings: Int?, onServingsChange: (Int) -> Unit) {
         value = servings,
         onValueChange = onServingsChange,
         hint = stringResource(R.string.recipe_servings_label),
-        items = Utils.servings,
+        items = Constants.servings,
         getTextValue = { it.toString() })
 }
 
@@ -287,7 +287,7 @@ private fun Tag(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Utils.recipeTags.forEach { item ->
+            Constants.recipeTags.forEach { item ->
                 RecipePill(
                     isSelected = selectedTags.contains(item),
                     onItemSelect = { onTagClick(it) },
@@ -305,7 +305,7 @@ private fun Heaviness(heaviness: RecipeHeaviness?, onHeavinessChange: (RecipeHea
         value = heaviness,
         onValueChange = onHeavinessChange,
         hint = stringResource(R.string.recipe_heaviness_label),
-        items = Utils.recipeHeaviness,
+        items = Constants.recipeHeaviness,
         getTextValue = { it.value })
 }
 

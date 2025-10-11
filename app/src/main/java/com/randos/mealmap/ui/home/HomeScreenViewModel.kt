@@ -11,7 +11,7 @@ import com.randos.domain.repository.MealRepository
 import com.randos.domain.repository.RecipeRepository
 import com.randos.domain.type.Day
 import com.randos.domain.type.MealType
-import com.randos.mealmap.utils.Utils.getWeekStartAndEnd
+import com.randos.mealmap.utils.CalendarUtils.getWeekStartAndEnd
 import com.randos.mealmap.utils.toDayOfWeek
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay

@@ -36,7 +36,7 @@ import com.randos.mealmap.ui.components.DateView
 import com.randos.mealmap.ui.components.ScreenHeadingText
 import com.randos.mealmap.ui.components.VerticalAnimatedContent
 import com.randos.mealmap.ui.components.WeekSelector
-import com.randos.mealmap.utils.Utils.formatQuantity
+import com.randos.mealmap.utils.NumberUtils.formatIngredientQuantity
 
 
 @Composable
@@ -159,7 +159,7 @@ private fun getIngredientAmountsByUnitText(
 ): String {
     val stringBuilder = StringBuilder()
     amountsByUnit.forEach { (unit, quantity) ->
-        val quantityText = formatQuantity(quantity)
+        val quantityText = formatIngredientQuantity(quantity)
         val unitText = unit?.value ?: defaultUnit
         stringBuilder.append("$quantityText $unitText\n")
     }

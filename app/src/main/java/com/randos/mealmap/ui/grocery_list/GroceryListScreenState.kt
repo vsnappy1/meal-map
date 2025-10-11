@@ -2,8 +2,8 @@ package com.randos.mealmap.ui.grocery_list
 
 import com.randos.domain.model.GroceryIngredient
 import com.randos.domain.type.IngredientUnit
-import com.randos.mealmap.utils.Utils.getWeekStartAndEnd
-import com.randos.mealmap.utils.Utils.listOfWeeksAvailable
+import com.randos.mealmap.utils.CalendarUtils.getWeekStartAndEnd
+import com.randos.mealmap.utils.Constants.listOfWeeksAvailable
 import java.time.DayOfWeek
 import java.time.LocalDate
 

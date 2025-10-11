@@ -34,7 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.randos.domain.model.Recipe
 import com.randos.mealmap.R
-import com.randos.mealmap.utils.Utils
+import com.randos.mealmap.utils.Constants
 import kotlin.math.min
 
 @Composable
@@ -138,7 +138,7 @@ fun RecipeSuggestion(
 @Composable
 private fun RecipeSuggestionPreview() {
     RecipeSuggestion(
-        suggestions = listOf(Utils.recipe, Utils.recipe, Utils.recipe),
+        suggestions = listOf(Constants.recipe, Constants.recipe, Constants.recipe),
         onSuggestionItemSelected = {},
         recipeName = "Recipe Name",
         onRecipeAddClick = {}

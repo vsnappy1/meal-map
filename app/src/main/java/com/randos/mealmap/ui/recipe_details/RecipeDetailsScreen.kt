@@ -50,10 +50,10 @@ import com.randos.domain.model.Recipe
 import com.randos.mealmap.R
 import com.randos.mealmap.ui.components.TileBackground
 import com.randos.mealmap.ui.theme.iconButtonColors
-import com.randos.mealmap.utils.Utils
-import com.randos.mealmap.utils.Utils.formatQuantity
-import com.randos.mealmap.utils.Utils.formatTime
-import com.randos.mealmap.utils.Utils.shareRecipe
+import com.randos.mealmap.utils.Constants
+import com.randos.mealmap.utils.NumberUtils.formatIngredientQuantity
+import com.randos.mealmap.utils.CalendarUtils.formatTime
+import com.randos.mealmap.utils.ContextUtils.shareRecipe
 
 @Composable
 fun RecipeDetailsScreen(
@@ -150,7 +150,7 @@ private fun RecipeIngredients(recipe: Recipe) {
                 fontWeight = FontWeight.W400
             )
             Text(
-                text = "${formatQuantity(it.quantity)} ${it.unit?.value ?: stringResource(R.string.ingredient_default_unit)}",
+                text = "${formatIngredientQuantity(it.quantity)} ${it.unit?.value ?: stringResource(R.string.ingredient_default_unit)}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -360,6 +360,6 @@ private fun ActionButton(
 @Composable
 fun RecipeDetailsScreenPreview() {
     MaterialTheme {
-        RecipeDetailsScreen(Utils.recipe, onEdit = {}, onDelete = {})
+        RecipeDetailsScreen(Constants.recipe, onEdit = {}, onDelete = {})
     }
 }

@@ -12,6 +12,7 @@ import com.randos.domain.type.RecipeHeaviness
 import com.randos.domain.type.RecipeTag
 import com.randos.mealmap.MainDispatcherRule
 import com.randos.mealmap.ui.getOrAwaitValue
+import com.randos.mealmap.utils.Constants
 import com.randos.mealmap.utils.Constants.RECIPE_COOKING_TIME_MAX_LENGTH
 import com.randos.mealmap.utils.Constants.RECIPE_DESCRIPTION_MAX_LENGTH
 import com.randos.mealmap.utils.Constants.RECIPE_ERROR_MESSAGE_SHOWN_DURATION
@@ -20,7 +21,6 @@ import com.randos.mealmap.utils.Constants.RECIPE_INSTRUCTIONS_MAX_LENGTH
 import com.randos.mealmap.utils.Constants.RECIPE_PREPARATION_TIME_MAX_LENGTH
 import com.randos.mealmap.utils.Constants.RECIPE_TITLE_MAX_LENGTH
 import com.randos.mealmap.utils.Constants.RECIPE_TOTAL_CALORIES_MAX_LENGTH
-import com.randos.mealmap.utils.Utils
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -56,7 +56,7 @@ class AddRecipeScreenViewModelTest {
     private lateinit var savedStateHandle: SavedStateHandle
     private lateinit var viewModel: AddRecipeScreenViewModel
 
-    private val recipe = Utils.recipe
+    private val recipe = Constants.recipe
 
     @Before
     fun setUp() {

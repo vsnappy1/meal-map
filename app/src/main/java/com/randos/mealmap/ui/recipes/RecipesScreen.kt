@@ -60,7 +60,7 @@ import com.randos.mealmap.ui.components.RecipeItem
 import com.randos.mealmap.ui.components.RecipePill
 import com.randos.mealmap.ui.components.ScreenHeadingText
 import com.randos.mealmap.ui.components.VerticalAnimatedContent
-import com.randos.mealmap.utils.Utils
+import com.randos.mealmap.utils.Constants
 
 @Composable
 fun RecipesScreen(
@@ -195,7 +195,7 @@ private fun ActionButtons(
     ) {
         DropDownButton(
             text = stringResource(R.string.filter_button_text),
-            items = Utils.recipeTags,
+            items = Constants.recipeTags,
             onItemSelect = { onFilterChange(it) },
             displayValue = { it.value },
             selectedItem = state.filter
@@ -203,7 +203,7 @@ private fun ActionButtons(
         Spacer(modifier = Modifier.width(8.dp))
         DropDownButton(
             text = stringResource(R.string.sort_by_button_text),
-            items = Utils.recipeSort,
+            items = Constants.recipeSort,
             onItemSelect = { onSortChange(it) },
             displayValue = { it.value },
             selectedItem = state.sort
@@ -354,7 +354,7 @@ private fun RecipesScreenPreview() {
     RecipesScreen(
         onAddNewRecipe = { },
         onRecipeClick = {},
-        state = RecipesScreenState(recipes = Utils.recipes),
+        state = RecipesScreenState(recipes = Constants.recipes),
         onSearchTextChange = {},
         onSortChange = {},
         onFilterChange = {},

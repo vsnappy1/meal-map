@@ -9,7 +9,7 @@ import com.randos.domain.manager.SettingsManager
 import com.randos.domain.model.GroceryIngredient
 import com.randos.domain.repository.MealRepository
 import com.randos.domain.type.IngredientUnit
-import com.randos.mealmap.utils.Utils.getWeekStartAndEnd
+import com.randos.mealmap.utils.CalendarUtils.getWeekStartAndEnd
 import com.randos.mealmap.utils.toDayOfWeek
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject

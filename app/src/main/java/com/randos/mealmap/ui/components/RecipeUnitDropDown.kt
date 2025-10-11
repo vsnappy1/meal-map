@@ -27,7 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.randos.domain.type.IngredientUnit
-import com.randos.mealmap.utils.Utils
+import com.randos.mealmap.utils.Constants
 
 @Composable
 fun RecipeUnitDropDown(
@@ -65,7 +65,7 @@ fun RecipeUnitDropDown(
             expanded = isExpanded,
             onDismissRequest = { isExpanded = false },
             scrollState = rememberScrollState()) {
-            Utils.ingredientUnits.forEach {
+            Constants.ingredientUnits.forEach {
                 DropdownMenuItem(
                     text = { Text(text = it.value) },
                     onClick = {

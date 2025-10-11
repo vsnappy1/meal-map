@@ -8,7 +8,7 @@ import com.randos.domain.type.RecipesSort
 import com.randos.domain.type.SortOrder
 import com.randos.mealmap.MainDispatcherRule
 import com.randos.mealmap.ui.getOrAwaitValue
-import com.randos.mealmap.utils.Utils
+import com.randos.mealmap.utils.Constants
 import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.unmockkAll
@@ -32,7 +32,7 @@ class RecipesScreenViewModelTest {
 
     private lateinit var recipesRepository: RecipeRepository
     private lateinit var viewModel: RecipesScreenViewModel
-    val recipe = Utils.recipe
+    val recipe = Constants.recipe
 
     @Before
     fun setUp() {

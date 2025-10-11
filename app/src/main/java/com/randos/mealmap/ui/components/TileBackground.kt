@@ -13,12 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.randos.mealmap.utils.Utils
+import com.randos.mealmap.utils.Constants
 
 @Composable
 fun TileBackground(
     modifier: Modifier = Modifier,
-    columns: Int = Utils.foodIcons.size,
+    columns: Int = Constants.foodIcons.size,
     rows: Int = 5,
     iconSize: Dp = 32.dp,
     spaceBetweenRow: Dp = 0.dp
@@ -32,7 +32,7 @@ fun TileBackground(
                 repeat(columns) { colIndex ->
                     Icon(
                         modifier = Modifier.size(iconSize),
-                        imageVector = Utils.foodIcons[(rowIndex + colIndex) % Utils.foodIcons.size],
+                        imageVector = Constants.foodIcons[(rowIndex + colIndex) % Constants.foodIcons.size],
                         contentDescription = null,
                     )
                 }

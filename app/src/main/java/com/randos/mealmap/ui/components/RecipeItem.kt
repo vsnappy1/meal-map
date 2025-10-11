@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.randos.domain.model.Recipe
-import com.randos.mealmap.utils.Utils
+import com.randos.mealmap.utils.Constants
 
 @Composable
 fun RecipeItem(
@@ -72,7 +72,7 @@ fun RecipeItem(
 @Composable
 fun RecipeItemPreview() {
     RecipeItem(
-        recipe = Utils.recipe,
+        recipe = Constants.recipe,
         onClick = {}
     )
 }

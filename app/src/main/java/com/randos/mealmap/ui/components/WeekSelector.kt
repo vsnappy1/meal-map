@@ -28,7 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.randos.mealmap.utils.Utils.listOfWeeksAvailable
+import com.randos.mealmap.utils.Constants.listOfWeeksAvailable
 
 @Composable
 fun WeekSelector(

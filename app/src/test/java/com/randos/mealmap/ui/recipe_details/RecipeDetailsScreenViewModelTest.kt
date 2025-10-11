@@ -4,7 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.randos.domain.repository.RecipeRepository
 import com.randos.mealmap.MainDispatcherRule
 import com.randos.mealmap.ui.getOrAwaitValue
-import com.randos.mealmap.utils.Utils
+import com.randos.mealmap.utils.Constants
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -32,7 +32,7 @@ class RecipeDetailsScreenViewModelTest {
 
     private lateinit var recipesRepository: RecipeRepository
     private lateinit var recipeDetailsScreenViewModel: RecipeDetailsScreenViewModel
-    private val recipe = Utils.recipe
+    private val recipe = Constants.recipe
 
     @Before
     fun setUp() {
