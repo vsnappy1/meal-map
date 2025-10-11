@@ -9,6 +9,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import java.time.LocalDate
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -27,5 +28,10 @@ internal object AndroidModule {
     @Provides
     fun provideDispatcher(): CoroutineDispatcher {
         return Dispatchers.IO
+    }
+
+    @Provides
+    fun provideLocalDate(): LocalDate {
+        return LocalDate.now()
     }
 }

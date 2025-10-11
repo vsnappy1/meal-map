@@ -70,20 +70,19 @@ class GroceryListScreenViewModel @Inject constructor(
 
     private suspend fun getGroceryIngredients(weekOffset: Int): List<GroceryIngredient> {
         val (dateFrom, dateTo) = getWeekRange(weekOffset)
-        val ingredients = mealRepository.getRecipeIngredientsForDateRange(dateFrom, dateTo)
-        val checkedIngredients = groceryListManager.getCheckedGroceryIngredientsForWeek(weekOffset)
-        return ingredients
-            .groupBy { it.ingredient.name }
-            .map { (name, ingredients) ->
+        val recipeIngredients = mealRepository.getRecipeIngredientsForDateRange(dateFrom, dateTo)
+        val checkedRecipeIngredients =
+            groceryListManager.getCheckedGroceryIngredientsNameForWeek(weekOffset)
+        return recipeIngredients
+            .groupBy { it.ingredient }
+            .map { recipeIngredient ->
                 GroceryIngredient(
-                    name = name,
-                    amountsByUnit = ingredients
-                        .groupBy { it.unit }
-                        .map { (unit, ingredients) -> unit to ingredients.sumOf { it.quantity } },
+                    name = recipeIngredient.key.name,
+                    amountsByUnit = recipeIngredient.value.map { Pair(it.unit, it.quantity)  }
                 )
             }
             .map { it.copy(amountsByUnit = mergeUnits(it.amountsByUnit)) }
-            .map { it.copy(isChecked = checkedIngredients.contains(it)) }
+            .map { it.copy(isChecked = checkedRecipeIngredients.contains(it.name)) }
             .sortedBy { it.name }
     }
 
