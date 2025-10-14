@@ -17,5 +17,5 @@ data class Recipe(
     val tags: List<RecipeTag> = emptyList(),
     val calories: Int? = null,
     val heaviness: RecipeHeaviness? = null,
-    val dateCreated: LocalDate,
+    val dateCreated: LocalDate
 )
