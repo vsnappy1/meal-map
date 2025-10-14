@@ -128,7 +128,10 @@ internal class IngredientRepositoryImplTest {
             val recipe = recipe1
             val ingredient = ingredient1
             val recipeIngredient = RecipeIngredient(
-                id = 0, ingredientId = ingredient.id, recipeId = recipe.id, quantity = 1.0,
+                id = 0,
+                ingredientId = ingredient.id,
+                recipeId = recipe.id,
+                quantity = 1.0,
                 unit = IngredientUnit.GRAM
             )
             ingredientDao.insert(ingredient.toEntity())

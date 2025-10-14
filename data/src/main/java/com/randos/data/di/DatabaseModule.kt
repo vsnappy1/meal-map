@@ -8,18 +8,16 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 internal object DatabaseModule {
 
     @Provides
-    fun provideMealMapDatabase(application: Application): MealMapDatabase {
-        return Room.databaseBuilder(
-            application,
-            MealMapDatabase::class.java, "meal_map_database"
-        ).build()
-    }
+    fun provideMealMapDatabase(application: Application): MealMapDatabase = Room.databaseBuilder(
+        application,
+        MealMapDatabase::class.java,
+        "meal_map_database"
+    ).build()
 
     @Provides
     fun provideIngredientDao(database: MealMapDatabase) = database.ingredientDao()
@@ -34,5 +32,5 @@ internal object DatabaseModule {
     fun provideMealDao(database: MealMapDatabase) = database.mealDao()
 
     @Provides
-    fun MealRecipeCrossRefDao(database: MealMapDatabase) = database.mealRecipeCrossRefDao()
+    fun mealRecipeCrossRefDao(database: MealMapDatabase) = database.mealRecipeCrossRefDao()
 }

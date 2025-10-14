@@ -18,18 +18,19 @@ internal object Utils {
     fun getMealMapDatabase(): MealMapDatabase {
         val context = ApplicationProvider.getApplicationContext<Context>()
         return Room.inMemoryDatabaseBuilder(
-            context, MealMapDatabase::class.java
+            context = context,
+            klass = MealMapDatabase::class.java
         ).build()
     }
 
     val ingredient1 = Ingredient(
         id = 10,
-        name = "Potato",
+        name = "Potato"
     )
 
     val ingredient2 = Ingredient(
         id = 11,
-        name = "Tomato",
+        name = "Tomato"
     )
 
     val recipe1 = Recipe(
@@ -74,13 +75,6 @@ internal object Utils {
         id = 1,
         recipes = listOf(recipe1, recipe2),
         type = MealType.BREAKFAST,
-        date = LocalDate.now()
-    )
-
-    val meal2 = Meal(
-        id = 2,
-        recipes = listOf(recipe1, recipe2),
-        type = MealType.LUNCH,
         date = LocalDate.now()
     )
 }

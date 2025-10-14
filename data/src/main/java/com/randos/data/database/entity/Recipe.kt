@@ -11,7 +11,11 @@ import com.randos.domain.type.RecipeTag
 import java.time.LocalDate
 
 @Entity()
-@TypeConverters(StringListConverter::class, RecipeTagListConverter::class, LocalDateConverter::class)
+@TypeConverters(
+    StringListConverter::class,
+    RecipeTagListConverter::class,
+    LocalDateConverter::class
+)
 internal data class Recipe(
     @PrimaryKey(autoGenerate = true)
     val id: Long,

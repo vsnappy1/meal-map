@@ -8,5 +8,5 @@ import androidx.room.PrimaryKey
 internal data class Ingredient(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
-    val name: String,
+    val name: String
 )

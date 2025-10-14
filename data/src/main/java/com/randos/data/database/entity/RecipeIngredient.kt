@@ -30,5 +30,5 @@ internal data class RecipeIngredient(
     @ColumnInfo(name = "recipe_id", index = true)
     val recipeId: Long,
     val quantity: Double,
-    val unit: IngredientUnit?,
+    val unit: IngredientUnit?
 )

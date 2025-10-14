@@ -10,7 +10,7 @@ import com.randos.data.manager.SettingsManagerImpl.Companion.IS_FIRST_TIME_USING
 import com.randos.domain.manager.SettingsManager
 import com.randos.domain.type.Day
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -112,5 +112,4 @@ class SettingsManagerImplTest {
         val savedValue = sharedPreferences.getBoolean(IS_FIRST_TIME_USING_APP, true)
         assertEquals(isFirstTime, savedValue)
     }
-
 }

@@ -7,31 +7,24 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import java.time.LocalDate
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import java.time.LocalDate
 
 @Module
 @InstallIn(SingletonComponent::class)
 internal object AndroidModule {
 
     @Provides
-    fun provideSharedPreferences(application: Application): SharedPreferences {
-        return application.getSharedPreferences("meal_map", Context.MODE_PRIVATE)
-    }
+    fun provideSharedPreferences(application: Application): SharedPreferences =
+        application.getSharedPreferences("meal_map", Context.MODE_PRIVATE)
 
     @Provides
-    fun provideContext(application: Application): Context {
-        return application.applicationContext
-    }
+    fun provideContext(application: Application): Context = application.applicationContext
 
     @Provides
-    fun provideDispatcher(): CoroutineDispatcher {
-        return Dispatchers.IO
-    }
+    fun provideDispatcher(): CoroutineDispatcher = Dispatchers.IO
 
     @Provides
-    fun provideLocalDate(): LocalDate {
-        return LocalDate.now()
-    }
+    fun provideLocalDate(): LocalDate = LocalDate.now()
 }

@@ -6,12 +6,12 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.randos.domain.manager.GroceryListManager
 import com.randos.domain.model.GroceryIngredient
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 
 internal class GroceryListManagerImpl @Inject constructor(
     private val sharedPreferences: SharedPreferences,
@@ -25,17 +25,11 @@ internal class GroceryListManagerImpl @Inject constructor(
 
     private val gson = Gson()
 
-    override suspend fun markIngredientAsChecked(
-        ingredient: GroceryIngredient,
-        week: Int
-    ) = withContext(dispatcher) {
+    override suspend fun markIngredientAsChecked(ingredient: GroceryIngredient, week: Int) = withContext(dispatcher) {
         markIngredient(ingredient.name, week, true)
     }
 
-    override suspend fun markIngredientAsUnchecked(
-        ingredient: GroceryIngredient,
-        week: Int
-    ) = withContext(dispatcher) {
+    override suspend fun markIngredientAsUnchecked(ingredient: GroceryIngredient, week: Int) = withContext(dispatcher) {
         markIngredient(ingredient.name, week, false)
     }
 

@@ -11,7 +11,6 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 internal abstract class RepositoryModule {
@@ -24,5 +23,4 @@ internal abstract class RepositoryModule {
 
     @Binds
     abstract fun bindMealRepository(impl: MealRepositoryImpl): MealRepository
-
 }

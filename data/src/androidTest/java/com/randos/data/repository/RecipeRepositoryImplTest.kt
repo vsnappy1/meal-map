@@ -131,7 +131,8 @@ internal class RecipeRepositoryImplTest {
                         5.0,
                         IngredientUnit.TEASPOON
                     )
-                ), instructions = listOf("NewStep")
+                ),
+                instructions = listOf("NewStep")
             )
         )
 

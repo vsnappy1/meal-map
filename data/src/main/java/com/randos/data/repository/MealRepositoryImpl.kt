@@ -11,9 +11,9 @@ import com.randos.domain.model.RecipeIngredient
 import com.randos.domain.repository.MealRepository
 import com.randos.domain.repository.RecipeRepository
 import jakarta.inject.Inject
+import java.time.LocalDate
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
-import java.time.LocalDate
 
 internal class MealRepositoryImpl @Inject constructor(
     private val mealDao: MealDao,
@@ -44,14 +44,12 @@ internal class MealRepositoryImpl @Inject constructor(
         mealRecipeCrossRefDao.insertAll(*recipes.toTypedArray())
     }
 
-    override suspend fun getMealsForDateRange(
-        startDate: LocalDate,
-        endDate: LocalDate
-    ): List<Meal> = withContext(dispatcher) {
-        return@withContext mealDao.getByDateRange(startDate, endDate).map {
-            it.toDomain(getRecipesOfMeal(it.id))
+    override suspend fun getMealsForDateRange(startDate: LocalDate, endDate: LocalDate): List<Meal> =
+        withContext(dispatcher) {
+            return@withContext mealDao.getByDateRange(startDate, endDate).map {
+                it.toDomain(getRecipesOfMeal(it.id))
+            }
         }
-    }
 
     override suspend fun getRecipeIngredientsForDateRange(
         startDate: LocalDate,

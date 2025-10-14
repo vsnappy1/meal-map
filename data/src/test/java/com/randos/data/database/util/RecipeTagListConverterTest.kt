@@ -56,5 +56,4 @@ class RecipeTagListConverterTest {
         // Then
         assertNull(result)
     }
-
 }

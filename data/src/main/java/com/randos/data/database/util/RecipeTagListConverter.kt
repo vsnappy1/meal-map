@@ -9,12 +9,8 @@ private val recipeTagListType = object : TypeToken<List<RecipeTag>>() {}.type
 
 internal class RecipeTagListConverter {
     @TypeConverter
-    fun fromString(value: String?): List<RecipeTag>? {
-        return value?.let { Gson().fromJson(it, recipeTagListType) }
-    }
+    fun fromString(value: String?): List<RecipeTag>? = value?.let { Gson().fromJson(it, recipeTagListType) }
 
     @TypeConverter
-    fun fromList(list: List<RecipeTag>?): String? {
-        return list?.let { Gson().toJson(it) }
-    }
+    fun fromList(list: List<RecipeTag>?): String? = list?.let { Gson().toJson(it) }
 }

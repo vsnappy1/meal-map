@@ -28,7 +28,11 @@ import com.randos.data.database.util.StringListConverter
     version = 1,
     exportSchema = false
 )
-@TypeConverters(StringListConverter::class, RecipeTagListConverter::class, LocalDateConverter::class)
+@TypeConverters(
+    StringListConverter::class,
+    RecipeTagListConverter::class,
+    LocalDateConverter::class
+)
 internal abstract class MealMapDatabase : RoomDatabase() {
     abstract fun ingredientDao(): IngredientDao
     abstract fun recipeDao(): RecipeDao

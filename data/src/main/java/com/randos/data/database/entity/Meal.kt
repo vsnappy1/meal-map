@@ -13,5 +13,5 @@ internal data class Meal(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
     val type: MealType,
-    val date: LocalDate,
+    val date: LocalDate
 )

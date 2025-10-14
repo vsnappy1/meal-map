@@ -15,10 +15,10 @@ import com.randos.domain.model.Recipe
 import com.randos.domain.model.RecipeIngredient
 import com.randos.domain.repository.RecipeRepository
 import jakarta.inject.Inject
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
 import java.io.InputStreamReader
 import java.time.LocalDate
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 
 internal class RecipeRepositoryImpl @Inject constructor(
     private val recipeDao: RecipeDao,
@@ -59,7 +59,7 @@ internal class RecipeRepositoryImpl @Inject constructor(
         return@withContext recipeDao.get(id)?.copy(
             description = null,
             instructions = emptyList(),
-            tags = emptyList(),
+            tags = emptyList()
         )?.toDomain(listOf())
     }
 
@@ -130,9 +130,12 @@ internal class RecipeRepositoryImpl @Inject constructor(
             val recipeListType = object : TypeToken<List<Recipe>>() {}.type
             val reader = InputStreamReader(inputStream)
             val gson = GsonBuilder()
-                .registerTypeAdapter(LocalDate::class.java, JsonDeserializer { json, _, _ ->
-                    LocalDate.parse(json.asString) // parse date string
-                })
+                .registerTypeAdapter(
+                    LocalDate::class.java,
+                    JsonDeserializer { json, _, _ ->
+                        LocalDate.parse(json.asString) // parse date string
+                    }
+                )
                 .create()
             val recipes = gson.fromJson<List<Recipe>>(reader, recipeListType)
             batchInsert(recipes)
