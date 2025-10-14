@@ -8,4 +8,5 @@ plugins {
     alias(libs.plugins.android.room) apply false
     alias(libs.plugins.android.ksp) apply false
     alias(libs.plugins.android.hilt) apply false
+    alias(libs.plugins.ktlint)
 }
