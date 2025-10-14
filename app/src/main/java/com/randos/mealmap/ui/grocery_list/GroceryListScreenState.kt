@@ -1,7 +1,6 @@
 package com.randos.mealmap.ui.grocery_list
 
 import com.randos.domain.model.GroceryIngredient
-import com.randos.domain.type.IngredientUnit
 import com.randos.mealmap.utils.CalendarUtils.getWeekStartAndEnd
 import com.randos.mealmap.utils.Constants.listOfWeeksAvailable
 import java.time.DayOfWeek
@@ -12,14 +11,5 @@ data class GroceryListScreenState(
     val selectedWeek: Pair<Int, String> = listOfWeeksAvailable[1],
     val dateFrom: LocalDate = getWeekStartAndEnd(selectedWeek.first, DayOfWeek.MONDAY).first,
     val dateTo: LocalDate = getWeekStartAndEnd(selectedWeek.first, DayOfWeek.MONDAY).second,
-    val groceryIngredients: List<GroceryIngredient> = listOf(
-        GroceryIngredient(
-            name = "Salt",
-            amountsByUnit = listOf(
-                Pair(null, 1.0),
-                Pair(null, 1.0),
-                Pair(IngredientUnit.TEASPOON, 1.0)
-            )
-        )
-    )
+    val groceryIngredients: List<GroceryIngredient> = emptyList()
 )

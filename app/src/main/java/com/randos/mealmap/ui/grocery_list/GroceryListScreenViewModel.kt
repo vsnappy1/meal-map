@@ -37,7 +37,7 @@ class GroceryListScreenViewModel @Inject constructor(
         _state.postValue(getState().copy(isSelectingWeek = isSelectingWeek))
     }
 
-    fun onSelectedWeekTextUpdate(week: Pair<Int, String>) {
+    fun onSelectedWeekUpdate(week: Pair<Int, String>) {
         val (dateFrom, dateTo) = getWeekRange(week.first)
         viewModelScope.launch {
             _state.postValue(

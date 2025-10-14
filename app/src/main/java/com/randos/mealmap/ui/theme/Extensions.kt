@@ -1,4 +1,4 @@
-package com.randos.mealmap.utils
+package com.randos.mealmap.ui.theme
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier

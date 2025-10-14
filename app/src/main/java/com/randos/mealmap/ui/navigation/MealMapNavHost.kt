@@ -21,7 +21,7 @@ import com.randos.mealmap.ui.recipe_add.AddRecipeScreen
 import com.randos.mealmap.ui.recipe_details.RecipeDetailsScreen
 import com.randos.mealmap.ui.recipes.RecipesScreen
 import com.randos.mealmap.ui.settings.SettingsScreen
-import com.randos.mealmap.utils.defaultMainContainerPadding
+import com.randos.mealmap.ui.theme.defaultMainContainerPadding
 
 @Composable
 fun MealMapNavHost(navController: NavHostController) {

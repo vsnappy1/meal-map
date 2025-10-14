@@ -47,7 +47,7 @@ fun GroceryListScreen(
     GroceryListScreen(
         state = state,
         onIsSelectingWeekUpdate = viewModel::onIsSelectingWeekUpdate,
-        onSelectedWeekTextUpdate = viewModel::onSelectedWeekTextUpdate,
+        onSelectedWeekTextUpdate = viewModel::onSelectedWeekUpdate,
         onIngredientCheckedUpdate = viewModel::onIngredientCheckedUpdate
     )
     LaunchedEffect(Unit) {

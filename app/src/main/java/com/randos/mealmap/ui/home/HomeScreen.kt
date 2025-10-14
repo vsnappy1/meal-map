@@ -84,7 +84,7 @@ fun HomeScreen(
     HomeScreen(
         state = state.value,
         onIsSelectingWeekUpdate = viewModel::onIsSelectingWeekUpdate,
-        onSelectedWeekTextUpdate = viewModel::onSelectedWeekTextUpdate,
+        onSelectedWeekTextUpdate = viewModel::onSelectedWeekUpdate,
         onCurrentMealEditingUpdate = viewModel::onCurrentMealEditingUpdate,
         onAddMeal = viewModel::onAddMeal,
         onRemoveMeal = viewModel::onRemoveMeal,

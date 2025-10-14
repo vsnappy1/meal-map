@@ -47,7 +47,7 @@ class HomeScreenViewModel @Inject constructor(
         _state.postValue(getState().copy(isSelectingWeek = isSelectingWeek))
     }
 
-    fun onSelectedWeekTextUpdate(week: Pair<Int, String>) {
+    fun onSelectedWeekUpdate(week: Pair<Int, String>) {
         val (dateFrom, dateTo) = getWeekRange(week.first)
         viewModelScope.launch {
             val mealMap = getTheMealMap(dateFrom, dateTo)
@@ -92,7 +92,7 @@ class HomeScreenViewModel @Inject constructor(
                 mealRepository.updateMeal(updatedMeal)
                 updatedMeal
             }
-            updateMeal(updatedMeal, mealType, date)
+            updateMealMap(updatedMeal, mealType, date)
         }
     }
 
@@ -115,11 +115,11 @@ class HomeScreenViewModel @Inject constructor(
             if (recipes.isEmpty()) {
                 mealRepository.deleteMeal(updatedMeal)
             }
-            updateMeal(updatedMeal, mealType, date)
+            updateMealMap(updatedMeal, mealType, date)
         }
     }
 
-    private fun updateMeal(
+    private fun updateMealMap(
         meal: Meal,
         mealType: MealType,
         date: LocalDate,

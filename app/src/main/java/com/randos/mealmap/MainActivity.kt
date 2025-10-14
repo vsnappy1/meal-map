@@ -23,7 +23,7 @@ import androidx.navigation.compose.rememberNavController
 import com.randos.mealmap.ui.navigation.MealMapBottomNavigationBar
 import com.randos.mealmap.ui.navigation.MealMapNavHost
 import com.randos.mealmap.ui.theme.MealMapTheme
-import com.randos.mealmap.utils.MealMapDestinationChangedListener
+import com.randos.mealmap.ui.navigation.MealMapDestinationChangedListener
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

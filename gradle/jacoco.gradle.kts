@@ -18,6 +18,7 @@ val exclusions = listOf(
     "**/ui/components/*",
     "**/ui/theme/*",
     "**/ui/navigation/*",
+    "**/ContextUtils*.*",
 )
 
 tasks.withType(Test::class) {

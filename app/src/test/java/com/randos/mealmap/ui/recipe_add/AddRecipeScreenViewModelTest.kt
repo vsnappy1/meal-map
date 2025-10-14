@@ -55,7 +55,6 @@ class AddRecipeScreenViewModelTest {
     private lateinit var ingredientsRepository: IngredientRepository
     private lateinit var savedStateHandle: SavedStateHandle
     private lateinit var viewModel: AddRecipeScreenViewModel
-
     private val recipe = Constants.recipe
 
     @Before

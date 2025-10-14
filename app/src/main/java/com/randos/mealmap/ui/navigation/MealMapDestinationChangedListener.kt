@@ -1,13 +1,8 @@
-package com.randos.mealmap.utils
+package com.randos.mealmap.ui.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.savedstate.SavedState
-import com.randos.mealmap.ui.navigation.Destination.Account
-import com.randos.mealmap.ui.navigation.Destination.Grocery
-import com.randos.mealmap.ui.navigation.Destination.Home
-import com.randos.mealmap.ui.navigation.Destination.Recipes
-import com.randos.mealmap.ui.navigation.Destination.Settings
 
 /**
  * A listener that observes changes in the navigation destination and updates the visibility of the bottom navigation bar.
@@ -20,11 +15,11 @@ class MealMapDestinationChangedListener(
      * Routes that should show the bottom navigation bar.
      */
     val routes = listOf(
-        Grocery::class.simpleName,
-        Recipes::class.simpleName,
-        Home::class.simpleName,
-        Account::class.simpleName,
-        Settings::class.simpleName
+        Destination.Grocery::class.simpleName,
+        Destination.Recipes::class.simpleName,
+        Destination.Home::class.simpleName,
+        Destination.Account::class.simpleName,
+        Destination.Settings::class.simpleName
     )
 
     override fun onDestinationChanged(
