@@ -14,10 +14,10 @@ import com.randos.domain.type.MealType
 import com.randos.mealmap.utils.CalendarUtils.getWeekStartAndEnd
 import com.randos.mealmap.utils.toDayOfWeek
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
@@ -37,7 +37,7 @@ class HomeScreenViewModel @Inject constructor(
                 getState().copy(
                     dateFrom = dateFrom,
                     dateTo = dateTo,
-                    mealMap = mealMap,
+                    mealMap = mealMap
                 )
             )
         }
@@ -57,7 +57,7 @@ class HomeScreenViewModel @Inject constructor(
                     selectedWeek = week,
                     dateFrom = dateFrom,
                     dateTo = dateTo,
-                    mealMap = mealMap,
+                    mealMap = mealMap
                 )
             )
         }
@@ -119,11 +119,7 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    private fun updateMealMap(
-        meal: Meal,
-        mealType: MealType,
-        date: LocalDate,
-    ) {
+    private fun updateMealMap(meal: Meal, mealType: MealType, date: LocalDate) {
         val currentMealsForDate = getState().mealMap[date] ?: emptyList()
         val mealExistsForType = currentMealsForDate.any { it.type == mealType }
 
@@ -151,10 +147,7 @@ class HomeScreenViewModel @Inject constructor(
         return getWeekStartAndEnd(week, firstDayOfTheWeek)
     }
 
-    private suspend fun getTheMealMap(
-        dateFrom: LocalDate,
-        dateTo: LocalDate
-    ): Map<LocalDate, List<Meal>> {
+    private suspend fun getTheMealMap(dateFrom: LocalDate, dateTo: LocalDate): Map<LocalDate, List<Meal>> {
         val map = mutableMapOf<LocalDate, List<Meal>>()
         val meals = mealRepository.getMealsForDateRange(dateFrom, dateTo).groupBy { it.date }
         for (i in 0 until Day.entries.size) {

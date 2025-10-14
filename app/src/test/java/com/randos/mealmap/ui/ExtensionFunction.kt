@@ -13,11 +13,7 @@ import java.util.concurrent.TimeoutException
  * `androidTestImplementation("androidx.arch.core:core-testing:version")`
  * to utilize `InstantTaskExecutorRule` for synchronous LiveData operations.
  */
-fun <T> LiveData<T>.getOrAwaitValue(
-    time: Long = 2,
-    timeUnit: TimeUnit = TimeUnit.SECONDS,
-    afterObserve: () -> Unit = {}
-): T {
+fun <T> LiveData<T>.getOrAwaitValue(time: Long = 2, timeUnit: TimeUnit = TimeUnit.SECONDS, afterObserve: () -> Unit = {}): T {
     var data: T? = null
     val latch = CountDownLatch(1)
     val observer = object : Observer<T> {
@@ -37,7 +33,6 @@ fun <T> LiveData<T>.getOrAwaitValue(
             this.removeObserver(observer)
             throw TimeoutException("LiveData value was never set.")
         }
-
     } finally {
         this.removeObserver(observer)
     }

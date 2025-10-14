@@ -12,15 +12,17 @@ import com.randos.mealmap.utils.Constants
 import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.unmockkAll
+import java.time.LocalDate
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import java.time.LocalDate
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class RecipesScreenViewModelTest {
@@ -93,24 +95,23 @@ class RecipesScreenViewModelTest {
     }
 
     @Test
-    fun `onSearchTextChange with special characters should return list of matching recipes`() =
-        runTest {
-            val recipes = listOf(
-                recipe.copy(id = 1, title = "Salad (light)"),
-                recipe.copy(id = 2, title = "Burger & Fries")
-            )
-            coEvery { recipesRepository.getRecipes() } returns recipes
-            viewModel.getRecipes()
-            advanceUntilIdle()
+    fun `onSearchTextChange with special characters should return list of matching recipes`() = runTest {
+        val recipes = listOf(
+            recipe.copy(id = 1, title = "Salad (light)"),
+            recipe.copy(id = 2, title = "Burger & Fries")
+        )
+        coEvery { recipesRepository.getRecipes() } returns recipes
+        viewModel.getRecipes()
+        advanceUntilIdle()
 
-            viewModel.onSearchTextChange("(light)")
-            advanceUntilIdle()
+        viewModel.onSearchTextChange("(light)")
+        advanceUntilIdle()
 
-            val state = viewModel.state.getOrAwaitValue()
-            assertEquals("(light)", state.searchText)
-            assertEquals(1, state.recipes.size)
-            assertEquals("Salad (light)", state.recipes[0].title)
-        }
+        val state = viewModel.state.getOrAwaitValue()
+        assertEquals("(light)", state.searchText)
+        assertEquals(1, state.recipes.size)
+        assertEquals("Salad (light)", state.recipes[0].title)
+    }
 
     @Test
     fun `onSearchTextChange case insensitivity should return list of matching recipes`() = runTest {
@@ -207,7 +208,8 @@ class RecipesScreenViewModelTest {
         advanceUntilIdle()
         assertEquals(
             listOf("A", "B", "C"),
-            viewModel.state.getOrAwaitValue().recipes.map { it.title })
+            viewModel.state.getOrAwaitValue().recipes.map { it.title }
+        )
 
         // Then clear it
         viewModel.onSortChange(null)
@@ -263,7 +265,8 @@ class RecipesScreenViewModelTest {
         assertEquals(RecipesSort.CREATED_DATE, state.sort)
         assertEquals(
             listOf(date.minusDays(2), date.minusDays(1), date),
-            state.recipes.map { it.dateCreated })
+            state.recipes.map { it.dateCreated }
+        )
 
         // Sort by CALORIES
         viewModel.onSortChange(RecipesSort.CALORIES)
@@ -279,7 +282,8 @@ class RecipesScreenViewModelTest {
         assertEquals(RecipesSort.HEAVINESS, state.sort)
         assertEquals(
             listOf(RecipeHeaviness.LIGHT, RecipeHeaviness.MEDIUM, RecipeHeaviness.HEAVY),
-            state.recipes.map { it.heaviness })
+            state.recipes.map { it.heaviness }
+        )
     }
 
     @Test
@@ -323,7 +327,8 @@ class RecipesScreenViewModelTest {
         advanceUntilIdle()
         assertEquals(
             listOf("C", "B", "A"),
-            viewModel.state.getOrAwaitValue().recipes.map { it.title })
+            viewModel.state.getOrAwaitValue().recipes.map { it.title }
+        )
 
         // Then change back to ASCENDING
         viewModel.onSortOrderChange(SortOrder.ASCENDING)
@@ -338,7 +343,12 @@ class RecipesScreenViewModelTest {
     @Test
     fun `Interaction  Search  then Filter  then Sort  then change Sort Order`() = runTest {
         val recipes = listOf(
-            recipe.copy(id = 1, title = "Chicken Pasta", tags = listOf(RecipeTag.QUICK, RecipeTag.CHICKEN), calories = 500),
+            recipe.copy(
+                id = 1,
+                title = "Chicken Pasta",
+                tags = listOf(RecipeTag.QUICK, RecipeTag.CHICKEN),
+                calories = 500
+            ),
             recipe.copy(id = 2, title = "Beef Pasta", tags = listOf(RecipeTag.QUICK), calories = 700),
             recipe.copy(id = 3, title = "Chicken Salad", tags = listOf(RecipeTag.CHICKEN), calories = 300),
             recipe.copy(id = 4, title = "Vegetable Pasta", tags = listOf(RecipeTag.VEGETABLE), calories = 400)
@@ -351,7 +361,12 @@ class RecipesScreenViewModelTest {
         viewModel.onSearchTextChange("Pasta")
         advanceUntilIdle()
         assertEquals(3, viewModel.state.getOrAwaitValue().recipes.size)
-        assertEquals(listOf("Chicken Pasta", "Beef Pasta", "Vegetable Pasta"), viewModel.state.getOrAwaitValue().recipes.map { it.title })
+        assertEquals(
+            listOf("Chicken Pasta", "Beef Pasta", "Vegetable Pasta"),
+            viewModel.state.getOrAwaitValue().recipes.map {
+                it.title
+            }
+        )
 
         // 2. Apply a filter
         viewModel.onFilterChange(RecipeTag.QUICK)
@@ -471,8 +486,8 @@ class RecipesScreenViewModelTest {
         // verify the sorting behavior in such cases, especially for stability if multiple items have the same sort key value.
         val recipes = listOf(
             recipe.copy(id = 1, title = "A", calories = 200, dateCreated = LocalDate.now()), // default date
-            recipe.copy(id = 2, title = "B", calories = 0, dateCreated = LocalDate.now().minusDays(2)),   // 0 calories
-            recipe.copy(id = 3, title = "C", calories = 200, dateCreated = LocalDate.now().minusDays(1))  // same calories as C
+            recipe.copy(id = 2, title = "B", calories = 0, dateCreated = LocalDate.now().minusDays(2)), // 0 calories
+            recipe.copy(id = 3, title = "C", calories = 200, dateCreated = LocalDate.now().minusDays(1)) // same calories as C
         )
         coEvery { recipesRepository.getRecipes() } returns recipes
         viewModel.getRecipes()

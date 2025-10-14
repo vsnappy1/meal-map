@@ -30,10 +30,7 @@ object CalendarUtils {
         }
     }
 
-    fun getWeekStartAndEnd(
-        week: Int,
-        firstDayOfTheWeek: DayOfWeek
-    ): Pair<LocalDate, LocalDate> {
+    fun getWeekStartAndEnd(week: Int, firstDayOfTheWeek: DayOfWeek): Pair<LocalDate, LocalDate> {
         val week = LocalDate.now().plusWeeks(week.toLong())
         val weekStartDate = week.with(TemporalAdjusters.previous(firstDayOfTheWeek))
         val weekEndDate = weekStartDate.plusDays(6)
@@ -47,18 +44,14 @@ fun LocalDate.format(): String {
     return "$dayOfWeek / $dayOfMonth $month"
 }
 
-fun LocalDate.getDayName(): String {
-    return dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
-}
+fun LocalDate.getDayName(): String = dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
 
-fun Day.toDayOfWeek(): DayOfWeek {
-    return when (this) {
-        Day.MONDAY -> DayOfWeek.MONDAY
-        Day.TUESDAY -> DayOfWeek.TUESDAY
-        Day.WEDNESDAY -> DayOfWeek.WEDNESDAY
-        Day.THURSDAY -> DayOfWeek.THURSDAY
-        Day.FRIDAY -> DayOfWeek.FRIDAY
-        Day.SATURDAY -> DayOfWeek.SATURDAY
-        Day.SUNDAY -> DayOfWeek.SUNDAY
-    }
+fun Day.toDayOfWeek(): DayOfWeek = when (this) {
+    Day.MONDAY -> DayOfWeek.MONDAY
+    Day.TUESDAY -> DayOfWeek.TUESDAY
+    Day.WEDNESDAY -> DayOfWeek.WEDNESDAY
+    Day.THURSDAY -> DayOfWeek.THURSDAY
+    Day.FRIDAY -> DayOfWeek.FRIDAY
+    Day.SATURDAY -> DayOfWeek.SATURDAY
+    Day.SUNDAY -> DayOfWeek.SUNDAY
 }

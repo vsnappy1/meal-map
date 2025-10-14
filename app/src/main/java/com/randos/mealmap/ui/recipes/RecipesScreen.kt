@@ -113,7 +113,7 @@ private fun RecipesScreen(
         VerticalAnimatedContent(
             modifier = Modifier.fillMaxSize(),
             targetState = state.recipes,
-            label = "RecipeListAnimation",
+            label = "RecipeListAnimation"
         ) { recipes ->
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -130,7 +130,9 @@ private fun RecipesScreen(
                     }
                 }
                 item {
-                    if (recipes.isEmpty() && (state.filter != null || state.searchText.isNotEmpty())) {
+                    if (recipes.isEmpty() &&
+                        (state.filter != null || state.searchText.isNotEmpty())
+                    ) {
                         Text(
                             modifier = Modifier.fillMaxSize(),
                             text = stringResource(R.string.no_recipes_found),
@@ -147,10 +149,7 @@ private fun RecipesScreen(
 }
 
 @Composable
-private fun SortOrder(
-    state: RecipesScreenState,
-    onSortOrderChange: (SortOrder) -> Unit
-) {
+private fun SortOrder(state: RecipesScreenState, onSortOrderChange: (SortOrder) -> Unit) {
     Box(
         modifier = Modifier
             .clip(CircleShape)
@@ -160,12 +159,21 @@ private fun SortOrder(
                 } else {
                     onSortOrderChange(SortOrder.ASCENDING)
                 }
-            }) {
+            }
+    ) {
         Icon(
             modifier = Modifier.size(32.dp),
             imageVector = Icons.Rounded.KeyboardArrowUp,
             contentDescription = stringResource(R.string.sort_ascending),
-            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = if (state.sortOrder == SortOrder.ASCENDING) 1f else 0.3f)
+            tint = MaterialTheme.colorScheme.onBackground.copy(
+                alpha = if (state.sortOrder ==
+                    SortOrder.ASCENDING
+                ) {
+                    1f
+                } else {
+                    0.3f
+                }
+            )
         )
         Icon(
             modifier = Modifier
@@ -173,7 +181,13 @@ private fun SortOrder(
                 .size(32.dp),
             imageVector = Icons.Rounded.KeyboardArrowDown,
             contentDescription = stringResource(R.string.sort_descending),
-            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = if (state.sortOrder == SortOrder.DESCENDING) 1f else 0.3f)
+            tint = MaterialTheme.colorScheme.onBackground.copy(
+                alpha = if (state.sortOrder == SortOrder.DESCENDING) {
+                    1f
+                } else {
+                    0.3f
+                }
+            )
         )
     }
 }
@@ -218,10 +232,7 @@ private fun ActionButtons(
 }
 
 @Composable
-private fun SearchBar(
-    text: String,
-    onSearchTextChange: (String) -> Unit,
-) {
+private fun SearchBar(text: String, onSearchTextChange: (String) -> Unit) {
     val focusManager = LocalFocusManager.current
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
@@ -255,7 +266,8 @@ private fun SearchBar(
                     )
                 }
             }
-        })
+        }
+    )
 }
 
 @Composable
@@ -303,7 +315,7 @@ private fun <T> DropdownMenu(
     selectedItem: T?,
     onItemSelect: (T?) -> Unit,
     displayValue: (T) -> String,
-    onDismissRequest: () -> Unit,
+    onDismissRequest: () -> Unit
 ) {
     Popup(
         alignment = Alignment.TopCenter,
@@ -342,7 +354,9 @@ private fun <T> DropdownMenu(
                         onDismissRequest()
                     },
                 text = stringResource(R.string.clear_filter_button_text),
-                style = MaterialTheme.typography.labelLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                style = MaterialTheme.typography.labelLarge.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             )
         }
     }

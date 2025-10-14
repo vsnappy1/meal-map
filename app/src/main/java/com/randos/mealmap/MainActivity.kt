@@ -21,9 +21,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.randos.mealmap.ui.navigation.MealMapBottomNavigationBar
+import com.randos.mealmap.ui.navigation.MealMapDestinationChangedListener
 import com.randos.mealmap.ui.navigation.MealMapNavHost
 import com.randos.mealmap.ui.theme.MealMapTheme
-import com.randos.mealmap.ui.navigation.MealMapDestinationChangedListener
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -50,7 +50,8 @@ class MainActivity : ComponentActivity() {
                                 navController = navController
                             )
                         }
-                    }) { innerPadding ->
+                    }
+                ) { innerPadding ->
                     Box(modifier = Modifier.padding(innerPadding)) {
                         MealMapNavHost(navController)
                     }

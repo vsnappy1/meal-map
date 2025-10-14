@@ -1,4 +1,4 @@
-package com.randos.mealmap.ui.recipe_details
+package com.randos.mealmap.ui.recipe.details
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -50,10 +50,10 @@ import com.randos.domain.model.Recipe
 import com.randos.mealmap.R
 import com.randos.mealmap.ui.components.TileBackground
 import com.randos.mealmap.ui.theme.iconButtonColors
-import com.randos.mealmap.utils.Constants
-import com.randos.mealmap.utils.NumberUtils.formatIngredientQuantity
 import com.randos.mealmap.utils.CalendarUtils.formatTime
+import com.randos.mealmap.utils.Constants
 import com.randos.mealmap.utils.ContextUtils.shareRecipe
+import com.randos.mealmap.utils.NumberUtils.formatIngredientQuantity
 
 @Composable
 fun RecipeDetailsScreen(
@@ -66,18 +66,15 @@ fun RecipeDetailsScreen(
     RecipeDetailsScreen(
         recipe = state.value?.recipe,
         onEdit = { onEdit(id) },
-        onDelete = { viewModel.deleteRecipe { onDeleted() } })
+        onDelete = { viewModel.deleteRecipe { onDeleted() } }
+    )
     LaunchedEffect(Unit) {
         viewModel.getRecipeDetails(id)
     }
 }
 
 @Composable
-private fun RecipeDetailsScreen(
-    recipe: Recipe?,
-    onEdit: () -> Unit,
-    onDelete: () -> Unit
-) {
+private fun RecipeDetailsScreen(recipe: Recipe?, onEdit: () -> Unit, onDelete: () -> Unit) {
     if (recipe == null) return
 
     Column(
@@ -101,7 +98,9 @@ private fun RecipeDetailsScreen(
         recipe.description?.let {
             Text(
                 text = it,
-                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             )
         }
         SubHeading(text = stringResource(R.string.recipe_ingredients_label))
@@ -150,7 +149,9 @@ private fun RecipeIngredients(recipe: Recipe) {
                 fontWeight = FontWeight.W400
             )
             Text(
-                text = "${formatIngredientQuantity(it.quantity)} ${it.unit?.value ?: stringResource(R.string.ingredient_default_unit)}",
+                text = "${formatIngredientQuantity(
+                    it.quantity
+                )} ${it.unit?.value ?: stringResource(R.string.ingredient_default_unit)}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -184,7 +185,7 @@ fun HeaderImageWithActionButtons(
             Card {
                 TileBackground(
                     modifier = Modifier.padding(vertical = 4.dp),
-                    rows = 6,
+                    rows = 6
                 )
             }
         }
@@ -196,11 +197,12 @@ fun HeaderImageWithActionButtons(
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.25f),
                     shape = CircleShape
                 ),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             ActionButton(
                 imageVector = Icons.Rounded.Delete,
-                onClick = { isDeleteConfirmationDialogOpen = true })
+                onClick = { isDeleteConfirmationDialogOpen = true }
+            )
             ActionButton(imageVector = Icons.Rounded.Edit, onClick = onEdit)
             ActionButton(imageVector = Icons.Rounded.Share, onClick = {
                 shareRecipe(context = context, recipe = recipe)
@@ -219,10 +221,7 @@ fun HeaderImageWithActionButtons(
 }
 
 @Composable
-private fun SubHeading(
-    modifier: Modifier = Modifier,
-    text: String
-) {
+private fun SubHeading(modifier: Modifier = Modifier, text: String) {
     Text(
         modifier = modifier.padding(top = 8.dp),
         text = text,
@@ -251,9 +250,13 @@ private fun RecipeExtraDetails(modifier: Modifier = Modifier, recipe: Recipe) {
             Spacer(modifier = Modifier.height(8.dp))
             RecipeExtraRow(
                 title1 = stringResource(R.string.recipe_tags_label),
-                value1 = if (recipe.tags.isEmpty()) stringResource(R.string.default_value_for_no_value) else recipe.tags.joinToString(
-                    ", "
-                ) { it.value },
+                value1 = if (recipe.tags.isEmpty()) {
+                    stringResource(R.string.default_value_for_no_value)
+                } else {
+                    recipe.tags.joinToString(
+                        ", "
+                    ) { it.value }
+                },
                 title2 = stringResource(R.string.recipe_heaviness_label),
                 value2 = recipe.heaviness?.value
                     ?: stringResource(R.string.default_value_for_no_value),
@@ -311,10 +314,7 @@ private fun RecipeExtraItem(modifier: Modifier = Modifier, title: String, value:
 }
 
 @Composable
-private fun DeleteConfirmationDialog(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
-) {
+private fun DeleteConfirmationDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {

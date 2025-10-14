@@ -15,9 +15,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class RecipesScreenViewModel @Inject constructor(
-    private val recipeRepository: RecipeRepository
-) : ViewModel() {
+class RecipesScreenViewModel @Inject constructor(private val recipeRepository: RecipeRepository) : ViewModel() {
 
     private val _state = MutableLiveData(RecipesScreenState())
     val state: LiveData<RecipesScreenState> = _state

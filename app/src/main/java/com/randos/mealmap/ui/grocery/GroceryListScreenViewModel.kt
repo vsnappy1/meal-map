@@ -1,4 +1,4 @@
-package com.randos.mealmap.ui.grocery_list
+package com.randos.mealmap.ui.grocery
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,8 +13,8 @@ import com.randos.mealmap.utils.CalendarUtils.getWeekStartAndEnd
 import com.randos.mealmap.utils.toDayOfWeek
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
-import kotlinx.coroutines.launch
 import java.time.LocalDate
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class GroceryListScreenViewModel @Inject constructor(
@@ -78,7 +78,7 @@ class GroceryListScreenViewModel @Inject constructor(
             .map { recipeIngredient ->
                 GroceryIngredient(
                     name = recipeIngredient.key.name,
-                    amountsByUnit = recipeIngredient.value.map { Pair(it.unit, it.quantity)  }
+                    amountsByUnit = recipeIngredient.value.map { Pair(it.unit, it.quantity) }
                 )
             }
             .map { it.copy(amountsByUnit = mergeUnits(it.amountsByUnit)) }
@@ -101,10 +101,10 @@ private fun mergeUnits(ingredients: List<Pair<IngredientUnit?, Double>>): List<P
     val volumeIngredients = ingredients
         .filter {
             it.first == IngredientUnit.ML ||
-                    it.first == IngredientUnit.LITER ||
-                    it.first == IngredientUnit.CUP ||
-                    it.first == IngredientUnit.TEASPOON ||
-                    it.first == IngredientUnit.TABLESPOON
+                it.first == IngredientUnit.LITER ||
+                it.first == IngredientUnit.CUP ||
+                it.first == IngredientUnit.TEASPOON ||
+                it.first == IngredientUnit.TABLESPOON
         }
     mergedIngredients.removeAll(massIngredients + volumeIngredients)
 

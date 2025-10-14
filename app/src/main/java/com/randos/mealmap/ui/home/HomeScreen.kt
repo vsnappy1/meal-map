@@ -72,14 +72,11 @@ import com.randos.mealmap.ui.components.ScreenHeadingText
 import com.randos.mealmap.ui.components.VerticalAnimatedContent
 import com.randos.mealmap.ui.components.WeekSelector
 import com.randos.mealmap.utils.getDayName
-import kotlinx.coroutines.delay
 import java.time.LocalDate
+import kotlinx.coroutines.delay
 
 @Composable
-fun HomeScreen(
-    onRecipeClick: (Recipe) -> Unit,
-    viewModel: HomeScreenViewModel = hiltViewModel()
-) {
+fun HomeScreen(onRecipeClick: (Recipe) -> Unit, viewModel: HomeScreenViewModel = hiltViewModel()) {
     val state = viewModel.state.observeAsState(HomeScreenState())
     HomeScreen(
         state = state.value,
@@ -157,7 +154,8 @@ private fun HomeScreen(
         ) {
             items(
                 items = state.mealMap.entries.toList(),
-                key = { (date, _) -> date }) { (date, meals) ->
+                key = { (date, _) -> date }
+            ) { (date, meals) ->
                 MealDay(
                     date = date,
                     meals = meals,
@@ -300,9 +298,11 @@ private fun MealRowItem(
         mealIconPainter = mealIconPainter,
         mealEditText = if (shouldUpdate(originalMealType)) mealEditText.orEmpty() else "",
         onMealEditTextUpdate = {
-            if (shouldUpdate(originalMealType)) onCurrentMealEditingUpdate(
-                Triple(date, originalMealType, it)
-            )
+            if (shouldUpdate(originalMealType)) {
+                onCurrentMealEditingUpdate(
+                    Triple(date, originalMealType, it)
+                )
+            }
         },
         recipes = recipes,
         recipeSuggestions = if (shouldUpdate(originalMealType)) recipeSuggestions else emptyList(),
@@ -356,7 +356,7 @@ private fun MealRow(
                 text = mealType,
                 maxLines = 1,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.onSurface
             )
             BasicTextField(
                 modifier = Modifier
@@ -382,7 +382,9 @@ private fun MealRow(
                     focusManager.clearFocus()
                 },
                 singleLine = true,
-                textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
+                textStyle = MaterialTheme.typography.bodyLarge.copy(
+                    color = MaterialTheme.colorScheme.onSurface
+                ),
                 cursorBrush = SolidColor(MaterialTheme.colorScheme.primary)
             ) {
                 Box(
@@ -424,9 +426,15 @@ private fun MealRow(
         VerticalAnimatedContent(
             modifier = Modifier.fillMaxWidth(),
             targetState = recipeSuggestions,
-            label = "RecipeSuggestionAnimation",
+            label = "RecipeSuggestionAnimation"
         ) { suggestions ->
-            val padding by animateDpAsState(if (suggestions.isNotEmpty() || mealEditText.length >= 2) 8.dp else 0.dp)
+            val padding by animateDpAsState(
+                if (suggestions.isNotEmpty() || mealEditText.length >= 2) {
+                    8.dp
+                } else {
+                    0.dp
+                }
+            )
             RecipeSuggestion(
                 modifier = Modifier.padding(start = padding, end = padding, bottom = padding),
                 suggestions = suggestions,
@@ -449,7 +457,7 @@ private fun MealRow(
                 recipes.forEach { recipe ->
                     Row(
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-                        verticalAlignment = Alignment.CenterVertically,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Row(
                             modifier = Modifier
@@ -482,7 +490,8 @@ private fun MealRow(
                             onClick = {
                                 onRemoveMeal(recipe)
                                 focusManager.clearFocus()
-                            }) {
+                            }
+                        ) {
                             Icon(
                                 modifier = Modifier.padding(2.dp),
                                 imageVector = Icons.Rounded.Clear,

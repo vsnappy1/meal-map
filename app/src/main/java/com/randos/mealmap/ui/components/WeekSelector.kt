@@ -39,7 +39,8 @@ fun WeekSelector(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        onClick = { onIsSelectingWeekUpdate(true) }) {
+        onClick = { onIsSelectingWeekUpdate(true) }
+    ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             this@Card.AnimatedVisibility(
                 visible = !isSelectingWeek,
@@ -50,7 +51,8 @@ fun WeekSelector(
                     .padding(horizontal = 8.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Rounded.KeyboardArrowDown, contentDescription = null
+                    imageVector = Icons.Rounded.KeyboardArrowDown,
+                    contentDescription = null
                 )
             }
             Column {
@@ -68,7 +70,8 @@ fun WeekSelector(
                                 } else {
                                     onIsSelectingWeekUpdate(true)
                                 }
-                            })
+                            }
+                        )
                     }
                     AnimatedVisibility(
                         modifier = Modifier.fillMaxWidth(),
@@ -83,6 +86,7 @@ fun WeekSelector(
         }
     }
 }
+
 @Composable
 private fun WeekText(text: String, onClick: () -> Unit = {}) {
     Box(
@@ -106,10 +110,13 @@ private fun WeekText(text: String, onClick: () -> Unit = {}) {
 @Preview
 @Composable
 private fun PreviewWeekSelector() {
-    WeekSelector(isSelectingWeek = false, selectedWeek = "This Week", onIsSelectingWeekUpdate = {}, onSelectedWeekUpdate = { _, _ -> })
+    WeekSelector(isSelectingWeek = false, selectedWeek = "This Week", onIsSelectingWeekUpdate = {
+    }, onSelectedWeekUpdate = { _, _ -> })
 }
+
 @Preview
 @Composable
 private fun PreviewWeekSelectorIsSelecting() {
-    WeekSelector(isSelectingWeek = true, selectedWeek = "This Week", onIsSelectingWeekUpdate = {}, onSelectedWeekUpdate = { _, _ -> })
+    WeekSelector(isSelectingWeek = true, selectedWeek = "This Week", onIsSelectingWeekUpdate = {
+    }, onSelectedWeekUpdate = { _, _ -> })
 }

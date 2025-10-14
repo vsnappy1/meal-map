@@ -24,7 +24,9 @@ object Utils {
         recipe.prepTime?.let { builder.appendLine("⏱ Prep Time: ${formatTime(it)}") }
         recipe.cookTime?.let { builder.appendLine("🍳 Cook Time: ${formatTime(it)}") }
         recipe.servings?.let { builder.appendLine("👥 Servings: $it") }
-        recipe.tags.let { builder.appendLine("🏷 Tag: ${it.joinToString(", ") { tag -> tag.value }}") }
+        recipe.tags.let {
+            builder.appendLine("🏷 Tag: ${it.joinToString(", ") { tag -> tag.value }}")
+        }
         recipe.heaviness?.let { builder.appendLine("⚖️ Heaviness: $it") }
         recipe.calories?.let { builder.appendLine("🔥 Calories: $it kcal") }
         builder.appendLine()
@@ -32,7 +34,9 @@ object Utils {
         // Ingredients
         builder.appendLine("🛒 Ingredients:")
         recipe.ingredients.forEach { ri ->
-            builder.appendLine("- ${formatIngredientQuantity(ri.quantity)} ${ri.unit?.value ?: "unit"} ${ri.ingredient.name}")
+            builder.appendLine(
+                "- ${formatIngredientQuantity(ri.quantity)} ${ri.unit?.value ?: "unit"} ${ri.ingredient.name}"
+            )
         }
         builder.appendLine()
 

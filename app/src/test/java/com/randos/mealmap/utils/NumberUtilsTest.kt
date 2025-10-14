@@ -1,7 +1,7 @@
 package com.randos.mealmap.utils
 
 import com.randos.mealmap.utils.NumberUtils.formatIngredientQuantity
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class NumberUtilsTest {
@@ -40,7 +40,6 @@ class NumberUtilsTest {
 
         // Then
         assertEquals("⅓", result)
-
     }
 
     @Test

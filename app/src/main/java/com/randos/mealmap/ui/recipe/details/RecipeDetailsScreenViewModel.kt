@@ -1,4 +1,4 @@
-package com.randos.mealmap.ui.recipe_details
+package com.randos.mealmap.ui.recipe.details
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,9 +11,7 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class RecipeDetailsScreenViewModel @Inject constructor(
-    private val recipeRepository: RecipeRepository
-) : ViewModel() {
+class RecipeDetailsScreenViewModel @Inject constructor(private val recipeRepository: RecipeRepository) : ViewModel() {
 
     private val _state = MutableLiveData(RecipeDetailsScreenState())
     val state: LiveData<RecipeDetailsScreenState> = _state
@@ -33,7 +31,5 @@ class RecipeDetailsScreenViewModel @Inject constructor(
         }
     }
 
-    private fun getRecipe(): Recipe? {
-        return _state.value?.recipe
-    }
+    private fun getRecipe(): Recipe? = _state.value?.recipe
 }

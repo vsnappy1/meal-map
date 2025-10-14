@@ -1,4 +1,4 @@
-package com.randos.mealmap.ui.grocery_list
+package com.randos.mealmap.ui.grocery
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
@@ -38,11 +38,8 @@ import com.randos.mealmap.ui.components.VerticalAnimatedContent
 import com.randos.mealmap.ui.components.WeekSelector
 import com.randos.mealmap.utils.NumberUtils.formatIngredientQuantity
 
-
 @Composable
-fun GroceryListScreen(
-    viewModel: GroceryListScreenViewModel = hiltViewModel()
-) {
+fun GroceryListScreen(viewModel: GroceryListScreenViewModel = hiltViewModel()) {
     val state by viewModel.state.observeAsState(GroceryListScreenState())
     GroceryListScreen(
         state = state,
@@ -90,10 +87,12 @@ private fun GroceryListScreen(
             LazyColumn {
                 itemsIndexed(
                     items = state.groceryIngredients,
-                    key = { _, ingredient -> ingredient.name }) { index, ingredient ->
+                    key = { _, ingredient -> ingredient.name }
+                ) { index, ingredient ->
                     GroceryListItem(
                         groceryIngredient = ingredient,
-                        onCheckedChange = { checked -> onIngredientCheckedUpdate(index, checked) })
+                        onCheckedChange = { checked -> onIngredientCheckedUpdate(index, checked) }
+                    )
                 }
             }
         }
@@ -121,17 +120,20 @@ private fun GroceryListScreen(
 fun GroceryListItem(groceryIngredient: GroceryIngredient, onCheckedChange: (Boolean) -> Unit) {
     val isChecked = groceryIngredient.isChecked
     val textStyle =
-        MaterialTheme.typography.bodyLarge.copy(textDecoration = if (isChecked) TextDecoration.LineThrough else TextDecoration.None)
+        MaterialTheme.typography.bodyLarge.copy(
+            textDecoration = if (isChecked) TextDecoration.LineThrough else TextDecoration.None
+        )
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(end = 4.dp, top = 4.dp, bottom = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Checkbox(
             modifier = Modifier.size(32.dp),
             checked = isChecked,
-            onCheckedChange = { onCheckedChange(!isChecked) })
+            onCheckedChange = { onCheckedChange(!isChecked) }
+        )
         Text(
             modifier = Modifier
                 .weight(1f)

@@ -9,10 +9,10 @@ import android.os.Environment
 import androidx.core.content.FileProvider
 import com.randos.domain.model.Recipe
 import com.randos.mealmap.utils.Utils.recipeToShareableText
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 object ContextUtils {
     fun shareRecipe(context: Context, recipe: Recipe) {
@@ -26,28 +26,27 @@ object ContextUtils {
         context.startActivity(shareIntent)
     }
 
-    suspend fun copyUriToAppStorage(context: Context, uri: Uri): Uri? =
-        withContext(Dispatchers.IO) {
-            return@withContext try {
-                val inputStream =
-                    context.contentResolver.openInputStream(uri) ?: return@withContext null
-                val file = File(
-                    context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                    "meal_map_${System.currentTimeMillis()}.jpg"
-                )
-                FileOutputStream(file).use { output ->
-                    inputStream.copyTo(output)
-                }
-                FileProvider.getUriForFile(
-                    context,
-                    "${context.packageName}.provider",
-                    file
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
-                null
+    suspend fun copyUriToAppStorage(context: Context, uri: Uri): Uri? = withContext(Dispatchers.IO) {
+        return@withContext try {
+            val inputStream =
+                context.contentResolver.openInputStream(uri) ?: return@withContext null
+            val file = File(
+                context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                "meal_map_${System.currentTimeMillis()}.jpg"
+            )
+            FileOutputStream(file).use { output ->
+                inputStream.copyTo(output)
             }
+            FileProvider.getUriForFile(
+                context,
+                "${context.packageName}.provider",
+                file
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
+    }
 }
 
 fun Context.findActivity(): Activity {

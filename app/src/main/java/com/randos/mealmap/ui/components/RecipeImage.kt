@@ -37,8 +37,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -78,8 +78,10 @@ fun RecipeImage(
     ) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             if (imagePath == null) {
-                TileBackground(iconSize = 24.dp,
-                    spaceBetweenRow = 4.dp)
+                TileBackground(
+                    iconSize = 24.dp,
+                    spaceBetweenRow = 4.dp
+                )
                 Text(
                     modifier = Modifier
                         .border(
@@ -95,7 +97,7 @@ fun RecipeImage(
                             showImageSourceDialog = true
                         }
                         .padding(vertical = 8.dp, horizontal = 16.dp),
-                    text = "Add Image",
+                    text = "Add Image"
                 )
             } else {
                 AsyncImage(
@@ -116,7 +118,7 @@ fun RecipeImage(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Edit,
-                        contentDescription = null,
+                        contentDescription = null
                     )
                 }
             }
@@ -136,13 +138,8 @@ private fun RecipeImagePreview() {
     }
 }
 
-
 @Composable
-private fun ImageCapture(
-    onDismiss: () -> Unit,
-    onImagePick: (String) -> Unit,
-    onCameraCapture: (String) -> Unit
-) {
+private fun ImageCapture(onDismiss: () -> Unit, onImagePick: (String) -> Unit, onCameraCapture: (String) -> Unit) {
     var capturedImageUri by remember { mutableStateOf<Uri?>(null) }
     val context = LocalContext.current
     val imagePicker = imagePickerLauncher(onImagePick)
@@ -173,15 +170,12 @@ private fun ImageCapture(
                     onDismiss()
                 }
             )
-        })
+        }
+    )
 }
 
 @Composable
-private fun ImageSourceDialog(
-    onDismiss: () -> Unit,
-    onGalleryClick: () -> Unit,
-    onCameraClick: () -> Unit
-) {
+private fun ImageSourceDialog(onDismiss: () -> Unit, onGalleryClick: () -> Unit, onCameraClick: () -> Unit) {
     androidx.compose.ui.window.Dialog(onDismissRequest = onDismiss) {
         Card {
             Column(
@@ -205,7 +199,7 @@ private fun ImageSourceDialog(
 private fun permissionLauncher(
     context: Context,
     capturedImageUri: Uri?,
-    cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean>,
+    cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean>
 ): ManagedActivityResultLauncher<String, Boolean> = rememberLauncherForActivityResult(
     contract = ActivityResultContracts.RequestPermission()
 ) { isGranted ->
@@ -232,7 +226,9 @@ private fun cameraLauncher(
 
 @Composable
 private fun imagePickerLauncher(onImagePick: (String) -> Unit): ManagedActivityResultLauncher<String, Uri?> =
-    rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+    rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
         uri?.let { onImagePick(it.toString()) }
     }
 
@@ -257,7 +253,7 @@ private fun requestCameraPermission(
     val cameraPermission = Manifest.permission.CAMERA
     when {
         ContextCompat.checkSelfPermission(context, cameraPermission) ==
-                PackageManager.PERMISSION_GRANTED -> {
+            PackageManager.PERMISSION_GRANTED -> {
             // Already granted
             onGranted()
         }
@@ -276,4 +272,3 @@ private fun requestCameraPermission(
         }
     }
 }
-

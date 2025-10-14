@@ -7,9 +7,7 @@ import androidx.savedstate.SavedState
 /**
  * A listener that observes changes in the navigation destination and updates the visibility of the bottom navigation bar.
  */
-class MealMapDestinationChangedListener(
-    private val updateBottomSheetVisibility: (Boolean) -> Unit
-) :
+class MealMapDestinationChangedListener(private val updateBottomSheetVisibility: (Boolean) -> Unit) :
     NavController.OnDestinationChangedListener {
     /**
      * Routes that should show the bottom navigation bar.
@@ -22,11 +20,7 @@ class MealMapDestinationChangedListener(
         Destination.Settings::class.simpleName
     )
 
-    override fun onDestinationChanged(
-        controller: NavController,
-        destination: NavDestination,
-        arguments: SavedState?
-    ) {
+    override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: SavedState?) {
         for (route in routes) {
             if (destination.route?.contains(route.orEmpty()) == true) {
                 updateBottomSheetVisibility(true)

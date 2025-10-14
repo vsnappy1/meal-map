@@ -23,18 +23,15 @@ import com.randos.domain.model.Recipe
 import com.randos.mealmap.utils.Constants
 
 @Composable
-fun RecipeItem(
-    modifier: Modifier = Modifier,
-    recipe: Recipe,
-    onClick: (Long) -> Unit
-) {
+fun RecipeItem(modifier: Modifier = Modifier, recipe: Recipe, onClick: (Long) -> Unit) {
     Card(
         shape = MaterialTheme.shapes.medium,
-        modifier = modifier.clickable { onClick(recipe.id) }) {
+        modifier = modifier.clickable { onClick(recipe.id) }
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
+                .padding(8.dp)
         ) {
             RecipeItemImage(
                 modifier = Modifier
@@ -43,8 +40,8 @@ fun RecipeItem(
                         color = MaterialTheme.colorScheme.primary,
                         shape = MaterialTheme.shapes.small
                     )
-                    .clip(shape = MaterialTheme.shapes.small)
-                , imagePath = recipe.imagePath
+                    .clip(shape = MaterialTheme.shapes.small),
+                imagePath = recipe.imagePath
             )
             Spacer(modifier = Modifier.width(8.dp))
             Column {

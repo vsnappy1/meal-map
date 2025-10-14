@@ -60,7 +60,9 @@ fun RecipeAddTextField(
                 singleLine = true,
                 value = value,
                 onValueChange = onValueChange,
-                textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colorScheme.onSurface),
+                textStyle = LocalTextStyle.current.copy(
+                    color = MaterialTheme.colorScheme.onSurface
+                ),
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Text,
                     capitalization = KeyboardCapitalization.Sentences
@@ -96,7 +98,7 @@ fun RecipeAddTextField(
             Icon(
                 modifier = Modifier.size(18.dp),
                 imageVector = Icons.Rounded.Done,
-                contentDescription = null,
+                contentDescription = null
             )
         }
     }
@@ -108,7 +110,7 @@ fun RecipeAddTextField(
     VerticalAnimatedContent(
         modifier = Modifier.fillMaxWidth(),
         targetState = suggestions,
-        label = "IngredientSuggestionAnimation",
+        label = "IngredientSuggestionAnimation"
     ) { suggestions ->
         RecipeIngredientSuggestion(
             modifier = if (isEditing) Modifier.padding(bottom = 4.dp) else Modifier,

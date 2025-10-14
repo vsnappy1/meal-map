@@ -5,7 +5,7 @@ import com.randos.domain.type.RecipeTag
 import com.randos.domain.type.RecipesSort
 import com.randos.domain.type.SortOrder
 
-data class RecipesScreenState (
+data class RecipesScreenState(
     val searchText: String = "",
     val recipes: List<Recipe> = emptyList(),
     val filter: RecipeTag? = null,

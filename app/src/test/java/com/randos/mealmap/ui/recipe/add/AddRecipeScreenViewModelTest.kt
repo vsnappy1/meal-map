@@ -1,4 +1,4 @@
-package com.randos.mealmap.ui.recipe_add
+package com.randos.mealmap.ui.recipe.add
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
@@ -13,14 +13,6 @@ import com.randos.domain.type.RecipeTag
 import com.randos.mealmap.MainDispatcherRule
 import com.randos.mealmap.ui.getOrAwaitValue
 import com.randos.mealmap.utils.Constants
-import com.randos.mealmap.utils.Constants.RECIPE_COOKING_TIME_MAX_LENGTH
-import com.randos.mealmap.utils.Constants.RECIPE_DESCRIPTION_MAX_LENGTH
-import com.randos.mealmap.utils.Constants.RECIPE_ERROR_MESSAGE_SHOWN_DURATION
-import com.randos.mealmap.utils.Constants.RECIPE_INGREDIENTS_MAX_LENGTH
-import com.randos.mealmap.utils.Constants.RECIPE_INSTRUCTIONS_MAX_LENGTH
-import com.randos.mealmap.utils.Constants.RECIPE_PREPARATION_TIME_MAX_LENGTH
-import com.randos.mealmap.utils.Constants.RECIPE_TITLE_MAX_LENGTH
-import com.randos.mealmap.utils.Constants.RECIPE_TOTAL_CALORIES_MAX_LENGTH
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -33,11 +25,7 @@ import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -89,25 +77,25 @@ class AddRecipeScreenViewModelTest {
 
         // When
         initializeViewModel()
-        assertEquals(true, viewModel.state.getOrAwaitValue().isLoading)
+        Assert.assertEquals(true, viewModel.state.getOrAwaitValue().isLoading)
         advanceUntilIdle()
 
         // Then
         coVerify { recipesRepository.getRecipe(recipeId) }
-        assertEquals(recipe, viewModel.state.getOrAwaitValue().recipe)
-        assertEquals(false, viewModel.state.getOrAwaitValue().isLoading)
+        Assert.assertEquals(recipe, viewModel.state.getOrAwaitValue().recipe)
+        Assert.assertEquals(false, viewModel.state.getOrAwaitValue().isLoading)
     }
 
     @Test
     fun `getState when recipeId is null should return empty recipe`() = runTest {
         // When
         initializeViewModel()
-        assertEquals(false, viewModel.state.getOrAwaitValue().isLoading)
+        Assert.assertEquals(false, viewModel.state.getOrAwaitValue().isLoading)
         advanceUntilIdle()
 
         // Then
-        assertEquals(0L, viewModel.state.getOrAwaitValue().recipe.id)
-        assertEquals(false, viewModel.state.getOrAwaitValue().isLoading)
+        Assert.assertEquals(0L, viewModel.state.getOrAwaitValue().recipe.id)
+        Assert.assertEquals(false, viewModel.state.getOrAwaitValue().isLoading)
     }
 
     @Test
@@ -137,20 +125,19 @@ class AddRecipeScreenViewModelTest {
     }
 
     @Test
-    fun `onSave when image path is not null should update recipe with updated image path`() =
-        runTest {
-            // Given
-            val imagePath = "imagePath"
-            val recipeSlot = slot<Recipe>()
+    fun `onSave when image path is not null should update recipe with updated image path`() = runTest {
+        // Given
+        val imagePath = "imagePath"
+        val recipeSlot = slot<Recipe>()
 
-            // When
-            viewModel.onSave(imagePath = imagePath, onSaved = {})
-            advanceUntilIdle()
+        // When
+        viewModel.onSave(imagePath = imagePath, onSaved = {})
+        advanceUntilIdle()
 
-            // Then
-            coVerify { recipesRepository.addRecipe(capture(recipeSlot)) }
-            assertEquals(imagePath, recipeSlot.captured.imagePath)
-        }
+        // Then
+        coVerify { recipesRepository.addRecipe(capture(recipeSlot)) }
+        Assert.assertEquals(imagePath, recipeSlot.captured.imagePath)
+    }
 
     @Test
     fun `onSave when image path is null imagePath remains unchanged`() = runTest {
@@ -163,7 +150,7 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         coVerify { recipesRepository.addRecipe(capture(recipeSlot)) }
-        assertEquals(null, recipeSlot.captured.imagePath)
+        Assert.assertEquals(null, recipeSlot.captured.imagePath)
     }
 
     @Test
@@ -180,161 +167,152 @@ class AddRecipeScreenViewModelTest {
     }
 
     @Test
-    fun `onIngredientTextChange when text length exceeds max length should not update state`() =
-        runTest {
-            // Given
-            val text = "a".repeat(RECIPE_INGREDIENTS_MAX_LENGTH + 1)
+    fun `onIngredientTextChange when text length exceeds max length should not update state`() = runTest {
+        // Given
+        val text = "a".repeat(Constants.RECIPE_INGREDIENTS_MAX_LENGTH + 1)
 
-            // When
-            viewModel.onIngredientTextChange(text)
-            advanceUntilIdle()
+        // When
+        viewModel.onIngredientTextChange(text)
+        advanceUntilIdle()
 
-            // Then
-            coVerify(exactly = 0) { ingredientsRepository.getIngredientsLike(text) }
-            assertEquals("", viewModel.state.getOrAwaitValue().currentIngredientText)
-        }
-
-    @Test
-    fun `onIngredientTextChange when text is empty should update currentIngredientText and clear ingredientSuggestions`() =
-        runTest {
-            // Given
-            val text = ""
-
-            // When
-            viewModel.onIngredientTextChange(text)
-            advanceUntilIdle()
-
-            // Then
-            coVerify(exactly = 0) { ingredientsRepository.getIngredientsLike(text) }
-            assertEquals("", viewModel.state.getOrAwaitValue().currentIngredientText)
-            assertEquals(
-                emptyList<Ingredient>(),
-                viewModel.state.getOrAwaitValue().ingredientSuggestions
-            )
-        }
+        // Then
+        coVerify(exactly = 0) { ingredientsRepository.getIngredientsLike(text) }
+        Assert.assertEquals("", viewModel.state.getOrAwaitValue().currentIngredientText)
+    }
 
     @Test
-    fun `onIngredientTextChange when text length is less than max length should update currentIngredientText and call findSuggestion`() =
-        runTest {
-            // Given
-            val text = "abc"
+    fun `onIngredientTextChange when text is empty should update currentIngredientText and clear ingredientSuggestions`() = runTest {
+        // Given
+        val text = ""
 
-            // When
-            viewModel.onIngredientTextChange(text)
-            advanceUntilIdle()
+        // When
+        viewModel.onIngredientTextChange(text)
+        advanceUntilIdle()
 
-            // Then
-            coVerify { ingredientsRepository.getIngredientsLike(text) }
-            assertEquals(text, viewModel.state.getOrAwaitValue().currentIngredientText)
-        }
-
-    @Test
-    fun `onIngredientEditTextChanged when text length exceeds max length should not update state`() =
-        runTest {
-            // Given
-            val text = "a".repeat(RECIPE_INGREDIENTS_MAX_LENGTH + 1)
-
-            // When
-            viewModel.onIngredientEditTextChange(text)
-            advanceUntilIdle()
-
-            // Then
-            coVerify(exactly = 0) { ingredientsRepository.getIngredientsLike(text) }
-            assertEquals("", viewModel.state.getOrAwaitValue().editIngredientText)
-        }
+        // Then
+        coVerify(exactly = 0) { ingredientsRepository.getIngredientsLike(text) }
+        Assert.assertEquals("", viewModel.state.getOrAwaitValue().currentIngredientText)
+        Assert.assertEquals(
+            emptyList<Ingredient>(),
+            viewModel.state.getOrAwaitValue().ingredientSuggestions
+        )
+    }
 
     @Test
-    fun `onIngredientEditTextChange when text is empty should update currentIngredientText and clear ingredientSuggestions`() =
-        runTest {
-            // Given
-            val text = ""
+    fun `onIngredientTextChange when text length is less than max length should update currentIngredientText and call findSuggestion`() = runTest {
+        // Given
+        val text = "abc"
 
-            // When
-            viewModel.onIngredientEditTextChange(text)
-            advanceUntilIdle()
+        // When
+        viewModel.onIngredientTextChange(text)
+        advanceUntilIdle()
 
-            // Then
-            coVerify(exactly = 0) { ingredientsRepository.getIngredientsLike(text) }
-            assertEquals("", viewModel.state.getOrAwaitValue().editIngredientText)
-            assertEquals(
-                emptyList<Ingredient>(),
-                viewModel.state.getOrAwaitValue().ingredientSuggestions
-            )
-        }
+        // Then
+        coVerify { ingredientsRepository.getIngredientsLike(text) }
+        Assert.assertEquals(text, viewModel.state.getOrAwaitValue().currentIngredientText)
+    }
 
     @Test
-    fun `onIngredientEditTextChange when text length is less than max length should update currentIngredientText and call findSuggestion`() =
-        runTest {
-            // Given
-            val text = "abc"
+    fun `onIngredientEditTextChanged when text length exceeds max length should not update state`() = runTest {
+        // Given
+        val text = "a".repeat(Constants.RECIPE_INGREDIENTS_MAX_LENGTH + 1)
 
-            // When
-            viewModel.onIngredientEditTextChange(text)
-            advanceUntilIdle()
+        // When
+        viewModel.onIngredientEditTextChange(text)
+        advanceUntilIdle()
 
-            // Then
-            coVerify { ingredientsRepository.getIngredientsLike(text) }
-            assertEquals(text, viewModel.state.getOrAwaitValue().editIngredientText)
-        }
-
-    @Test
-    fun `onIngredientIsEditingChange when value is true should update editIngredientIndex and editIngredientText`() =
-        runTest {
-            // Given
-            val text = "Ingredient 1"
-            val index = 0
-            coEvery { ingredientsRepository.addIngredient(any()) } returns Ingredient(name = text)
-            viewModel.onIngredientAdd(text)
-            advanceUntilIdle()
-
-            // When
-            viewModel.onIngredientIsEditingChange(index, true)
-            advanceUntilIdle()
-
-            // Then
-            assertEquals(index, viewModel.state.getOrAwaitValue().editIngredientIndex)
-            assertEquals(text, viewModel.state.getOrAwaitValue().editIngredientText)
-        }
+        // Then
+        coVerify(exactly = 0) { ingredientsRepository.getIngredientsLike(text) }
+        Assert.assertEquals("", viewModel.state.getOrAwaitValue().editIngredientText)
+    }
 
     @Test
-    fun `onIngredientIsEditingChange when value is false should update editIngredientIndex to null and editIngredientText to empty`() =
-        runTest {
-            // Given
-            coEvery { ingredientsRepository.addIngredient(any()) } returns mockk(relaxed = true)
-            viewModel.onIngredientAdd("text")
-            advanceUntilIdle()
+    fun `onIngredientEditTextChange when text is empty should update currentIngredientText and clear ingredientSuggestions`() = runTest {
+        // Given
+        val text = ""
 
-            // When
-            viewModel.onIngredientIsEditingChange(0, false)
-            advanceUntilIdle()
+        // When
+        viewModel.onIngredientEditTextChange(text)
+        advanceUntilIdle()
 
-            // Then
-            assertEquals(null, viewModel.state.getOrAwaitValue().editIngredientIndex)
-            assertEquals("", viewModel.state.getOrAwaitValue().editIngredientText)
-        }
+        // Then
+        coVerify(exactly = 0) { ingredientsRepository.getIngredientsLike(text) }
+        Assert.assertEquals("", viewModel.state.getOrAwaitValue().editIngredientText)
+        Assert.assertEquals(
+            emptyList<Ingredient>(),
+            viewModel.state.getOrAwaitValue().ingredientSuggestions
+        )
+    }
 
     @Test
-    fun `onIngredientAdd new ingredient should add to recipe, repository and update state`() =
-        runTest {
-            // Given
-            val ingredientText = "New Ingredient"
-            val newIngredient = Ingredient(name = ingredientText)
-            val ingredientSlot = slot<Ingredient>()
-            coEvery { ingredientsRepository.addIngredient(capture(ingredientSlot)) } returns newIngredient
+    fun `onIngredientEditTextChange when text length is less than max length should update currentIngredientText and call findSuggestion`() = runTest {
+        // Given
+        val text = "abc"
 
-            // When
-            viewModel.onIngredientAdd(ingredientText)
-            advanceUntilIdle()
+        // When
+        viewModel.onIngredientEditTextChange(text)
+        advanceUntilIdle()
 
-            // Then
-            coVerify { ingredientsRepository.addIngredient(Ingredient(name = ingredientText)) }
-            assertEquals(ingredientText, ingredientSlot.captured.name)
-            val state = viewModel.state.getOrAwaitValue()
-            assertEquals(1, state.recipe.ingredients.size)
-            assertEquals(ingredientText, state.recipe.ingredients.first().ingredient.name)
-            assertEquals("", state.currentIngredientText)
-            assertEquals(emptyList<Ingredient>(), state.ingredientSuggestions)
-        }
+        // Then
+        coVerify { ingredientsRepository.getIngredientsLike(text) }
+        Assert.assertEquals(text, viewModel.state.getOrAwaitValue().editIngredientText)
+    }
+
+    @Test
+    fun `onIngredientIsEditingChange when value is true should update editIngredientIndex and editIngredientText`() = runTest {
+        // Given
+        val text = "Ingredient 1"
+        val index = 0
+        coEvery { ingredientsRepository.addIngredient(any()) } returns Ingredient(name = text)
+        viewModel.onIngredientAdd(text)
+        advanceUntilIdle()
+
+        // When
+        viewModel.onIngredientIsEditingChange(index, true)
+        advanceUntilIdle()
+
+        // Then
+        Assert.assertEquals(index, viewModel.state.getOrAwaitValue().editIngredientIndex)
+        Assert.assertEquals(text, viewModel.state.getOrAwaitValue().editIngredientText)
+    }
+
+    @Test
+    fun `onIngredientIsEditingChange when value is false should update editIngredientIndex to null and editIngredientText to empty`() = runTest {
+        // Given
+        coEvery { ingredientsRepository.addIngredient(any()) } returns mockk(relaxed = true)
+        viewModel.onIngredientAdd("text")
+        advanceUntilIdle()
+
+        // When
+        viewModel.onIngredientIsEditingChange(0, false)
+        advanceUntilIdle()
+
+        // Then
+        Assert.assertEquals(null, viewModel.state.getOrAwaitValue().editIngredientIndex)
+        Assert.assertEquals("", viewModel.state.getOrAwaitValue().editIngredientText)
+    }
+
+    @Test
+    fun `onIngredientAdd new ingredient should add to recipe, repository and update state`() = runTest {
+        // Given
+        val ingredientText = "New Ingredient"
+        val newIngredient = Ingredient(name = ingredientText)
+        val ingredientSlot = slot<Ingredient>()
+        coEvery { ingredientsRepository.addIngredient(capture(ingredientSlot)) } returns newIngredient
+
+        // When
+        viewModel.onIngredientAdd(ingredientText)
+        advanceUntilIdle()
+
+        // Then
+        coVerify { ingredientsRepository.addIngredient(Ingredient(name = ingredientText)) }
+        Assert.assertEquals(ingredientText, ingredientSlot.captured.name)
+        val state = viewModel.state.getOrAwaitValue()
+        Assert.assertEquals(1, state.recipe.ingredients.size)
+        Assert.assertEquals(ingredientText, state.recipe.ingredients.first().ingredient.name)
+        Assert.assertEquals("", state.currentIngredientText)
+        Assert.assertEquals(emptyList<Ingredient>(), state.ingredientSuggestions)
+    }
 
     @Test
     fun `onIngredientAdd duplicate ingredient should not add and show error`() = runTest {
@@ -349,17 +327,17 @@ class AddRecipeScreenViewModelTest {
 
         // When - trying to add a duplicate
         viewModel.onIngredientAdd(ingredientText)
-        advanceTimeBy(RECIPE_ERROR_MESSAGE_SHOWN_DURATION - 100)
+        advanceTimeBy(Constants.RECIPE_ERROR_MESSAGE_SHOWN_DURATION - 100)
 
         // Then
         coVerify(exactly = 1) { ingredientsRepository.addIngredient(Ingredient(name = ingredientText)) }
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(1, state.recipe.ingredients.size)
-        assertNotNull(state.errorMessage)
+        Assert.assertEquals(1, state.recipe.ingredients.size)
+        Assert.assertNotNull(state.errorMessage)
 
         // Verify error message is cleared after a delay
         advanceUntilIdle()
-        assertNull(viewModel.state.getOrAwaitValue().errorMessage)
+        Assert.assertNull(viewModel.state.getOrAwaitValue().errorMessage)
     }
 
     @Test
@@ -377,10 +355,10 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         coVerify { ingredientsRepository.addIngredient(Ingredient(name = trimmedIngredientText)) }
-        assertEquals(trimmedIngredientText, ingredientSlot.captured.name)
+        Assert.assertEquals(trimmedIngredientText, ingredientSlot.captured.name)
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(1, state.recipe.ingredients.size)
-        assertEquals(trimmedIngredientText, state.recipe.ingredients.first().ingredient.name)
+        Assert.assertEquals(1, state.recipe.ingredients.size)
+        Assert.assertEquals(trimmedIngredientText, state.recipe.ingredients.first().ingredient.name)
     }
 
     @Test
@@ -397,7 +375,8 @@ class AddRecipeScreenViewModelTest {
         advanceUntilIdle()
 
         // Mock the repository to return the new ingredient when adding
-        coEvery { ingredientsRepository.addIngredient(Ingredient(name = updatedIngredientName)) } returns updatedIngredient
+        coEvery { ingredientsRepository.addIngredient(Ingredient(name = updatedIngredientName)) } returns
+            updatedIngredient
 
         // When
         viewModel.onIngredientUpdate(index = indexToUpdate, text = updatedIngredientName)
@@ -406,9 +385,15 @@ class AddRecipeScreenViewModelTest {
         // Then
         coVerify { ingredientsRepository.addIngredient(Ingredient(name = updatedIngredientName)) }
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(1, state.recipe.ingredients.size)
-        assertEquals(updatedIngredientName, state.recipe.ingredients[indexToUpdate].ingredient.name)
-        assertEquals(updatedIngredient.id, state.recipe.ingredients[indexToUpdate].ingredient.id)
+        Assert.assertEquals(1, state.recipe.ingredients.size)
+        Assert.assertEquals(
+            updatedIngredientName,
+            state.recipe.ingredients[indexToUpdate].ingredient.name
+        )
+        Assert.assertEquals(
+            updatedIngredient.id,
+            state.recipe.ingredients[indexToUpdate].ingredient.id
+        )
     }
 
     @Test
@@ -425,18 +410,24 @@ class AddRecipeScreenViewModelTest {
 
         // When - Try to update "Ingredient 2" to "Ingredient 1" which already exists
         viewModel.onIngredientUpdate(index = 1, text = "Ingredient 1")
-        advanceTimeBy(RECIPE_ERROR_MESSAGE_SHOWN_DURATION - 100)
+        advanceTimeBy(Constants.RECIPE_ERROR_MESSAGE_SHOWN_DURATION - 100)
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(2, state.recipe.ingredients.size)
-        assertEquals("Ingredient 1", state.recipe.ingredients[0].ingredient.name) // Unchanged
-        assertEquals("Ingredient 2", state.recipe.ingredients[1].ingredient.name) // Unchanged
-        assertNotNull(state.errorMessage)
+        Assert.assertEquals(2, state.recipe.ingredients.size)
+        Assert.assertEquals(
+            "Ingredient 1",
+            state.recipe.ingredients[0].ingredient.name
+        ) // Unchanged
+        Assert.assertEquals(
+            "Ingredient 2",
+            state.recipe.ingredients[1].ingredient.name
+        ) // Unchanged
+        Assert.assertNotNull(state.errorMessage)
 
         // Verify error message is cleared
         advanceUntilIdle()
-        assertNull(viewModel.state.getOrAwaitValue().errorMessage)
+        Assert.assertNull(viewModel.state.getOrAwaitValue().errorMessage)
     }
 
     @Test
@@ -453,7 +444,7 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(0, state.recipe.ingredients.size)
+        Assert.assertEquals(0, state.recipe.ingredients.size)
     }
 
     @Test
@@ -470,7 +461,7 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(5.0, state.recipe.ingredients[0].quantity, 0.0)
+        Assert.assertEquals(5.0, state.recipe.ingredients[0].quantity, 0.0)
     }
 
     @Test
@@ -487,23 +478,22 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(IngredientUnit.CUP, state.recipe.ingredients[0].unit)
+        Assert.assertEquals(IngredientUnit.CUP, state.recipe.ingredients[0].unit)
     }
 
     @Test
-    fun `onInstructionTextChange when text length exceeds max length should not update currentInstructionText`() =
-        runTest {
-            // Given
-            val maxLength = "a".repeat(RECIPE_INSTRUCTIONS_MAX_LENGTH + 1)
+    fun `onInstructionTextChange when text length exceeds max length should not update currentInstructionText`() = runTest {
+        // Given
+        val maxLength = "a".repeat(Constants.RECIPE_INSTRUCTIONS_MAX_LENGTH + 1)
 
-            // When
-            viewModel.onInstructionTextChange("abc")
-            viewModel.onInstructionTextChange(maxLength)
-            advanceUntilIdle()
+        // When
+        viewModel.onInstructionTextChange("abc")
+        viewModel.onInstructionTextChange(maxLength)
+        advanceUntilIdle()
 
-            // Then
-            assertEquals("abc", viewModel.state.getOrAwaitValue().currentInstructionText)
-        }
+        // Then
+        Assert.assertEquals("abc", viewModel.state.getOrAwaitValue().currentInstructionText)
+    }
 
     @Test
     fun `onInstructionTextChange should update currentInstructionText`() = runTest {
@@ -512,23 +502,22 @@ class AddRecipeScreenViewModelTest {
         advanceUntilIdle()
 
         // Then
-        assertEquals("abc", viewModel.state.getOrAwaitValue().currentInstructionText)
+        Assert.assertEquals("abc", viewModel.state.getOrAwaitValue().currentInstructionText)
     }
 
     @Test
-    fun `onInstructionEditTextChange when text length exceeds max length should not update editInstructionText`() =
-        runTest {
-            // Given
-            val maxLength = "a".repeat(RECIPE_INSTRUCTIONS_MAX_LENGTH + 1)
+    fun `onInstructionEditTextChange when text length exceeds max length should not update editInstructionText`() = runTest {
+        // Given
+        val maxLength = "a".repeat(Constants.RECIPE_INSTRUCTIONS_MAX_LENGTH + 1)
 
-            // When
-            viewModel.onInstructionEditTextChange("abc")
-            viewModel.onInstructionEditTextChange(maxLength)
-            advanceUntilIdle()
+        // When
+        viewModel.onInstructionEditTextChange("abc")
+        viewModel.onInstructionEditTextChange(maxLength)
+        advanceUntilIdle()
 
-            // Then
-            assertEquals("abc", viewModel.state.getOrAwaitValue().editInstructionText)
-        }
+        // Then
+        Assert.assertEquals("abc", viewModel.state.getOrAwaitValue().editInstructionText)
+    }
 
     @Test
     fun `onInstructionEditTextChange should update editInstructionText`() = runTest {
@@ -537,43 +526,40 @@ class AddRecipeScreenViewModelTest {
         advanceUntilIdle()
 
         // Then
-        assertEquals("abc", viewModel.state.getOrAwaitValue().editInstructionText)
+        Assert.assertEquals("abc", viewModel.state.getOrAwaitValue().editInstructionText)
     }
 
     @Test
-    fun `onInstructionIsEditingChange when value is true should update editIngredientIndex and editIngredientText`() =
-        runTest {
-            // Given
-            val instruction = "Step 1"
-            val index = 0
-            viewModel.onInstructionAdd(instruction)
-            advanceUntilIdle()
+    fun `onInstructionIsEditingChange when value is true should update editIngredientIndex and editIngredientText`() = runTest {
+        // Given
+        val instruction = "Step 1"
+        val index = 0
+        viewModel.onInstructionAdd(instruction)
+        advanceUntilIdle()
 
-            // When
-            viewModel.onInstructionIsEditingChange(index, true)
-            advanceUntilIdle()
+        // When
+        viewModel.onInstructionIsEditingChange(index, true)
+        advanceUntilIdle()
 
-            // Then
-            assertEquals(index, viewModel.state.getOrAwaitValue().editInstructionIndex)
-            assertEquals(instruction, viewModel.state.getOrAwaitValue().editInstructionText)
-        }
+        // Then
+        Assert.assertEquals(index, viewModel.state.getOrAwaitValue().editInstructionIndex)
+        Assert.assertEquals(instruction, viewModel.state.getOrAwaitValue().editInstructionText)
+    }
 
     @Test
-    fun `onInstructionIsEditingChange when value is false should update editIngredientIndex to null and editIngredientText to empty`() =
-        runTest {
-            // Given
-            viewModel.onInstructionAdd("Step 1")
-            advanceUntilIdle()
+    fun `onInstructionIsEditingChange when value is false should update editIngredientIndex to null and editIngredientText to empty`() = runTest {
+        // Given
+        viewModel.onInstructionAdd("Step 1")
+        advanceUntilIdle()
 
-            // When
-            viewModel.onInstructionIsEditingChange(0, false)
-            advanceUntilIdle()
+        // When
+        viewModel.onInstructionIsEditingChange(0, false)
+        advanceUntilIdle()
 
-            // Then
-            assertEquals(null, viewModel.state.getOrAwaitValue().editInstructionIndex)
-            assertEquals("", viewModel.state.getOrAwaitValue().editInstructionText)
-        }
-
+        // Then
+        Assert.assertEquals(null, viewModel.state.getOrAwaitValue().editInstructionIndex)
+        Assert.assertEquals("", viewModel.state.getOrAwaitValue().editInstructionText)
+    }
 
     @Test
     fun `onInstructionAdd should add instruction to recipe`() = runTest {
@@ -583,9 +569,9 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(1, state.recipe.instructions.size)
-        assertEquals("Step 1", state.recipe.instructions[0])
-        assertEquals("", state.currentInstructionText)
+        Assert.assertEquals(1, state.recipe.instructions.size)
+        Assert.assertEquals("Step 1", state.recipe.instructions[0])
+        Assert.assertEquals("", state.currentInstructionText)
     }
 
     @Test
@@ -600,7 +586,7 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals("Do this", state.recipe.instructions[0])
+        Assert.assertEquals("Do this", state.recipe.instructions[0])
     }
 
     @Test
@@ -615,7 +601,7 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertTrue(state.recipe.instructions.isEmpty())
+        Assert.assertTrue(state.recipe.instructions.isEmpty())
     }
 
     @Test
@@ -628,7 +614,7 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(newPath, state.recipe.imagePath)
+        Assert.assertEquals(newPath, state.recipe.imagePath)
     }
 
     @Test
@@ -641,7 +627,7 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(newTitle, state.recipe.title)
+        Assert.assertEquals(newTitle, state.recipe.title)
     }
 
     @Test
@@ -649,14 +635,14 @@ class AddRecipeScreenViewModelTest {
         // Given
         val initialTitle = "Initial Title"
         viewModel.onTitleChange(initialTitle)
-        val longTitle = "a".repeat(RECIPE_TITLE_MAX_LENGTH + 1)
+        val longTitle = "a".repeat(Constants.RECIPE_TITLE_MAX_LENGTH + 1)
 
         // When
         viewModel.onTitleChange(longTitle)
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(initialTitle, state.recipe.title)
+        Assert.assertEquals(initialTitle, state.recipe.title)
     }
 
     @Test
@@ -669,7 +655,7 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(newDescription, state.recipe.description)
+        Assert.assertEquals(newDescription, state.recipe.description)
     }
 
     @Test
@@ -677,14 +663,14 @@ class AddRecipeScreenViewModelTest {
         // Given
         val initialDescription = "Initial Description"
         viewModel.onDescriptionChange(initialDescription)
-        val longDescription = "a".repeat(RECIPE_DESCRIPTION_MAX_LENGTH + 1)
+        val longDescription = "a".repeat(Constants.RECIPE_DESCRIPTION_MAX_LENGTH + 1)
 
         // When
         viewModel.onDescriptionChange(longDescription)
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(initialDescription, state.recipe.description)
+        Assert.assertEquals(initialDescription, state.recipe.description)
     }
 
     @Test
@@ -700,7 +686,7 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(newIngredients, state.recipe.ingredients)
+        Assert.assertEquals(newIngredients, state.recipe.ingredients)
     }
 
     @Test
@@ -713,7 +699,7 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(newInstructions, state.recipe.instructions)
+        Assert.assertEquals(newInstructions, state.recipe.instructions)
     }
 
     @Test
@@ -726,7 +712,7 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(30, state.recipe.prepTime)
+        Assert.assertEquals(30, state.recipe.prepTime)
     }
 
     @Test
@@ -739,21 +725,21 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertNull(state.recipe.prepTime)
+        Assert.assertNull(state.recipe.prepTime)
     }
 
     @Test
     fun `onPrepTimeChange time string exceeding max length`() {
         // Given
         viewModel.onPrepTimeChange("15") // Initial value
-        val longTimeString = "1".repeat(RECIPE_PREPARATION_TIME_MAX_LENGTH + 1)
+        val longTimeString = "1".repeat(Constants.RECIPE_PREPARATION_TIME_MAX_LENGTH + 1)
 
         // When
         viewModel.onPrepTimeChange(longTimeString)
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(15, state.recipe.prepTime)
+        Assert.assertEquals(15, state.recipe.prepTime)
     }
 
     @Test
@@ -767,7 +753,7 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertNull(state.recipe.prepTime)
+        Assert.assertNull(state.recipe.prepTime)
     }
 
     @Test
@@ -780,7 +766,7 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(45, state.recipe.cookTime)
+        Assert.assertEquals(45, state.recipe.cookTime)
     }
 
     @Test
@@ -793,21 +779,21 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertNull(state.recipe.cookTime)
+        Assert.assertNull(state.recipe.cookTime)
     }
 
     @Test
     fun `onCookTimeChange time string exceeding max length`() {
         // Given
         viewModel.onCookTimeChange("20") // Initial value
-        val longTimeString = "1".repeat(RECIPE_COOKING_TIME_MAX_LENGTH + 1)
+        val longTimeString = "1".repeat(Constants.RECIPE_COOKING_TIME_MAX_LENGTH + 1)
 
         // When
         viewModel.onCookTimeChange(longTimeString)
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(20, state.recipe.cookTime)
+        Assert.assertEquals(20, state.recipe.cookTime)
     }
 
     @Test
@@ -821,7 +807,7 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertNull(state.recipe.cookTime)
+        Assert.assertNull(state.recipe.cookTime)
     }
 
     @Test
@@ -834,22 +820,22 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(servings, state.recipe.servings)
+        Assert.assertEquals(servings, state.recipe.servings)
     }
 
     @Test
     fun `onTagClick add new tag`() {
         // Given
         val tag = RecipeTag.BREAKFAST
-        assertTrue(viewModel.state.getOrAwaitValue().recipe.tags.isEmpty())
+        Assert.assertTrue(viewModel.state.getOrAwaitValue().recipe.tags.isEmpty())
 
         // When
         viewModel.onTagClick(tag)
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertTrue(state.recipe.tags.contains(tag))
-        assertEquals(1, state.recipe.tags.size)
+        Assert.assertTrue(state.recipe.tags.contains(tag))
+        Assert.assertEquals(1, state.recipe.tags.size)
     }
 
     @Test
@@ -857,15 +843,15 @@ class AddRecipeScreenViewModelTest {
         // Given
         val tag = RecipeTag.DINNER
         viewModel.onTagClick(tag)
-        assertTrue(viewModel.state.getOrAwaitValue().recipe.tags.contains(tag))
+        Assert.assertTrue(viewModel.state.getOrAwaitValue().recipe.tags.contains(tag))
 
         // When
         viewModel.onTagClick(tag)
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertFalse(state.recipe.tags.contains(tag))
-        assertTrue(state.recipe.tags.isEmpty())
+        Assert.assertFalse(state.recipe.tags.contains(tag))
+        Assert.assertTrue(state.recipe.tags.isEmpty())
     }
 
     @Test
@@ -878,7 +864,7 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(heaviness, state.recipe.heaviness)
+        Assert.assertEquals(heaviness, state.recipe.heaviness)
     }
 
     @Test
@@ -891,7 +877,7 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(550, state.recipe.calories)
+        Assert.assertEquals(550, state.recipe.calories)
     }
 
     @Test
@@ -905,21 +891,21 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertNull(state.recipe.calories)
+        Assert.assertNull(state.recipe.calories)
     }
 
     @Test
     fun `onCaloriesChange calories string exceeding max length`() {
         // Given
         viewModel.onCaloriesChange("250") // Initial value
-        val longCaloriesString = "1".repeat(RECIPE_TOTAL_CALORIES_MAX_LENGTH + 1)
+        val longCaloriesString = "1".repeat(Constants.RECIPE_TOTAL_CALORIES_MAX_LENGTH + 1)
 
         // When
         viewModel.onCaloriesChange(longCaloriesString)
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(250, state.recipe.calories)
+        Assert.assertEquals(250, state.recipe.calories)
     }
 
     @Test
@@ -933,7 +919,7 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertNull(state.recipe.calories)
+        Assert.assertNull(state.recipe.calories)
     }
 
     @Test
@@ -948,8 +934,8 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(1, state.recipe.ingredients.size)
-        assertEquals(suggestedIngredient, state.recipe.ingredients[0].ingredient)
+        Assert.assertEquals(1, state.recipe.ingredients.size)
+        Assert.assertEquals(suggestedIngredient, state.recipe.ingredients[0].ingredient)
     }
 
     @Test
@@ -968,8 +954,8 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals(1, state.recipe.ingredients.size)
-        assertEquals(suggestedIngredient, state.recipe.ingredients[0].ingredient)
+        Assert.assertEquals(1, state.recipe.ingredients.size)
+        Assert.assertEquals(suggestedIngredient, state.recipe.ingredients[0].ingredient)
     }
 
     @Test
@@ -990,76 +976,73 @@ class AddRecipeScreenViewModelTest {
 
         // Then
         val state = viewModel.state.getOrAwaitValue()
-        assertEquals("A", state.recipe.ingredients[0].ingredient.name)
-        assertTrue(state.ingredientSuggestions.isEmpty())
-        assertEquals("", state.currentIngredientText)
-        assertEquals("", state.editIngredientText)
-        assertNull(state.editIngredientIndex)
+        Assert.assertEquals("A", state.recipe.ingredients[0].ingredient.name)
+        Assert.assertTrue(state.ingredientSuggestions.isEmpty())
+        Assert.assertEquals("", state.currentIngredientText)
+        Assert.assertEquals("", state.editIngredientText)
+        Assert.assertNull(state.editIngredientIndex)
     }
 
     @Test
-    fun `onDeleteSuggestedIngredient when ingredient not used and not in recipe should be deleted`() =
-        runTest {
-            // Given
-            val ingredientToDelete = Ingredient(id = 1, name = "Unused Ingredient")
-            coEvery { ingredientsRepository.isThisIngredientUsedInAnyRecipe(ingredientToDelete) } returns false
-            coEvery { ingredientsRepository.deleteIngredient(ingredientToDelete) } returns Unit
+    fun `onDeleteSuggestedIngredient when ingredient not used and not in recipe should be deleted`() = runTest {
+        // Given
+        val ingredientToDelete = Ingredient(id = 1, name = "Unused Ingredient")
+        coEvery { ingredientsRepository.isThisIngredientUsedInAnyRecipe(ingredientToDelete) } returns false
+        coEvery { ingredientsRepository.deleteIngredient(ingredientToDelete) } returns Unit
 
-            // When
-            viewModel.onDeleteSuggestedIngredient(ingredientToDelete)
-            advanceUntilIdle()
+        // When
+        viewModel.onDeleteSuggestedIngredient(ingredientToDelete)
+        advanceUntilIdle()
 
-            // Then
-            coVerify { ingredientsRepository.isThisIngredientUsedInAnyRecipe(ingredientToDelete) }
-            coVerify { ingredientsRepository.deleteIngredient(ingredientToDelete) }
-        }
-
-    @Test
-    fun `onDeleteSuggestedIngredient when ingredient used in other recipes should not be deleted and show error message`() =
-        runTest {
-            // Given
-            val ingredientToDelete = Ingredient(id = 1, name = "Used Ingredient")
-            val suggestions = viewModel.state.getOrAwaitValue().ingredientSuggestions
-            coEvery { ingredientsRepository.isThisIngredientUsedInAnyRecipe(ingredientToDelete) } returns true
-            coEvery { ingredientsRepository.deleteIngredient(ingredientToDelete) } returns Unit
-
-            // When
-            viewModel.onDeleteSuggestedIngredient(ingredientToDelete)
-            advanceTimeBy(RECIPE_ERROR_MESSAGE_SHOWN_DURATION - 100)
-
-            // Then
-            val state = viewModel.state.getOrAwaitValue()
-            coVerify(exactly = 0) { ingredientsRepository.deleteIngredient(ingredientToDelete) }
-            assertEquals(suggestions, state.ingredientSuggestions)
-            assertNotNull(state.errorMessage)
-
-            advanceUntilIdle()
-            assertNull(viewModel.state.getOrAwaitValue().errorMessage)
-        }
+        // Then
+        coVerify { ingredientsRepository.isThisIngredientUsedInAnyRecipe(ingredientToDelete) }
+        coVerify { ingredientsRepository.deleteIngredient(ingredientToDelete) }
+    }
 
     @Test
-    fun `onDeleteSuggestedIngredient when ingredient is in current recipe should not be deleted and show error message`() =
-        runTest {
-            // Given
-            val ingredient = Ingredient(id = 1, name = "Ingredient 1")
-            val suggestions = viewModel.state.getOrAwaitValue().ingredientSuggestions
-            coEvery { ingredientsRepository.addIngredient(any()) } returns ingredient
-            coEvery { ingredientsRepository.isThisIngredientUsedInAnyRecipe(ingredient) } returns false
-            coEvery { ingredientsRepository.deleteIngredient(ingredient) } returns Unit
-            viewModel.onIngredientAdd(ingredient.name)
-            advanceUntilIdle()
+    fun `onDeleteSuggestedIngredient when ingredient used in other recipes should not be deleted and show error message`() = runTest {
+        // Given
+        val ingredientToDelete = Ingredient(id = 1, name = "Used Ingredient")
+        val suggestions = viewModel.state.getOrAwaitValue().ingredientSuggestions
+        coEvery { ingredientsRepository.isThisIngredientUsedInAnyRecipe(ingredientToDelete) } returns true
+        coEvery { ingredientsRepository.deleteIngredient(ingredientToDelete) } returns Unit
 
-            // When
-            viewModel.onDeleteSuggestedIngredient(ingredient)
-            advanceTimeBy(RECIPE_ERROR_MESSAGE_SHOWN_DURATION - 100)
+        // When
+        viewModel.onDeleteSuggestedIngredient(ingredientToDelete)
+        advanceTimeBy(Constants.RECIPE_ERROR_MESSAGE_SHOWN_DURATION - 100)
 
-            // Then
-            val state = viewModel.state.getOrAwaitValue()
-            coVerify(exactly = 0) { ingredientsRepository.deleteIngredient(ingredient) }
-            assertEquals(suggestions, state.ingredientSuggestions)
-            assertNotNull(state.errorMessage)
+        // Then
+        val state = viewModel.state.getOrAwaitValue()
+        coVerify(exactly = 0) { ingredientsRepository.deleteIngredient(ingredientToDelete) }
+        Assert.assertEquals(suggestions, state.ingredientSuggestions)
+        Assert.assertNotNull(state.errorMessage)
 
-            advanceUntilIdle()
-            assertNull(viewModel.state.getOrAwaitValue().errorMessage)
-        }
+        advanceUntilIdle()
+        Assert.assertNull(viewModel.state.getOrAwaitValue().errorMessage)
+    }
+
+    @Test
+    fun `onDeleteSuggestedIngredient when ingredient is in current recipe should not be deleted and show error message`() = runTest {
+        // Given
+        val ingredient = Ingredient(id = 1, name = "Ingredient 1")
+        val suggestions = viewModel.state.getOrAwaitValue().ingredientSuggestions
+        coEvery { ingredientsRepository.addIngredient(any()) } returns ingredient
+        coEvery { ingredientsRepository.isThisIngredientUsedInAnyRecipe(ingredient) } returns false
+        coEvery { ingredientsRepository.deleteIngredient(ingredient) } returns Unit
+        viewModel.onIngredientAdd(ingredient.name)
+        advanceUntilIdle()
+
+        // When
+        viewModel.onDeleteSuggestedIngredient(ingredient)
+        advanceTimeBy(Constants.RECIPE_ERROR_MESSAGE_SHOWN_DURATION - 100)
+
+        // Then
+        val state = viewModel.state.getOrAwaitValue()
+        coVerify(exactly = 0) { ingredientsRepository.deleteIngredient(ingredient) }
+        Assert.assertEquals(suggestions, state.ingredientSuggestions)
+        Assert.assertNotNull(state.errorMessage)
+
+        advanceUntilIdle()
+        Assert.assertNull(viewModel.state.getOrAwaitValue().errorMessage)
+    }
 }

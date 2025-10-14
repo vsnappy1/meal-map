@@ -1,4 +1,4 @@
-package com.randos.mealmap.ui.recipe_add
+package com.randos.mealmap.ui.recipe.add
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -23,9 +23,9 @@ import com.randos.mealmap.utils.Constants.RECIPE_TITLE_MAX_LENGTH
 import com.randos.mealmap.utils.Constants.RECIPE_TOTAL_CALORIES_MAX_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import java.time.LocalDate
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 @HiltViewModel
 class AddRecipeScreenViewModel @Inject constructor(
@@ -53,8 +53,11 @@ class AddRecipeScreenViewModel @Inject constructor(
             if (imagePath != null) {
                 recipe = recipe.copy(imagePath = imagePath)
             }
-            if (recipeId != null) recipesRepository.updateRecipe(recipe)
-            else recipesRepository.addRecipe(recipe.copy(dateCreated = LocalDate.now()))
+            if (recipeId != null) {
+                recipesRepository.updateRecipe(recipe)
+            } else {
+                recipesRepository.addRecipe(recipe.copy(dateCreated = LocalDate.now()))
+            }
             onSaved()
         }
     }
@@ -204,12 +207,16 @@ class AddRecipeScreenViewModel @Inject constructor(
 
     fun onPrepTimeChange(prepTime: String) {
         if (prepTime.length > RECIPE_PREPARATION_TIME_MAX_LENGTH) return
-        _state.postValue(getState().copy(recipe = getRecipe().copy(prepTime = prepTime.toIntOrNull())))
+        _state.postValue(
+            getState().copy(recipe = getRecipe().copy(prepTime = prepTime.toIntOrNull()))
+        )
     }
 
     fun onCookTimeChange(cookTime: String) {
         if (cookTime.length > RECIPE_COOKING_TIME_MAX_LENGTH) return
-        _state.postValue(getState().copy(recipe = getRecipe().copy(cookTime = cookTime.toIntOrNull())))
+        _state.postValue(
+            getState().copy(recipe = getRecipe().copy(cookTime = cookTime.toIntOrNull()))
+        )
     }
 
     fun onServingsChange(servings: Int) {
@@ -218,8 +225,11 @@ class AddRecipeScreenViewModel @Inject constructor(
 
     fun onTagClick(tag: RecipeTag) {
         val tags = getRecipe().tags.toMutableList()
-        if (tags.contains(tag)) tags.remove(tag)
-        else tags.add(tag)
+        if (tags.contains(tag)) {
+            tags.remove(tag)
+        } else {
+            tags.add(tag)
+        }
         _state.postValue(getState().copy(recipe = getRecipe().copy(tags = tags)))
     }
 
@@ -229,7 +239,9 @@ class AddRecipeScreenViewModel @Inject constructor(
 
     fun onCaloriesChange(calories: String) {
         if (calories.length > RECIPE_TOTAL_CALORIES_MAX_LENGTH) return
-        _state.postValue(getState().copy(recipe = getRecipe().copy(calories = calories.toIntOrNull())))
+        _state.postValue(
+            getState().copy(recipe = getRecipe().copy(calories = calories.toIntOrNull()))
+        )
     }
 
     fun onSuggestionItemSelected(index: Int, ingredient: Ingredient) {

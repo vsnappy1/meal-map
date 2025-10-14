@@ -106,14 +106,13 @@ class GroceryListManagerImplTest {
     }
 
     @Test
-    fun getCheckedGroceryIngredientsForWeek_should_return_empty_list_when_no_ingredients_are_checked() =
-        runTest(dispatcher) {
-            // When
-            val result = groceryListManager.getCheckedGroceryIngredientsNameForWeek(1)
+    fun getCheckedGroceryIngredientsForWeek_should_return_empty_list_when_no_ingredients_are_checked() = runTest(dispatcher) {
+        // When
+        val result = groceryListManager.getCheckedGroceryIngredientsNameForWeek(1)
 
-            // Then
-            assertEquals(0, result.size)
-        }
+        // Then
+        assertEquals(0, result.size)
+    }
 
     @Test
     fun findMiddlePointOfWeek_should_return_wednesday_of_the_week() = runTest(dispatcher) {

@@ -5,11 +5,11 @@ import com.randos.mealmap.utils.CalendarUtils.formatTime
 import com.randos.mealmap.utils.CalendarUtils.getWeekStartAndEnd
 import io.mockk.every
 import io.mockk.mockkStatic
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
 import java.time.DayOfWeek
 import java.time.LocalDate
+import org.junit.Assert.assertEquals
+import org.junit.Before
+import org.junit.Test
 
 class CalendarUtilsTest {
 
@@ -109,7 +109,6 @@ class CalendarUtilsTest {
 
         // Then
         assertEquals("2 hrs 1 min", result)
-
     }
 
     @Test
@@ -193,7 +192,7 @@ class CalendarUtilsTest {
     }
 
     @Test
-    fun `format on LocalDate returns a formatted string`(){
+    fun `format on LocalDate returns a formatted string`() {
         // When
         val result = date.format()
 
@@ -202,7 +201,7 @@ class CalendarUtilsTest {
     }
 
     @Test
-    fun `getDayName on LocalDate returns name of the day`(){
+    fun `getDayName on LocalDate returns name of the day`() {
         // When
         val result = date.getDayName()
 
@@ -211,7 +210,7 @@ class CalendarUtilsTest {
     }
 
     @Test
-    fun `toDayOfWeek on Day returns DayOfWeek`(){
+    fun `toDayOfWeek on Day returns DayOfWeek`() {
         Day.entries.forEach {
             assertEquals(DayOfWeek.valueOf(it.name), it.toDayOfWeek())
         }

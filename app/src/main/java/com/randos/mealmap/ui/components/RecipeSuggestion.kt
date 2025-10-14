@@ -43,7 +43,7 @@ fun RecipeSuggestion(
     suggestions: List<Recipe>,
     recipeName: String,
     onRecipeAddClick: () -> Unit,
-    onSuggestionItemSelected: (Recipe) -> Unit,
+    onSuggestionItemSelected: (Recipe) -> Unit
 ) {
     val itemHeight = 50.dp // Standard DropdownMenuItem height
     val maxVisibleItems = 3
@@ -88,7 +88,8 @@ fun RecipeSuggestion(
                         )
                     }
                 },
-                onClick = { onSuggestionItemSelected(recipe) })
+                onClick = { onSuggestionItemSelected(recipe) }
+            )
             if (index < suggestions.size - 1) {
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
             }
@@ -144,5 +145,3 @@ private fun RecipeSuggestionPreview() {
         onRecipeAddClick = {}
     )
 }
-
-

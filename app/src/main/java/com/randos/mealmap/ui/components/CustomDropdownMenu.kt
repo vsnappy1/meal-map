@@ -38,14 +38,14 @@ fun <T> CustomDropdownMenu(
     Spacer(modifier = Modifier.height(if (value != null) 4.dp else 8.dp))
     AnimatedVisibility(
         visible = value != null,
-        enter = fadeIn() + expandVertically(),
+        enter = fadeIn() + expandVertically()
     ) {
         Text(modifier = Modifier.padding(bottom = 4.dp), text = hint)
     }
     var isExpanded by remember { mutableStateOf(false) }
     Card(
         modifier = modifier,
-        onClick = { isExpanded = !isExpanded },
+        onClick = { isExpanded = !isExpanded }
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -64,7 +64,8 @@ fun <T> CustomDropdownMenu(
                         onClick = {
                             onValueChange(it)
                             isExpanded = false
-                        })
+                        }
+                    )
                 }
             }
         }

@@ -28,18 +28,14 @@ import com.randos.mealmap.ui.navigation.Destination.Home
 import com.randos.mealmap.ui.navigation.Destination.Recipes
 import com.randos.mealmap.ui.navigation.Destination.Settings
 
-private data class NavigationItem<T>(
-    val title: String,
-    val icon: ImageVector,
-    val route: T
-)
+private data class NavigationItem<T>(val title: String, val icon: ImageVector, val route: T)
 
 private val navigationItems = listOf(
     NavigationItem("Grocery", Icons.Rounded.ShoppingCart, Grocery()),
     NavigationItem("Recipes", Icons.Rounded.SoupKitchen, Recipes()),
     NavigationItem("Home", Icons.Rounded.Home, Home()),
     NavigationItem("Account", Icons.Rounded.Person, Account()),
-    NavigationItem("Settings", Icons.Rounded.Settings, Settings()),
+    NavigationItem("Settings", Icons.Rounded.Settings, Settings())
 )
 
 @Composable
@@ -86,15 +82,13 @@ fun MealMapBottomNavigationBar(modifier: Modifier = Modifier, navController: Nav
 }
 
 private class DestinationSaver : Saver<Destination, String> {
-    override fun SaverScope.save(value: Destination): String? {
-        return when (value) {
-            is Grocery -> Grocery::class.simpleName
-            is Recipes -> Recipes::class.simpleName
-            is Home -> Home::class.simpleName
-            is Account -> Account::class.simpleName
-            is Settings -> Settings::class.simpleName
-            else -> null
-        }
+    override fun SaverScope.save(value: Destination): String? = when (value) {
+        is Grocery -> Grocery::class.simpleName
+        is Recipes -> Recipes::class.simpleName
+        is Home -> Home::class.simpleName
+        is Account -> Account::class.simpleName
+        is Settings -> Settings::class.simpleName
+        else -> null
     }
 
     override fun restore(value: String): Destination? {

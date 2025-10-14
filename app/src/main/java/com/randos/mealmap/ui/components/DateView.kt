@@ -15,10 +15,7 @@ import com.randos.mealmap.utils.format
 import java.time.LocalDate
 
 @Composable
-fun DateView(
-    modifier: Modifier = Modifier,
-    dateFrom: LocalDate, dateTo: LocalDate
-) {
+fun DateView(modifier: Modifier = Modifier, dateFrom: LocalDate, dateTo: LocalDate) {
     AnimatedContent(
         modifier = modifier,
         targetState = dateFrom,

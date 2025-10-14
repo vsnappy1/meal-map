@@ -37,7 +37,7 @@ fun RecipeInstruction(
     editText: String,
     onEditTextChanged: (String) -> Unit,
     isEditing: Boolean,
-    onIsEditingChange: (Boolean) -> Unit,
+    onIsEditingChange: (Boolean) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
@@ -78,7 +78,7 @@ fun RecipeInstruction(
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
             modifier = Modifier
@@ -86,7 +86,7 @@ fun RecipeInstruction(
                 .clickable {
                     onIsEditingChange(true)
                 },
-            text = "${index + 1}. $instruction",
+            text = "${index + 1}. $instruction"
         )
         IconButton(
             modifier = Modifier
@@ -111,16 +111,16 @@ fun RecipeInstruction(
 @Composable
 private fun RecipeInstructionPreviewEditing() {
     MealMapTheme {
-            RecipeInstruction(
-                instruction = "instruction",
-                onUpdate = {},
-                onDelete = { },
-                index = 0,
-                editText = "editText",
-                onEditTextChanged = {},
-                isEditing = true,
-                onIsEditingChange = {}
-            )
+        RecipeInstruction(
+            instruction = "instruction",
+            onUpdate = {},
+            onDelete = { },
+            index = 0,
+            editText = "editText",
+            onEditTextChanged = {},
+            isEditing = true,
+            onIsEditingChange = {}
+        )
     }
 }
 

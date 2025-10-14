@@ -73,7 +73,7 @@ fun RecipeQuantityTextField(
             modifier = Modifier.alpha(if (quality.isEmpty()) 1f else 0f),
             textAlign = TextAlign.Center,
             text = "Qty",
-            color = MaterialTheme.colorScheme.outline,
+            color = MaterialTheme.colorScheme.outline
         )
         it()
     }

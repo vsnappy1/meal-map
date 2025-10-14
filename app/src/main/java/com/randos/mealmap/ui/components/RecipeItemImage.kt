@@ -15,11 +15,8 @@ import coil3.compose.AsyncImage
 import com.randos.mealmap.R
 
 @Composable
-fun RecipeItemImage(
-    modifier: Modifier = Modifier,
-    imagePath: String?,
-) {
-    Box(modifier = modifier){
+fun RecipeItemImage(modifier: Modifier = Modifier, imagePath: String?) {
+    Box(modifier = modifier) {
         if (imagePath.isNullOrEmpty()) {
             Image(
                 modifier = Modifier.fillMaxSize().padding(4.dp),
@@ -32,7 +29,7 @@ fun RecipeItemImage(
                 modifier = Modifier.fillMaxSize(),
                 model = imagePath,
                 contentDescription = stringResource(R.string.recipe_image),
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Crop
             )
         }
     }

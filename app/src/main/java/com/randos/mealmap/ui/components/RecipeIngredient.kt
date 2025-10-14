@@ -92,7 +92,7 @@ fun RecipeIngredient(
         Row(
             modifier = modifier,
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
                 modifier = Modifier
@@ -100,7 +100,7 @@ fun RecipeIngredient(
                     .clickable {
                         onIsEditingChange(true)
                     },
-                text = ingredient.ingredient.name,
+                text = ingredient.ingredient.name
             )
             RecipeQuantityTextField(
                 ingredient = ingredient,
@@ -166,7 +166,11 @@ private fun PreviewRecipeIngredientEditing() {
 private fun PreviewRecipeIngredient() {
     MaterialTheme {
         RecipeIngredient(
-            ingredient = RecipeIngredient(ingredient = Ingredient(name = "Ingredient A"), unit = IngredientUnit.GRAM, quantity = 1.0),
+            ingredient = RecipeIngredient(
+                ingredient = Ingredient(name = "Ingredient A"),
+                unit = IngredientUnit.GRAM,
+                quantity = 1.0
+            ),
             onUpdateName = {},
             editText = "Ingredient A",
             onEditTextChanged = {},
@@ -177,6 +181,7 @@ private fun PreviewRecipeIngredient() {
             onDelete = {},
             suggestions = listOf(),
             onSuggestionItemSelected = {},
-            onDeleteSuggestion = {})
+            onDeleteSuggestion = {}
+        )
     }
 }

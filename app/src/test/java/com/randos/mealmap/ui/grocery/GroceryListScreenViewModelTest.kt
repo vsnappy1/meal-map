@@ -1,4 +1,4 @@
-package com.randos.mealmap.ui.grocery_list
+package com.randos.mealmap.ui.grocery
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.randos.domain.manager.GroceryListManager
@@ -28,7 +28,6 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class GroceryListScreenViewModelTest {
 
-
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -51,7 +50,7 @@ class GroceryListScreenViewModelTest {
         RecipeIngredient(Ingredient(name = "Orange Juice"), 1.0, IngredientUnit.LITER),
         RecipeIngredient(Ingredient(name = "Orange Juice"), 1.0, IngredientUnit.ML),
         RecipeIngredient(Ingredient(name = "Baking Soda"), 2.0, IngredientUnit.TEASPOON),
-        RecipeIngredient(Ingredient(name = "Baking Powder"), 0.25, IngredientUnit.TABLESPOON),
+        RecipeIngredient(Ingredient(name = "Baking Powder"), 0.25, IngredientUnit.TABLESPOON)
     )
 
     @Before
@@ -80,7 +79,6 @@ class GroceryListScreenViewModelTest {
     fun tearDown() {
         unmockkAll()
     }
-
 
     @Test
     fun `getGroceryIngredients successful retrieval`() = runTest {

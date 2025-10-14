@@ -7,7 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.randos.mealmap.ui.account.AccountScreen
-import com.randos.mealmap.ui.grocery_list.GroceryListScreen
+import com.randos.mealmap.ui.grocery.GroceryListScreen
 import com.randos.mealmap.ui.home.HomeScreen
 import com.randos.mealmap.ui.navigation.Destination.Account
 import com.randos.mealmap.ui.navigation.Destination.AddRecipe
@@ -17,8 +17,8 @@ import com.randos.mealmap.ui.navigation.Destination.ModifyRecipe
 import com.randos.mealmap.ui.navigation.Destination.RecipeDetails
 import com.randos.mealmap.ui.navigation.Destination.Recipes
 import com.randos.mealmap.ui.navigation.Destination.Settings
-import com.randos.mealmap.ui.recipe_add.AddRecipeScreen
-import com.randos.mealmap.ui.recipe_details.RecipeDetailsScreen
+import com.randos.mealmap.ui.recipe.add.AddRecipeScreen
+import com.randos.mealmap.ui.recipe.details.RecipeDetailsScreen
 import com.randos.mealmap.ui.recipes.RecipesScreen
 import com.randos.mealmap.ui.settings.SettingsScreen
 import com.randos.mealmap.ui.theme.defaultMainContainerPadding
@@ -41,7 +41,8 @@ fun MealMapNavHost(navController: NavHostController) {
                 },
                 onRecipeClick = { id ->
                     navController.navigate(RecipeDetails(id))
-                })
+                }
+            )
         }
 
         composable<Grocery> {
@@ -73,12 +74,14 @@ fun MealMapNavHost(navController: NavHostController) {
             val modifyRecipe = it.toRoute<ModifyRecipe>()
             AddRecipeScreen(
                 id = modifyRecipe.id,
-                onSaved = { navController.popBackStack() })
+                onSaved = { navController.popBackStack() }
+            )
         }
 
-        composable<AddRecipe>() {
+        composable<AddRecipe> {
             AddRecipeScreen(
-                onSaved = { navController.popBackStack() })
+                onSaved = { navController.popBackStack() }
+            )
         }
     }
 }

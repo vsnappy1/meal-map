@@ -108,54 +108,51 @@ internal class IngredientRepositoryImplTest {
     }
 
     @Test
-    fun getIngredientsLike_when_ingredient_name_starts_with_search_text_should_return_ingredients() =
-        runTest(dispatcher) {
-            // Given
-            ingredientDao.insert(ingredient1.toEntity())
+    fun getIngredientsLike_when_ingredient_name_starts_with_search_text_should_return_ingredients() = runTest(dispatcher) {
+        // Given
+        ingredientDao.insert(ingredient1.toEntity())
 
-            // When
-            val ingredients = ingredientRepository.getIngredientsLike("Pot")
+        // When
+        val ingredients = ingredientRepository.getIngredientsLike("Pot")
 
-            // Then
-            assertEquals(1, ingredients.size)
-            assertEquals(ingredient1, ingredients[0])
-        }
-
-    @Test
-    fun isThisIngredientUsedInAnyRecipe_when_ingredient_is_used_in_any_recipe_should_return_true() =
-        runTest(dispatcher) {
-            // Given
-            val recipe = recipe1
-            val ingredient = ingredient1
-            val recipeIngredient = RecipeIngredient(
-                id = 0,
-                ingredientId = ingredient.id,
-                recipeId = recipe.id,
-                quantity = 1.0,
-                unit = IngredientUnit.GRAM
-            )
-            ingredientDao.insert(ingredient.toEntity())
-            mealMapDatabase.recipeDao().insert(recipe.toEntity())
-            mealMapDatabase.recipeIngredientDao().insert(recipeIngredient)
-
-            // When
-            val isUsed = ingredientRepository.isThisIngredientUsedInAnyRecipe(ingredient)
-
-            // Then
-            assertTrue(isUsed)
-        }
+        // Then
+        assertEquals(1, ingredients.size)
+        assertEquals(ingredient1, ingredients[0])
+    }
 
     @Test
-    fun isThisIngredientUsedInAnyRecipe_when_ingredient_is_not_used_in_any_recipe_should_return_false() =
-        runTest(dispatcher) {
-            // Given
-            val ingredient = ingredient1
-            ingredientDao.insert(ingredient.toEntity())
+    fun isThisIngredientUsedInAnyRecipe_when_ingredient_is_used_in_any_recipe_should_return_true() = runTest(dispatcher) {
+        // Given
+        val recipe = recipe1
+        val ingredient = ingredient1
+        val recipeIngredient = RecipeIngredient(
+            id = 0,
+            ingredientId = ingredient.id,
+            recipeId = recipe.id,
+            quantity = 1.0,
+            unit = IngredientUnit.GRAM
+        )
+        ingredientDao.insert(ingredient.toEntity())
+        mealMapDatabase.recipeDao().insert(recipe.toEntity())
+        mealMapDatabase.recipeIngredientDao().insert(recipeIngredient)
 
-            // When
-            val isUsed = ingredientRepository.isThisIngredientUsedInAnyRecipe(ingredient)
+        // When
+        val isUsed = ingredientRepository.isThisIngredientUsedInAnyRecipe(ingredient)
 
-            // Then
-            assertFalse(isUsed)
-        }
+        // Then
+        assertTrue(isUsed)
+    }
+
+    @Test
+    fun isThisIngredientUsedInAnyRecipe_when_ingredient_is_not_used_in_any_recipe_should_return_false() = runTest(dispatcher) {
+        // Given
+        val ingredient = ingredient1
+        ingredientDao.insert(ingredient.toEntity())
+
+        // When
+        val isUsed = ingredientRepository.isThisIngredientUsedInAnyRecipe(ingredient)
+
+        // Then
+        assertFalse(isUsed)
+    }
 }

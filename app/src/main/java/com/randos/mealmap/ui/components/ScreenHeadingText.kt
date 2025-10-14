@@ -9,10 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ScreenHeadingText(
-    modifier: Modifier = Modifier,
-    text: String
-) {
+fun ScreenHeadingText(modifier: Modifier = Modifier, text: String) {
     Text(
         modifier = modifier
             .fillMaxWidth()

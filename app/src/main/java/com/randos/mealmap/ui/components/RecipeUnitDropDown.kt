@@ -39,7 +39,7 @@ fun RecipeUnitDropDown(
     Surface(
         modifier = modifier
             .clickable { isExpanded = !isExpanded },
-        shape = MaterialTheme.shapes.extraSmall,
+        shape = MaterialTheme.shapes.extraSmall
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -64,14 +64,16 @@ fun RecipeUnitDropDown(
             modifier = Modifier.height(150.dp),
             expanded = isExpanded,
             onDismissRequest = { isExpanded = false },
-            scrollState = rememberScrollState()) {
+            scrollState = rememberScrollState()
+        ) {
             Constants.ingredientUnits.forEach {
                 DropdownMenuItem(
                     text = { Text(text = it.value) },
                     onClick = {
                         isExpanded = false
                         onUnitChange(it)
-                    })
+                    }
+                )
             }
         }
     }

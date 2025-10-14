@@ -1,4 +1,4 @@
-package com.randos.mealmap.ui.grocery_list
+package com.randos.mealmap.ui.grocery
 
 import com.randos.domain.model.GroceryIngredient
 import com.randos.mealmap.utils.CalendarUtils.getWeekStartAndEnd

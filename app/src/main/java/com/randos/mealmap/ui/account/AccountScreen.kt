@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import com.randos.mealmap.ui.components.ScreenHeadingText
 
 @Composable
-fun AccountScreen(){
+fun AccountScreen() {
     Column(
         modifier = Modifier
             .fillMaxWidth()

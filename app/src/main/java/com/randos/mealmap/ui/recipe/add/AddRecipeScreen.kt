@@ -1,4 +1,4 @@
-package com.randos.mealmap.ui.recipe_add
+package com.randos.mealmap.ui.recipe.add
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -160,7 +160,7 @@ private fun AddRecipeScreen(
     onHeavinessChange: (RecipeHeaviness) -> Unit = {},
     onTagClick: (RecipeTag) -> Unit = {},
     onSuggestionItemSelected: (Int, Ingredient) -> Unit = { _, _ -> },
-    onDeleteSuggestedIngredient: (Ingredient) -> Unit = {},
+    onDeleteSuggestedIngredient: (Ingredient) -> Unit = {}
 ) {
     val recipe = state.recipe
     val scrollState = rememberScrollState()
@@ -171,7 +171,7 @@ private fun AddRecipeScreen(
         Column(
             modifier = Modifier
                 .padding(top = 20.dp)
-                .verticalScroll(scrollState),
+                .verticalScroll(scrollState)
         ) {
             Spacer(modifier = Modifier.height(50.dp))
             RecipeImage(
@@ -267,14 +267,12 @@ private fun Servings(servings: Int?, onServingsChange: (Int) -> Unit) {
         onValueChange = onServingsChange,
         hint = stringResource(R.string.recipe_servings_label),
         items = Constants.servings,
-        getTextValue = { it.toString() })
+        getTextValue = { it.toString() }
+    )
 }
 
 @Composable
-private fun Tag(
-    selectedTags: List<RecipeTag>,
-    onTagClick: (RecipeTag) -> Unit,
-) {
+private fun Tag(selectedTags: List<RecipeTag>, onTagClick: (RecipeTag) -> Unit) {
     Text(
         modifier = Modifier.padding(vertical = 4.dp),
         text = stringResource(R.string.recipe_tags_label)
@@ -306,7 +304,8 @@ private fun Heaviness(heaviness: RecipeHeaviness?, onHeavinessChange: (RecipeHea
         onValueChange = onHeavinessChange,
         hint = stringResource(R.string.recipe_heaviness_label),
         items = Constants.recipeHeaviness,
-        getTextValue = { it.value })
+        getTextValue = { it.value }
+    )
 }
 
 @Composable
@@ -318,7 +317,7 @@ fun RecipeInstructions(
     onUpdateInstruction: (Int, String) -> Unit,
     onDeleteInstruction: (Int) -> Unit,
     onEditTextChanged: (String) -> Unit,
-    onIsEditingChange: (Int, Boolean) -> Unit,
+    onIsEditingChange: (Int, Boolean) -> Unit
 ) {
     val instructions = state.recipe.instructions
     Card(
@@ -329,9 +328,8 @@ fun RecipeInstructions(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp),
-
-            ) {
+                .padding(8.dp)
+        ) {
             instructions.forEachIndexed { index, instruction ->
                 RecipeInstruction(
                     modifier = Modifier.padding(vertical = 4.dp),
@@ -373,7 +371,7 @@ private fun RecipeIngredients(
     onEditTextChanged: (String) -> Unit,
     onIsEditingChange: (Int, Boolean) -> Unit,
     onSuggestionItemSelected: (Int, Ingredient) -> Unit,
-    onDeleteSuggestion: (Ingredient) -> Unit,
+    onDeleteSuggestion: (Ingredient) -> Unit
 ) {
     val ingredients = state.recipe.ingredients
     val suggestions = state.ingredientSuggestions
@@ -385,9 +383,8 @@ private fun RecipeIngredients(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp),
-
-            ) {
+                .padding(8.dp)
+        ) {
             ingredients.forEachIndexed { index, ingredient ->
                 VerticalAnimatedContent(
                     targetState = state.editIngredientIndex == index,
@@ -422,7 +419,11 @@ private fun RecipeIngredients(
                     ingredients.size + 1
                 ),
                 // We don't want to show suggestions on this text filed while some of the ingredients are being edited
-                suggestions = if (state.editIngredientIndex == null && state.currentIngredientText.isNotEmpty()) suggestions else emptyList(),
+                suggestions = if (state.editIngredientIndex == null && state.currentIngredientText.isNotEmpty()) {
+                    suggestions
+                } else {
+                    emptyList()
+                },
                 onSuggestionItemSelected = { onSuggestionItemSelected(ingredients.size, it) },
                 onDeleteSuggestion = onDeleteSuggestion
             )
@@ -493,7 +494,7 @@ fun AddRecipeScreenPreview() {
     MaterialTheme {
         AddRecipeScreen(
             id = null,
-            state = AddRecipeScreenState(),
+            state = AddRecipeScreenState()
         )
     }
 }

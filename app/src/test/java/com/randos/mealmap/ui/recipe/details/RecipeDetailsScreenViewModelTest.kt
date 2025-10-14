@@ -1,4 +1,4 @@
-package com.randos.mealmap.ui.recipe_details
+package com.randos.mealmap.ui.recipe.details
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.randos.domain.repository.RecipeRepository
@@ -16,8 +16,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -54,7 +53,7 @@ class RecipeDetailsScreenViewModelTest {
         val state = recipeDetailsScreenViewModel.state.value
 
         // Assert
-        assertNull(state?.recipe)
+        Assert.assertNull(state?.recipe)
     }
 
     @Test
@@ -68,7 +67,7 @@ class RecipeDetailsScreenViewModelTest {
 
         // Assert
         val state = recipeDetailsScreenViewModel.state.getOrAwaitValue()
-        assertEquals(recipe, state.recipe)
+        Assert.assertEquals(recipe, state.recipe)
     }
 
     @Test
@@ -93,7 +92,7 @@ class RecipeDetailsScreenViewModelTest {
     @Test
     fun `deleteRecipe when no recipe is loaded`() = runTest {
         // Arrange
-        assertNull(recipeDetailsScreenViewModel.state.value?.recipe) // Verify initial state
+        Assert.assertNull(recipeDetailsScreenViewModel.state.value?.recipe) // Verify initial state
         val onDeletedCallback = mockk<() -> Unit>(relaxed = true)
 
         // Act

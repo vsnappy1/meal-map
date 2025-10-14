@@ -18,17 +18,19 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.unmockkAll
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.temporal.TemporalAdjusters
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeScreenViewModelTest {
@@ -107,7 +109,6 @@ class HomeScreenViewModelTest {
         assertEquals(listOf(meal4), state.mealMap[date.plusDays(2)])
         assertEquals(monday, state.dateFrom)
         assertEquals(monday.plusDays(6), state.dateTo)
-
     }
 
     @Test
@@ -265,9 +266,11 @@ class HomeScreenViewModelTest {
         assertEquals("Recipe Title", recipe.captured.title)
         assertEquals(date, recipe.captured.dateCreated)
         assertEquals(
-            listOf(Constants.recipe.title), state.mealMap[date]
+            listOf(Constants.recipe.title),
+            state.mealMap[date]
                 ?.find { it.type == MealType.BREAKFAST }?.recipes
-                ?.map { it.title })
+                ?.map { it.title }
+        )
         assertEquals(emptyList<Recipe>(), state.recipeSuggestions)
         assertNull(state.currentMealEditing)
     }

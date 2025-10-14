@@ -64,12 +64,13 @@ fun RecipeIngredientSuggestion(
                             ) {
                                 Icon(
                                     imageVector = Icons.Rounded.Close,
-                                    contentDescription = null,
+                                    contentDescription = null
                                 )
                             }
                         }
                     },
-                    onClick = { onSuggestionItemSelected(ingredient) })
+                    onClick = { onSuggestionItemSelected(ingredient) }
+                )
                 if (index < suggestions.size - 1) {
                     HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
                 }
@@ -87,11 +88,9 @@ private fun RecipeIngredientSuggestionPreview() {
             Ingredient(name = "Bananas"),
             Ingredient(name = "Cherries"),
             Ingredient(name = "Dates"),
-            Ingredient(name = "Elderberries"),
+            Ingredient(name = "Elderberries")
         ),
         onSuggestionItemSelected = {},
         onDeleteSuggestion = {}
     )
 }
-
-

@@ -10,9 +10,10 @@ fun MealMapTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
-    content: @Composable() () -> Unit
+    content:
+    @Composable()
+    () -> Unit
 ) {
-
     MaterialTheme(
         colorScheme = getColorScheme(darkTheme, dynamicColor, LocalContext.current),
         shapes = mealMapShape,

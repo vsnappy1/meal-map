@@ -30,10 +30,11 @@ fun TileBackground(
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
                 repeat(columns) { colIndex ->
+                    val index = (rowIndex + colIndex) % Constants.foodIcons.size
                     Icon(
                         modifier = Modifier.size(iconSize),
-                        imageVector = Constants.foodIcons[(rowIndex + colIndex) % Constants.foodIcons.size],
-                        contentDescription = null,
+                        imageVector = Constants.foodIcons[index],
+                        contentDescription = null
                     )
                 }
             }

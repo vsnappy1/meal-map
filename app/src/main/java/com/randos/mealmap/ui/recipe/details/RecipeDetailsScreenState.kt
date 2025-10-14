@@ -1,4 +1,4 @@
-package com.randos.mealmap.ui.recipe_details
+package com.randos.mealmap.ui.recipe.details
 
 import com.randos.domain.model.Recipe
 

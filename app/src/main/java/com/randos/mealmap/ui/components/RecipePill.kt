@@ -19,27 +19,31 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun <T> RecipePill(
-    item: T,
-    onItemSelect: (T) -> Unit,
-    isSelected: Boolean,
-    displayValue: (T) -> String
-) {
+fun <T> RecipePill(item: T, onItemSelect: (T) -> Unit, isSelected: Boolean, displayValue: (T) -> String) {
     val haptics = LocalHapticFeedback.current
 
     val borderColor by animateColorAsState(
-        if (isSelected) MaterialTheme.colorScheme.primary
-        else MaterialTheme.colorScheme.onSurfaceVariant,
+        if (isSelected) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.onSurfaceVariant
+        },
         label = "borderColorAnim"
     )
     val textColor by animateColorAsState(
-        if (isSelected) MaterialTheme.colorScheme.onPrimary
-        else MaterialTheme.colorScheme.onSurfaceVariant,
+        if (isSelected) {
+            MaterialTheme.colorScheme.onPrimary
+        } else {
+            MaterialTheme.colorScheme.onSurfaceVariant
+        },
         label = "textColorAnim"
     )
     val cardContainerColor by animateColorAsState(
-        if (isSelected) MaterialTheme.colorScheme.primary
-        else MaterialTheme.colorScheme.background,
+        if (isSelected) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.background
+        },
         label = "cardBgAnim"
     )
 
